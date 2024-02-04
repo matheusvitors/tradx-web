@@ -1,0 +1,12 @@
+@font-face {
+	font-family: 'TT Bluescreens';
+	src: url('../assets/fonts/tt-bluescreens.woff') format('woff'),
+		url('../assets/fonts/tt-bluescreens.woff2') format('woff2');
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Retrolight';
+	src: url('../../public/fonts/Retrolight.otf') format('otf');
+	font-style: normal;
+}
