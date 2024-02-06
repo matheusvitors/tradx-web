@@ -1,4 +1,5 @@
 import { httpClient } from "@/infra/config/httpClient";
+import { Response } from '@/application/interfaces'
 
 export const http = {
 	get: async (endpoint: string, data?: any) => {

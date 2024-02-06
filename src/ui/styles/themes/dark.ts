@@ -1,8 +1,15 @@
-const primary = '#190933'
-const secondary = '#665687'
-// const accent = '#88e85e'
-const black = '#141414'
-const white = '#fcfcfc'
+// const primary = '#2af3a9'
+// const secondary = '#fbbf34'
+// const black = '#162731'
+// const white = '#fcfcfc'
+
+const primary = '#7f32fb'
+const primaryLight = '#BB96ED'
+// const primaryDark = '#000'
+const secondary = '#20d3ee'
+// const accent = '#CAFFD0'
+const black = '#120623'
+const white = '#F8F1F5'
 
 
 const dark = {
@@ -25,7 +32,7 @@ const dark = {
 	},
 
 	sidebar: {
-		border: white,
+		border: primary,
 		default: {
 			background: black,
 			text: white
@@ -50,8 +57,9 @@ const dark = {
 	},
 
 	card: {
-		background: white,
-		text: black,
+		background: primaryLight,
+		text: white,
+		shadowColor: white
 	},
 
 	textInput: {
@@ -59,6 +67,12 @@ const dark = {
 		border: white,
 		text: white,
 	},
+
+	link: {
+		text: white,
+		hover: secondary,
+	},
+
 
 }
 

@@ -1,13 +1,12 @@
-import React, { FormEvent, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { AxiosError } from "axios";
 import { authenticateUser } from "@/application/services/auth";
-import { TextInput, Button, Toast, Form } from "@/ui/components";
+import { TextInput, Button, Toast } from "@/ui/components";
 
 export const LoginPage: React.FC = () => {
 	const navigate = useNavigate();
-	const theme = useTheme();
 
 	const [loading, setLoading] = useState(false);
 
@@ -18,8 +17,6 @@ export const LoginPage: React.FC = () => {
 		try {
 			setLoading(true);
 			if(usernameRef.current && passwordRef.current){
-				console.log('username', usernameRef.current.value, 'password', passwordRef.current.value);
-
 				await authenticateUser({ username: usernameRef.current.value, password: passwordRef.current.value });
 				navigate("/home");
 			}
@@ -29,9 +26,9 @@ export const LoginPage: React.FC = () => {
 			console.log(error);
 
 			if (error instanceof AxiosError && error.response) {
-				if (error.response.status === 401) {
-					message = error.response.data.message;
-				}
+				// if (error.response.status === 401) {
+					message = error.response.data.response.message;
+				// }
 			} else {
 				message = error.message;
 			}

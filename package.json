@@ -12,6 +12,7 @@
 	"dependencies": {
 		"about-colors-js": "^1.0.2",
 		"axios": "^1.6.7",
+		"jwt-decode": "^4.0.0",
 		"notiflix": "^3.2.7",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -23,6 +24,7 @@
 		"@types/node": "^20.11.16",
 		"@types/react": "^18.2.43",
 		"@types/react-dom": "^18.2.17",
+		"@types/react-icons": "^3.0.0",
 		"@typescript-eslint/eslint-plugin": "^6.14.0",
 		"@typescript-eslint/parser": "^6.14.0",
 		"@vitejs/plugin-react-swc": "^3.5.0",

@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Navigate, Routes, Route, BrowserRouter } from "react-router-dom";
-import { HomePage, LoginPage } from "@/ui/pages";
+import { AtivosPage, HomePage, LoginPage, OperacoesPage } from "@/ui/pages";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
 
 export const Router: React.FC = () => {
@@ -12,12 +12,13 @@ export const Router: React.FC = () => {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<LoginPage />} />
-				<Route path="/home" element={<HomePage />} />
+				<Route path="/login" element={<LoginPage />} />
 
 				<Route path='/' element={<ProtectedRoutes />}>
 					<Route path="/" element={<Navigate replace to="home" />} />
 					<Route path="home" element={<HomePage />} />
+					<Route path="operacoes" element={<OperacoesPage />} />
+					<Route path="ativos" element={<AtivosPage />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

@@ -1,8 +1,8 @@
-const primary = '#190933'
-const secondary = '#665687'
-const accent = '#B084CC'
+const primary = '#6247AA'
+const secondary = '#102B3F'
+const accent = '#062726'
 const black = '#141414'
-const white = '#fcfcfc'
+const white = '#F6F1F9'
 
 const light = {
 	name: 'light',
@@ -24,7 +24,7 @@ const light = {
 	},
 
 	sidebar: {
-		border: black,
+		border: primary,
 		default: {
 			background: white,
 			text: black
@@ -51,12 +51,18 @@ const light = {
 	card: {
 		background: white,
 		text: black,
+		shadowColor: black
 	},
 
 	textInput: {
 		background: primary,
 		border: black,
 		text: black,
+	},
+
+	link: {
+		text: black,
+		hover: secondary,
 	},
 
 }
