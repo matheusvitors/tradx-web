@@ -32,7 +32,7 @@ const dark = {
 	},
 
 	sidebar: {
-		border: primary,
+		border: white,
 		default: {
 			background: black,
 			text: white

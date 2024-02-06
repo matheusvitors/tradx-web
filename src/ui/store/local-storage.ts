@@ -1,4 +1,4 @@
-import { Store, StoreData } from "@/infra/interfaces";
+import { Store, StoreData } from "@/application/interfaces";
 
 export const LocalStorageStore: Store = {
 	get: (key: string): StoreData | null => {

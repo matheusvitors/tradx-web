@@ -51,7 +51,8 @@ declare module 'styled-components' {
 
 		card: {
 			background: string,
-			text: string
+			text: string,
+			shadowColor: string;
 		},
 
 		textInput: {
@@ -59,6 +60,17 @@ declare module 'styled-components' {
 			border: string,
 			text: string,
 		},
+
+		link: {
+			text: string;
+			hover: string;
+		},
+
+		modalPage: {
+			background: string;
+			text: string;
+			shadowColor: string;
+		}
 
 	};
 }

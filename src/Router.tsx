@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Navigate, Routes, Route, BrowserRouter } from "react-router-dom";
-import { AtivosPage, HomePage, LoginPage, OperacoesPage } from "@/ui/pages";
+import { AtivosPage, ContasPage, HomePage, LoginPage, OperacoesPage } from "@/ui/pages";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
 
 export const Router: React.FC = () => {
@@ -19,6 +19,7 @@ export const Router: React.FC = () => {
 					<Route path="home" element={<HomePage />} />
 					<Route path="operacoes" element={<OperacoesPage />} />
 					<Route path="ativos" element={<AtivosPage />} />
+					<Route path="contas" element={<ContasPage />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

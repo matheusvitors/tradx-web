@@ -24,7 +24,7 @@ const light = {
 	},
 
 	sidebar: {
-		border: primary,
+		border: black,
 		default: {
 			background: white,
 			text: black

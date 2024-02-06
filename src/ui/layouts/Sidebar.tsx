@@ -12,6 +12,7 @@ export const Sidebar: React.FC = () => {
 		{ label: 'Home',	path: '/home' },
 		{ label: 'Operações',	path: '/operacoes' },
 		{ label: 'Ativos',	path: '/ativos' },
+		{ label: 'Contas',	path: '/contas' },
 	]
 
 	return (
