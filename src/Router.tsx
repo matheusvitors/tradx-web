@@ -6,7 +6,6 @@ import { KEY_TOKEN } from "@/infra/config/storage-keys";
 export const Router: React.FC = () => {
 	const ProtectedRoutes: React.FC = () => {
 		return localStorage.getItem(KEY_TOKEN) ? <Outlet /> : <Navigate to='login' />
-		// return <Outlet />
 	}
 
 	return (

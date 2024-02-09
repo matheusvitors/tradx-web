@@ -23,7 +23,7 @@ interface NewAccountCardProps {
 
 export const NewAccountCard: React.FC<NewAccountCardProps> = ({ setOpen }) => {
 	return (
-		<Container>
+		<Container new={true}>
 			<NewAccountContainer onClick={setOpen}>
 				<Label><FaPlus /></Label>
 				<Label>Nova Conta</Label>
@@ -32,7 +32,7 @@ export const NewAccountCard: React.FC<NewAccountCardProps> = ({ setOpen }) => {
 	);
 };
 
-const Container = styled.div`
+const Container = styled.div<{ new?: boolean }>`
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-evenly;
@@ -42,11 +42,14 @@ const Container = styled.div`
 	height: 100px;
 	padding: 10px;
 
-	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
+	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
 
 	border-radius: 10px;
 
-	/* border: 1px solid red; */
+	background: ${props =>  props.new ? props.theme.card.background : hexToRGBA(props.theme.card.background, 0.3)};
+	/* background: ${props =>  hexToRGBA(props.theme.card.background, 0.3)}; */
+
+/* border: 1px solid red; */
 `;
 
 const Name = styled.p`

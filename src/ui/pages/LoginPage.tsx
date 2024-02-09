@@ -26,9 +26,7 @@ export const LoginPage: React.FC = () => {
 			console.log(error);
 
 			if (error instanceof AxiosError && error.response) {
-				// if (error.response.status === 401) {
-					message = error.response.data.response.message;
-				// }
+				message = error.response.data.response.message;
 			} else {
 				message = error.message;
 			}
@@ -45,12 +43,9 @@ export const LoginPage: React.FC = () => {
 		<Container>
 			<Content>
 				{/* <SystemName color={theme ? theme.common.text : 'red'} width='250px' height='100px' /> */}
-				{/* <Form onSubmit={onSubmit}> */}
-					<TextInput label="Usuário" name="username" reference={usernameRef} />
-					<TextInput label="Senha" type="password" name="password"  reference={passwordRef} />
-					<Button label="Entrar" onClick={onSubmit} isLoading={loading} />
-					{/* <Button label="Entrar" type="submit" isLoading={loading} /> */}
-				{/* </Form> */}
+				<TextInput label="Usuário" name="username" reference={usernameRef} />
+				<TextInput label="Senha" type="password" name="password"  reference={passwordRef} />
+				<Button label="Entrar" onClick={onSubmit} isLoading={loading} />
 			</Content>
 		</Container>
 	);

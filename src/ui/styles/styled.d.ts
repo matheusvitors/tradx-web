@@ -8,6 +8,13 @@ declare module 'styled-components' {
     export interface DefaultTheme {
 		name: string,
 
+		primary: string;
+		secondary: string;
+		accent: string;
+		black: string;
+		white: string;
+		gray: string;
+
 		common: {
 			background: string,
 			text: string
@@ -53,6 +60,7 @@ declare module 'styled-components' {
 			background: string,
 			text: string,
 			shadowColor: string;
+			spread: string;
 		},
 
 		textInput: {

@@ -1,11 +1,21 @@
-const primary = '#6247AA'
-const secondary = '#102B3F'
-const accent = '#062726'
+const primary = '#593C8F'
+const secondary = '#171738'
+const accent = '#6247AA'
 const black = '#141414'
 const white = '#F6F1F9'
+const gray= '#c7c3c3'
+
 
 const light = {
 	name: 'light',
+
+	primary,
+	secondary,
+	accent,
+	black,
+	white,
+	gray,
+
 
 	common: {
 		background: white,
@@ -51,7 +61,8 @@ const light = {
 	card: {
 		background: white,
 		text: black,
-		shadowColor: black
+		shadowColor: black,
+		spread: '-8px',
 	},
 
 	textInput: {

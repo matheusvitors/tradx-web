@@ -4,10 +4,12 @@ import { Page } from "@/ui/layouts";
 import { AccountCard, Loading, NewAccountCard, Toast } from "@/ui/components";
 import { listContas } from "@/application/services/contas";
 import styled from "styled-components";
+import { NovaContaPage } from "@/ui/pages";
 
 export const ContasPage: React.FC = () => {
 	const [contas, setContas] = useState<Conta[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [openModal, setOpenModal] = useState(false);
 
 	useEffect(() => {
 		loadContas();
@@ -23,7 +25,12 @@ export const ContasPage: React.FC = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}
+
+	const onCloseWindow = () => {
+		setOpenModal(false);
+		loadContas();
+	}
 
 	return (
 		<Page>
@@ -31,7 +38,8 @@ export const ContasPage: React.FC = () => {
 				<h1>Contas</h1>
 				<ContasContainer>
 					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} />))}
-					<NewAccountCard setOpen={() => {}}  />
+					<NewAccountCard setOpen={() => setOpenModal(true)}  />
+					<NovaContaPage open={openModal} closeWindow={onCloseWindow} />
 				</ContasContainer>
 				<LoadingContainer $visible={loading}>
 					<Loading visible={loading} />

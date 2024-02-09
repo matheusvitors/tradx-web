@@ -5,7 +5,6 @@ import { hexToRGBA } from 'about-colors-js';
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
 	type?: HTMLInputTypeAttribute;
-	name: string;
 	reference?: RefObject<HTMLInputElement>;
 }
 

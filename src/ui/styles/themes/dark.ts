@@ -1,19 +1,19 @@
-// const primary = '#2af3a9'
-// const secondary = '#fbbf34'
-// const black = '#162731'
-// const white = '#fcfcfc'
-
 const primary = '#7f32fb'
-const primaryLight = '#BB96ED'
-// const primaryDark = '#000'
 const secondary = '#20d3ee'
-// const accent = '#CAFFD0'
+const accent = '#CAFFD0'
 const black = '#120623'
 const white = '#F8F1F5'
-
+const gray= '#c7c3c3'
 
 const dark = {
 	name: 'dark',
+
+	primary,
+	secondary,
+	accent,
+	black,
+	white,
+	gray,
 
 	common: {
 		background: black,
@@ -51,15 +51,16 @@ const dark = {
 		background: primary,
 		text: white,
 		hover: {
-			background: secondary,
+			background: accent,
 			text: black,
 		}
 	},
 
 	card: {
-		background: primaryLight,
+		background: primary,
 		text: white,
-		shadowColor: white
+		shadowColor: white,
+		spread: '-2px',
 	},
 
 	textInput: {
