@@ -1,9 +1,14 @@
 import { http } from "@/infra/adapters/http";
 import { AxiosError } from "axios";
 
-export const createConta = async (nome: string) => {
+interface CreateContaParams {
+	nome: string;
+	tipo: string;
+}
+
+export const createConta = async ({ nome, tipo }: CreateContaParams) => {
 	try {
-		const { data } = await http.post('/contas', {nome});
+		const { data } = await http.post('/contas', {nome, tipo});
 		return data.response.content;
 	} catch (error: any) {
 		let message = error.message;
@@ -16,7 +21,7 @@ export const createConta = async (nome: string) => {
 				// if(error.response.status === 404) {
 				// 	message = 'Usuário não foi encontrado.';
 				// }
-				message = error.message;
+				message = error.response.data.response.message;
 			}
 		}
 		console.error(error);
