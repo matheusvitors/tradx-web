@@ -28,11 +28,6 @@ const Container = styled.div`
 
 	height: 50px;
 	width: 200px;
-
-	/* &input[type="radio"] {
-		display: none;
-	} */
-
 `
 
 const Radio = styled.input`

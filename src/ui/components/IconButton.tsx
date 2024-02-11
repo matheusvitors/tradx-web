@@ -6,18 +6,19 @@ interface IconButtonProps {
 	icon: IconType;
 	onClick: () => void;
 	size?: number;
+	color?: string;
 }
 
-export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, }) => {
+export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, color }) => {
 
 	return (
-		<Button onClick={onClick} size={size || 32}>
+		<Button onClick={onClick} size={size || 32} color={color}>
 			<Icon size={size || 32} />
 		</Button>
 	);
 }
 
-const Button = styled.button<{size?: number}>`
+const Button = styled.button<{size?: number; color?: string;}>`
 	background: transparent;
 	width: ${props => props.size+'px' || '32px'};
 	height: ${props => props.size+'px' || '32px'};
@@ -28,7 +29,7 @@ const Button = styled.button<{size?: number}>`
 
 	&:hover {
 		svg {
-			fill: ${props => props.theme.button.hover.background};
+			fill: ${props => props.color || props.theme.button.hover.background};
 		}
 	}
 `

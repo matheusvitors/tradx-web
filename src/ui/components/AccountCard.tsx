@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FaPlus } from "react-icons/fa6";
 import { hexToRGBA } from "about-colors-js";
 import { Conta } from "@/application/models";
+import { Link, useLocation } from "react-router-dom";
 
 interface AccountCardProps {
 	conta: Conta
@@ -17,14 +18,13 @@ export const AccountCard: React.FC<AccountCardProps> = ({ conta }) => {
 	);
 };
 
-interface NewAccountCardProps {
-	setOpen: () => void
-}
+export const NewAccountCard: React.FC = () => {
 
-export const NewAccountCard: React.FC<NewAccountCardProps> = ({ setOpen }) => {
+	const location = useLocation();
+
 	return (
 		<Container $new={true}>
-			<NewAccountContainer onClick={setOpen}>
+			<NewAccountContainer to='/teste' state={{background: location}}>
 				<Label><FaPlus /></Label>
 				<Label>Nova Conta</Label>
 			</NewAccountContainer>
@@ -61,7 +61,7 @@ const Name = styled.p`
 // 	font-weight: 700;
 // `;
 
-const NewAccountContainer = styled.button`
+const NewAccountContainer = styled(Link)`
 	display: flex;
 	align-items: center;
 	justify-content: center;
