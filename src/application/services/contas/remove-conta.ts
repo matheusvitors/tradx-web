@@ -1,11 +1,9 @@
-import { Conta } from "@/application/models";
-import { http } from "@/infra/adapters/http";
+import { http } from "@/infra/adapters/http"
 import { AxiosError } from "axios";
 
-export const listContas = async (): Promise<Conta[]> => {
+export const removeConta = async (id: string): Promise<void> => {
 	try {
-		const { data } = await http.get('/contas');
-		return data.response.content;
+		await http.delete(`/contas/${id}`);
 	} catch (error: any) {
 		let message = error.message;
 		if(error instanceof AxiosError) {

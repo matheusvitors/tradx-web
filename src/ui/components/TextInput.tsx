@@ -31,7 +31,7 @@ const Container = styled.div`
 
 const Label = styled.label`
 	margin: 5px 0;
-	font-weight: 500;
+	font-weight: 400;
 `
 
 const Input = styled.input`

@@ -1,10 +1,10 @@
 import { Confirm, IConfirmOptions, INotifyOptions, Notify } from "notiflix";
 
 const confirmOptions: IConfirmOptions = {
-	backgroundColor: '#75FA7C',
-	titleColor: '#FF5C0A',
-	messageColor: '#141414',
-	okButtonBackground: '#FF5C0A'
+	backgroundColor: '#141414',
+	titleColor: '#7f32fb',
+	messageColor: '#fefefe',
+	okButtonBackground: '#7f32fb',
 }
 
 const notifyOptions: INotifyOptions = {
@@ -34,17 +34,17 @@ export const Toast = {
 			() => {},
 			confirmOptions
 		);
-	}
+	},
 
-	// ask: () => {
+	// ask: (title: string, text: string, positiveLabel: string, negativeLabel: string, positiveCallback: () => void, negativeCallback: () => void) => {
 	// 	Confirm.ask(
-	// 		'titulo',
-	// 		'texto',
-	// 		'label positivo',
-	// 		'label negativo',
+	// 		title,
+	// 		text,
+	// 		positiveLabel,
+	// 		negativeLabel,
 	// 		'nao sei',
-	// 		() => alert('positivo'),
-	// 		() => alert('negativo')
+	// 		positiveCallback,
+	// 		negativeCallback
 	// 	);
 	// }
 }

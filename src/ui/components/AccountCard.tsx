@@ -1,19 +1,32 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { FaPlus } from "react-icons/fa6";
 import { hexToRGBA } from "about-colors-js";
 import { Conta } from "@/application/models";
 import { Link, useLocation } from "react-router-dom";
+import { IconButton } from "@/ui/components";
+import { MdDelete, MdEdit } from "react-icons/md";
 
 interface AccountCardProps {
-	conta: Conta
+	conta: Conta;
+	onEdit: () => void;
+	onRemove: () => void;
 }
 
-export const AccountCard: React.FC<AccountCardProps> = ({ conta }) => {
+export const AccountCard: React.FC<AccountCardProps> = ({ conta, onEdit, onRemove }) => {
+
+	const theme = useTheme();
+
 	return (
 		<Container>
-			<Name>{conta.nome}</Name>
-			{/* <Balance>R$ {conta.balance.toFixed(2)}</Balance> */}
+			<Content>
+				<Name>{conta.nome}</Name>
+				{/* <Balance>R$ {conta.balance.toFixed(2)}</Balance> */}
+			</Content>
+			<ActionsContent>
+				<IconButton icon={MdEdit} size={22} onClick={onEdit} color={theme.semantic.attention} margin={5} />
+				<IconButton icon={MdDelete} size={22} onClick={onRemove} color={theme.semantic.warning} margin={5} />
+			</ActionsContent>
 		</Container>
 	);
 };
@@ -24,7 +37,7 @@ export const NewAccountCard: React.FC = () => {
 
 	return (
 		<Container $new={true}>
-			<NewAccountContainer to='/teste' state={{background: location}}>
+			<NewAccountContainer to='/contas/adicionar' state={{background: location}}>
 				<Label><FaPlus /></Label>
 				<Label>Nova Conta</Label>
 			</NewAccountContainer>
@@ -36,7 +49,7 @@ const Container = styled.div<{ $new?: boolean }>`
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-evenly;
-	flex-direction: column;
+	flex-direction: row;
 
 	width: 250px;
 	height: 100px;
@@ -47,19 +60,36 @@ const Container = styled.div<{ $new?: boolean }>`
 	border-radius: 10px;
 
 	background: ${props =>  props.$new ? props.theme.card.background : hexToRGBA(props.theme.card.background, 0.3)};
-	/* background: ${props =>  hexToRGBA(props.theme.card.background, 0.3)}; */
-
-/* border: 1px solid red; */
 `;
+
+const Content = styled.div`
+	width: 70%;
+	height: 100%;
+
+	/* border: 1px solid silver; */
+`
 
 const Name = styled.p`
 	font-size: 18px;
+	font-weight: 300;
 `;
 
 // const Balance = styled.p`
 // 	font-size: 20px;
 // 	font-weight: 700;
 // `;
+
+const ActionsContent = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+
+	width: 18%;
+
+	/* border: 1px solid silver; */
+
+`
 
 const NewAccountContainer = styled(Link)`
 	display: flex;
@@ -76,7 +106,7 @@ const NewAccountContainer = styled(Link)`
 `;
 
 const Label = styled.span`
-	font-size: 16px;
+	font-size: 18px;
 	svg {
 		font-size: 32px;
 	}

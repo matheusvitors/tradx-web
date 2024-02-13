@@ -24,7 +24,7 @@ const light = {
 
 	semantic: {
 		success: '#31cb00',
-		attention: '#f2f230',
+		attention: '#CCC900',
 		warning: '#C92020',
 	},
 

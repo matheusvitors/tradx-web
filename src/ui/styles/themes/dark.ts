@@ -22,7 +22,7 @@ const dark = {
 
 	semantic: {
 		success: '#46B93C',
-		attention: '#218aa4',
+		attention: '#f2f230',
 		warning: '#C92020',
 	},
 

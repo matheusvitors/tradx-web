@@ -1,2 +1,2 @@
 export * from './ContasPage'
-export * from './NovaContaPage'
+export * from './PersistContaPage'

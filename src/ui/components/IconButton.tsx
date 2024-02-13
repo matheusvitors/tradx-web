@@ -7,23 +7,24 @@ interface IconButtonProps {
 	onClick: () => void;
 	size?: number;
 	color?: string;
+	margin?: number;
 }
 
-export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, color }) => {
+export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, color, margin }) => {
 
 	return (
-		<Button onClick={onClick} size={size || 32} color={color}>
+		<Button onClick={onClick} size={size || 32} color={color} $margin={margin}>
 			<Icon size={size || 32} />
 		</Button>
 	);
 }
 
-const Button = styled.button<{size?: number; color?: string;}>`
+const Button = styled.button<{ size?: number; color?: string; $margin?: number; }>`
 	background: transparent;
 	width: ${props => props.size+'px' || '32px'};
 	height: ${props => props.size+'px' || '32px'};
 
-	margin: 15px;
+	margin: ${props => props.$margin ? props.$margin+'px' : '15px'};
 
 	transition: all .7s;
 

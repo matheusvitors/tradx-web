@@ -1,11 +1,12 @@
 import { Conta } from "@/application/models";
-import { http } from "@/infra/adapters/http";
+import { http } from "@/infra/adapters/http"
 import { AxiosError } from "axios";
 
-export const listContas = async (): Promise<Conta[]> => {
+export const getConta = async (id: string): Promise<Conta> => {
 	try {
-		const { data } = await http.get('/contas');
-		return data.response.content;
+		const response = await http.get(`/contas/${id}`);
+		return response.data.response.content;
+
 	} catch (error: any) {
 		let message = error.message;
 		if(error instanceof AxiosError) {
