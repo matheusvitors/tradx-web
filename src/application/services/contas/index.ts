@@ -1,4 +1,5 @@
 export * from './create-conta'
+export * from './edit-conta'
 export * from './get-conta'
 export * from './list-contas'
 export * from './remove-conta'

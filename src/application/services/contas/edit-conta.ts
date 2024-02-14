@@ -1,5 +1,4 @@
 import { AxiosError } from "axios";
-import { Conta } from "@/application/models";
 import { http } from "@/infra/adapters/http";
 
 interface EditContaParams {

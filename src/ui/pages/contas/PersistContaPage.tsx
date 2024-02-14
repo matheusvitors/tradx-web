@@ -14,7 +14,6 @@ export const PersistContaPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const nomeInputRef = useRef<HTMLInputElement>(null);
-	const tipoInputRef = useRef('simulador');
 	const initialBalanceInputRef = useRef<HTMLInputElement>(null);
 	const simuladorRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const realRadioButtonInputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +38,6 @@ export const PersistContaPage: React.FC = () => {
 			const data = await getConta(id);
 			if(data && nomeInputRef.current && simuladorRadioButtonInputRef.current && realRadioButtonInputRef.current) {
 				nomeInputRef.current.value = data.nome;
-				// tipoInputValue = data.tipo;
 				data.tipo === 'simulador' ? simuladorRadioButtonInputRef.current.checked = true : realRadioButtonInputRef.current.checked = true;
 			}
 		} catch (error: any) {
@@ -65,7 +63,6 @@ export const PersistContaPage: React.FC = () => {
 				// if(nomeInputRef.current && initialBalanceInputRef.current) {
 				nomeInputRef.current.value = "";
 			}
-
 		} catch (error) {
 			throw error;
 		}
@@ -84,15 +81,10 @@ export const PersistContaPage: React.FC = () => {
 					tipo: tipoInputValue,
 				});
 			}
-			if (nomeInputRef.current) {
-				// if(nomeInputRef.current && initialBalanceInputRef.current) {
-				nomeInputRef.current.value = "";
-			}
 
 		} catch (error) {
 			throw error;
 		}
-
 	}
 
 	const onSubmit = async (event: FormEvent) => {
