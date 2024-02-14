@@ -30,14 +30,6 @@ export const ContasPage: React.FC = () => {
 		}
 	}
 
-	const onRemoveConta = async (id: string) => {
-		try {
-			await removeConta(id)
-		} catch (error: any) {
-			Toast.error(error.message);
-		}
-	}
-
 	const onEdit = (id: string) => {
 		navigate('/contas/editar/'+id, { state: {background: location}})
 	}
@@ -49,6 +41,14 @@ export const ContasPage: React.FC = () => {
 			'Excluir',
 			async () => {await onRemoveConta(conta.id); loadContas()},
 		)
+	}
+
+	const onRemoveConta = async (id: string) => {
+		try {
+			await removeConta(id)
+		} catch (error: any) {
+			Toast.error(error.message);
+		}
 	}
 
 	return (

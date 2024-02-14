@@ -1,18 +1,19 @@
-import React from "react";
+import React, { InputHTMLAttributes, RefObject } from "react";
 import styled from "styled-components";
 
-interface RadioButtonParams {
+interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
 	name: string;
 	value: string;
 	checked?: boolean;
 	label: string;
-	onChange: React.ChangeEventHandler<HTMLInputElement> | undefined
+	reference?:  RefObject<HTMLInputElement>;
+	onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, checked, label, onChange}) => {
+export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, checked, label, reference, onChange, ...rest}) => {
 	return (
 		<Container>
-			<Radio type="radio" id={value} name={name} value={value} checked={checked} onChange={onChange} />
+			<Radio type="radio" id={value} name={name} value={value} checked={checked} ref={reference} onChange={onChange} {...rest} />
 			<Label htmlFor={value}>{label}</Label>
 		</Container>
 	);
