@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
@@ -10,25 +11,35 @@ export const ContasPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { data, isLoading, error, refetch } = useQuery<Conta[]>({ queryKey: ['contas'], queryFn: listContas})
 
 	const [contas, setContas] = useState<Conta[]>([]);
-	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		loadContas();
-	}, []);
+		data && setContas(data);
+	}, [data])
 
-	const loadContas = async () => {
-		try {
-			setLoading(true);
-			const data = await listContas();
-			data.length >= 0 && setContas(data);
-		} catch (error: any) {
-			Toast.error(error.message);
-		} finally {
-			setLoading(false);
-		}
-	}
+	useEffect(() => {
+		error && Toast.error(error.message);
+	}, [error])
+
+	// const [loading, setLoading] = useState(false);
+
+	// useEffect(() => {
+	// 	loadContas();
+	// }, []);
+
+	// const loadContas = async () => {
+	// 	try {
+	// 		setLoading(true);
+	// 		const data = await listContas();
+	// 		data.length >= 0 && setContas(data);
+	// 	} catch (error: any) {
+	// 		Toast.error(error.message);
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// }
 
 	const onEdit = (id: string) => {
 		navigate('/contas/editar/'+id, { state: {background: location}})
@@ -39,7 +50,7 @@ export const ContasPage: React.FC = () => {
 			'Excluir Conta?',
 			`Deseja excluir a conta [ ${conta.nome} ]?`,
 			'Excluir',
-			async () => {await onRemoveConta(conta.id); loadContas()},
+			async () => {await onRemoveConta(conta.id); refetch()},
 		)
 	}
 
@@ -59,8 +70,8 @@ export const ContasPage: React.FC = () => {
 					<NewAccountCard />
 					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta.id)} onRemove={() => onRemove(conta)} />))}
 				</ContasContainer>
-				<LoadingContainer $visible={loading}>
-					<Loading visible={loading} />
+				<LoadingContainer $visible={isLoading}>
+					<Loading visible={isLoading} />
 				</LoadingContainer>
 			</Content>
 		</Page>

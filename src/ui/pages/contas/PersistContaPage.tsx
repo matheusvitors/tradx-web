@@ -5,11 +5,13 @@ import { createConta, getConta } from "@/application/services/contas";
 import { ModalPage } from "@/ui/layouts";
 import { useNavigate, useParams } from "react-router-dom";
 import { editConta } from "@/application/services/contas/edit-conta";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const PersistContaPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const params = useParams();
+	const queryClient = useQueryClient();
 
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -63,6 +65,7 @@ export const PersistContaPage: React.FC = () => {
 				// if(nomeInputRef.current && initialBalanceInputRef.current) {
 				nomeInputRef.current.value = "";
 			}
+			queryClient.invalidateQueries({queryKey: ['contas']});
 		} catch (error) {
 			throw error;
 		}
@@ -81,6 +84,8 @@ export const PersistContaPage: React.FC = () => {
 					tipo: tipoInputValue,
 				});
 			}
+
+			queryClient.invalidateQueries({queryKey: ['contas']});
 
 		} catch (error) {
 			throw error;
