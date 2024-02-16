@@ -11,7 +11,11 @@ export const ContasPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { data, isLoading, error, refetch } = useQuery<Conta[]>({ queryKey: ['contas'], queryFn: listContas})
+	const { data, isLoading, error, refetch } = useQuery<Conta[]>({
+		queryKey: ['contas'],
+		queryFn: listContas,
+		staleTime: 1000 * 60 * 2
+	})
 
 	const [contas, setContas] = useState<Conta[]>([]);
 
