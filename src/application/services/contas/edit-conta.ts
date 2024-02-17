@@ -1,13 +1,8 @@
 import { AxiosError } from "axios";
 import { http } from "@/infra/adapters/http";
+import { ContaDTO } from "@/application/dto";
 
-interface EditContaParams {
-	id: string;
-	nome: string;
-	tipo: string;
-}
-
-export const editConta = async (params: EditContaParams) => {
+export const editConta = async (params: ContaDTO) => {
 	try {
 		const { data } = await http.put('/contas', params);
 		return data.response.content;

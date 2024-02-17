@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { AxiosError } from "axios";
 import { authenticateUser } from "@/application/services/auth";
-import { TextInput, Button, Toast } from "@/ui/components";
+import { TextInput, Button, Toast, Form } from "@/ui/components";
 
 export const LoginPage: React.FC = () => {
 	const navigate = useNavigate();
@@ -13,7 +12,8 @@ export const LoginPage: React.FC = () => {
 	const usernameRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 
-	const onSubmit = async () => {
+	const onSubmit = async (event: FormEvent) => {
+		event.preventDefault();
 		try {
 			setLoading(true);
 			if(usernameRef.current && passwordRef.current){
@@ -21,17 +21,7 @@ export const LoginPage: React.FC = () => {
 				navigate("/home");
 			}
 		} catch (error: any) {
-			//TODO: Criar um httpErrorHandler
-			let message = "erro!";
-			console.log(error);
-
-			if (error instanceof AxiosError && error.response) {
-				message = error.response.data.response.message;
-			} else {
-				message = error.message;
-			}
-
-			Toast.error(message);
+			Toast.error(error.message);
 		} finally {
 			setLoading(false);
 		}
@@ -43,9 +33,11 @@ export const LoginPage: React.FC = () => {
 		<Container>
 			<Content>
 				{/* <SystemName color={theme ? theme.common.text : 'red'} width='250px' height='100px' /> */}
-				<TextInput label="Usuário" name="username" reference={usernameRef} />
-				<TextInput label="Senha" type="password" name="password"  reference={passwordRef} />
-				<Button label="Entrar" onClick={onSubmit} isLoading={loading} />
+				<Form onSubmit={onSubmit}>
+					<TextInput label="Usuário" name="username" reference={usernameRef} />
+					<TextInput label="Senha" type="password" name="password"  reference={passwordRef} />
+					<Button label="Entrar" type="submit" isLoading={loading} />
+				</Form>
 			</Content>
 		</Container>
 	);

@@ -1,8 +1,6 @@
-export interface Conta {
+export interface ContaDTO {
 	id: string;
 	nome: string;
 	tipo: string;
-	saldo: number;
 	saldoInicial: number;
-	usuarioId: string;
 }

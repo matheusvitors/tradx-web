@@ -21,7 +21,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({ conta, onEdit, onRemov
 		<Container>
 			<Content>
 				<Name>{conta.nome}</Name>
-				{/* <Balance>R$ {conta.balance.toFixed(2)}</Balance> */}
+				<Balance>R$ {conta.saldo.toFixed(2)}</Balance>
 			</Content>
 			<ActionsContent>
 				<IconButton icon={MdEdit} size={22} onClick={onEdit} color={theme.semantic.attention} margin={5} />
@@ -70,14 +70,16 @@ const Content = styled.div`
 `
 
 const Name = styled.p`
-	font-size: 18px;
+	font-size: 16px;
 	font-weight: 300;
 `;
 
-// const Balance = styled.p`
-// 	font-size: 20px;
-// 	font-weight: 700;
-// `;
+const Balance = styled.p`
+	font-size: 20px;
+	font-weight: 700;
+
+	margin-top: 20px;
+`;
 
 const ActionsContent = styled.div`
 	display: flex;

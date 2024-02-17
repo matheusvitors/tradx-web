@@ -16,7 +16,7 @@ export const PersistContaPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const nomeInputRef = useRef<HTMLInputElement>(null);
-	const initialBalanceInputRef = useRef<HTMLInputElement>(null);
+	const saldoInicialInputRef = useRef<HTMLInputElement>(null);
 	const simuladorRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const realRadioButtonInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,8 +38,15 @@ export const PersistContaPage: React.FC = () => {
 		try {
 			setIsLoading(true);
 			const data = await getConta(id);
-			if(data && nomeInputRef.current && simuladorRadioButtonInputRef.current && realRadioButtonInputRef.current) {
+			if(
+				data &&
+				nomeInputRef.current &&
+				simuladorRadioButtonInputRef.current &&
+				realRadioButtonInputRef.current &&
+				saldoInicialInputRef.current
+			) {
 				nomeInputRef.current.value = data.nome;
+				saldoInicialInputRef.current.value = data.saldoInicial.toFixed(2).toString();
 				data.tipo === 'simulador' ? simuladorRadioButtonInputRef.current.checked = true : realRadioButtonInputRef.current.checked = true;
 			}
 		} catch (error: any) {
@@ -51,21 +58,25 @@ export const PersistContaPage: React.FC = () => {
 
 	const handleCreateConta = async () => {
 		try {
-			if (nomeInputRef.current && simuladorRadioButtonInputRef.current && realRadioButtonInputRef.current) {
-				// if(initialBalanceInputRef.current.value.length > 0) {
-				// 	input = {...input, initialBalance:  initialBalanceInputRef.current.value}
-				// }
-
+			if (nomeInputRef.current &&
+				simuladorRadioButtonInputRef.current &&
+				realRadioButtonInputRef.current &&
+				saldoInicialInputRef.current
+			) {
 				await createConta({
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
+					saldoInicial: parseFloat(saldoInicialInputRef.current.value)
 				});
 			}
-			if (nomeInputRef.current) {
-				// if(nomeInputRef.current && initialBalanceInputRef.current) {
-				nomeInputRef.current.value = "";
-			}
+
 			queryClient.invalidateQueries({queryKey: ['contas']});
+
+			if(nomeInputRef.current && saldoInicialInputRef.current) {
+				nomeInputRef.current.value = "";
+				saldoInicialInputRef.current.value = "0,00";
+			}
+
 		} catch (error) {
 			throw error;
 		}
@@ -73,15 +84,18 @@ export const PersistContaPage: React.FC = () => {
 
 	const handleEditConta = async () => {
 		try {
-			if (params.id && nomeInputRef.current && simuladorRadioButtonInputRef.current && realRadioButtonInputRef.current) {
-				// if(initialBalanceInputRef.current.value.length > 0) {
-				// 	input = {...input, initialBalance:  initialBalanceInputRef.current.value}
-				// }
+			if (params.id &&
+				nomeInputRef.current &&
+				simuladorRadioButtonInputRef.current &&
+				realRadioButtonInputRef.current &&
+				saldoInicialInputRef.current
+			) {
 
 				await editConta({
 					id: params.id,
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
+					saldoInicial: parseFloat(saldoInicialInputRef.current.value)
 				});
 			}
 
@@ -101,13 +115,12 @@ export const PersistContaPage: React.FC = () => {
 			navigate('/contas');
 		} catch (error: any) {
 			Toast.error(error.message);
-			console.error(error);
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
-	const onChangeTipoInput = (event: ChangeEvent<HTMLInputElement>) => {
+	const onChangeTipoInput = () => {
 
 		if(simuladorRadioButtonInputRef.current && simuladorRadioButtonInputRef.current.checked) {
 			tipoInputValue = 'simulador';
@@ -123,7 +136,7 @@ export const PersistContaPage: React.FC = () => {
 		<ModalPage title={params.id ? "Editar Conta" : "Adicionar Conta"}>
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
-				<TextInput disabled label="Saldo Inicial" type="number" step="0.01" placeholder='0.00' reference={initialBalanceInputRef} name={""} />
+				<TextInput label="Saldo Inicial" type="number" step="0.01" placeholder='0.00' reference={saldoInicialInputRef}  />
 				<RadioGroup>
 					<RadioButton name="tipo" value="simulador" label="simulador" onChange={onChangeTipoInput} reference={simuladorRadioButtonInputRef} />
 					<RadioButton name="tipo" value="real" label="real" onChange={onChangeTipoInput} reference={realRadioButtonInputRef} />
