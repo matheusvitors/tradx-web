@@ -1,11 +1,11 @@
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Toast, Button, Form, TextInput, RadioButton } from "@/ui/components";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Toast, Button, Form, TextInput, RadioButton, RadioGroup } from "@/ui/components";
 import { createConta, getConta } from "@/application/services/contas";
 import { ModalPage } from "@/ui/layouts";
-import { useNavigate, useParams } from "react-router-dom";
 import { editConta } from "@/application/services/contas/edit-conta";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const PersistContaPage: React.FC = () => {
 
@@ -129,7 +129,6 @@ export const PersistContaPage: React.FC = () => {
 		if(realRadioButtonInputRef.current && realRadioButtonInputRef.current.checked) {
 			tipoInputValue = 'real';
 		}
-		console.log('tipoInputValue', tipoInputValue);
 	};
 
 	return (
@@ -146,12 +145,3 @@ export const PersistContaPage: React.FC = () => {
 		</ModalPage>
 	);
 };
-
-const RadioGroup = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	flex-direction: row;
-
-	width: 82%;
-`;

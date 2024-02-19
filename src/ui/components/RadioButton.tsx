@@ -25,10 +25,11 @@ const Container = styled.div`
 	align-items: center;
 	justify-content: space-evenly;
 
-	margin: 5px 10px;
+	margin: 10px 0px;
 
 	height: 50px;
-	width: 200px;
+	/* width: 200px; */
+	width: 100%;
 `
 
 const Radio = styled.input`

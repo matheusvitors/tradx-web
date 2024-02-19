@@ -1,4 +1,4 @@
-export * from './AtivosPage'
+export * from './ativos'
 export * from './contas'
 export * from './HomePage'
 export * from './LoginPage'

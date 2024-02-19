@@ -4,8 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
-import { AccountCard, Loading, NewAccountCard, Toast } from "@/ui/components";
+import { AccountCard, Loading, NewAccountCard, PageLoading, Toast } from "@/ui/components";
 import { listContas, removeConta } from "@/application/services/contas";
+import { STALE_TIME } from "@/infra/config/constants";
 
 export const ContasPage: React.FC = () => {
 
@@ -14,7 +15,7 @@ export const ContasPage: React.FC = () => {
 	const { data, isLoading, error, refetch } = useQuery<Conta[]>({
 		queryKey: ['contas'],
 		queryFn: listContas,
-		staleTime: 1000 * 60 * 2
+		staleTime: STALE_TIME
 	})
 
 	const [contas, setContas] = useState<Conta[]>([]);
@@ -74,9 +75,7 @@ export const ContasPage: React.FC = () => {
 					<NewAccountCard />
 					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta.id)} onRemove={() => onRemove(conta)} />))}
 				</ContasContainer>
-				<LoadingContainer $visible={isLoading}>
-					<Loading visible={isLoading} />
-				</LoadingContainer>
+				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
 	);
@@ -88,16 +87,6 @@ const Content = styled.div`
 	justify-content: flex-start;
 	flex-direction: column;
 	flex-grow: 1;
-`;
-
-const LoadingContainer = styled.div<{ $visible: boolean }>`
-	display: ${({ $visible }) => ($visible ? "flex" : "none")};
-	align-items: center;
-	justify-content: center;
-	flex-grow: 1;
-
-	width: 100%;
-	height: 100%;
 `;
 
 const ContasContainer = styled.div`

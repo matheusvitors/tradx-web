@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Navigate, Routes, Route, useLocation } from "react-router-dom";
-import { AtivosPage, ContasPage, HomePage, LoginPage, PersistContaPage, OperacoesPage } from "@/ui/pages";
+import { AtivosPage, ContasPage, HomePage, LoginPage, PersistContaPage, OperacoesPage, PersistAtivoPage } from "@/ui/pages";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
 
 export const Router: React.FC = () => {
@@ -27,6 +27,8 @@ export const Router: React.FC = () => {
 
 			{background && (
 				<Routes>
+					<Route path="ativos/adicionar" element={<PersistAtivoPage />} />
+					<Route path="ativos/editar/:id" element={<PersistAtivoPage />} />
 					<Route path="contas/adicionar" element={<PersistContaPage />} />
 					<Route path="contas/editar/:id" element={<PersistContaPage />} />
 				</Routes>
