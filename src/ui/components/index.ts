@@ -1,5 +1,6 @@
-export * from './Button'
 export * from './AccountCard'
+export * from './Button'
+export * from './DataTable'
 export * from './Form'
 export * from './IconButton'
 export * from './Loading'
@@ -9,3 +10,4 @@ export * from './RadioGroup'
 export * from './TextInput'
 export * from './Toast'
 export * from './SystemName'
+

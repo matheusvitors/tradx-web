@@ -5,11 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Ativo } from '@/application/models';
 import { listAtivos } from '@/application/services/ativos';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Button, IconButton, PageLoading, Toast } from '@/ui/components';
+import { Button, DataTable, PageLoading, Toast } from '@/ui/components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { IconBaseProps } from 'react-icons';
-import { MdPlusOne } from 'react-icons/md';
-
 export const AtivosPage: React.FC = () => {
 
 	const navigate = useNavigate();
@@ -41,8 +38,9 @@ export const AtivosPage: React.FC = () => {
 				</PageHeader>
 				{/* <Filters></Filters> */}
 				<TableContainer>
-					{ativos.length === 0 && <p>Não há ativos cadastrados.</p>}
-					{ativos.length > 0 && ativos.map(ativo => <p key={ativo.id}>{ativo.nome} - {ativo.acronimo}</p>)}
+					{/* {ativos.length === 0 && <p>Não há ativos cadastrados.</p>}
+					{ativos.length > 0 && ativos.map(ativo => <p key={ativo.id}>{ativo.nome} - {ativo.acronimo}</p>)} */}
+					<DataTable />
 				</TableContainer>
 				<PageLoading visible={isLoading} />
 			</Content>

@@ -4,6 +4,7 @@ const accent = '#CAFFD0'
 const black = '#120623'
 const white = '#F8F1F5'
 const gray= '#c7c3c3'
+const background = '#080014';
 
 const dark = {
 	name: 'dark',
@@ -16,7 +17,8 @@ const dark = {
 	gray,
 
 	common: {
-		background: black,
+		background,
+		// background: black,
 		text: white
 	},
 
@@ -34,7 +36,7 @@ const dark = {
 	sidebar: {
 		border: white,
 		default: {
-			background: black,
+			background,
 			text: white
 		},
 		active: {
