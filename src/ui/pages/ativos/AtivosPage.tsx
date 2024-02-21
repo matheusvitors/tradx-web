@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Ativo } from '@/application/models';
 import { listAtivos } from '@/application/services/ativos';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Button, DataTable, PageLoading, Toast } from '@/ui/components';
+import { Button, Column, DataTable, PageLoading, Toast } from '@/ui/components';
 import { useNavigate, useLocation } from 'react-router-dom';
 export const AtivosPage: React.FC = () => {
 
@@ -27,6 +27,11 @@ export const AtivosPage: React.FC = () => {
 		error && Toast.error(error.message);
 	}, [error])
 
+	const columns: Column<Ativo>[] = [
+		{ name: 'Acrônimo', acessor: 'acronimo'},
+		{ name: 'Nome', acessor: 'nome'},
+		{ name: 'Tipo', acessor: 'tipo'},
+	]
 
 	return (
 		<Page>
@@ -38,9 +43,7 @@ export const AtivosPage: React.FC = () => {
 				</PageHeader>
 				{/* <Filters></Filters> */}
 				<TableContainer>
-					{/* {ativos.length === 0 && <p>Não há ativos cadastrados.</p>}
-					{ativos.length > 0 && ativos.map(ativo => <p key={ativo.id}>{ativo.nome} - {ativo.acronimo}</p>)} */}
-					<DataTable />
+					<DataTable columns={columns} data={ativos}/>
 				</TableContainer>
 				<PageLoading visible={isLoading} />
 			</Content>
