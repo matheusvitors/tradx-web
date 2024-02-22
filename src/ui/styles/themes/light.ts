@@ -76,6 +76,11 @@ const light = {
 		hover: secondary,
 	},
 
+	table: {
+		borderCell: primary,
+		borderRow: secondary,
+	}
+
 }
 
 export default light;

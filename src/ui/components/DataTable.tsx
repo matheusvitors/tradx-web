@@ -1,5 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
+import { IconButton } from '@/ui/components';
+import { IconType } from 'react-icons';
 
 /**
  * Referencia => https://tanstack.com/table/latest
@@ -7,8 +9,18 @@ import styled, { css } from 'styled-components';
 
 interface DataTableProps {
 	columns: Column<any>[];
+	payload: DataTablePayload[];
+}
+
+export interface DataTableActionConfig {
+	icon: IconType;
+	callback: () => void;
+	color?: string;
+}
+
+export interface DataTablePayload {
 	data: any;
-	options?: DataTableOptions
+	actions: DataTableActionConfig[];
 }
 
 export interface Column<T> {
@@ -16,17 +28,21 @@ export interface Column<T> {
 	acessor: keyof T;
 }
 
-export interface DataTableOptions {
-	omitFields?: string[]
-}
 
-export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
+export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 
-	const Actions = () => {
+
+	const Actions: React.FC<Omit<DataTablePayload, 'data'>> = ({ actions }) => {
 		return (
-			<div style={{background: 'red', position: 'absolute', width: '50%', height: '100%', zIndex: 9999}}>
-				<button onClick={() => console.log('actions')}>Teste</button>
-			</div>
+			<>
+				{ actions && actions.length > 0 &&
+					<ActionsContainer>
+						{actions.map((action: DataTableActionConfig) =>
+							<IconButton key={Math.random()} icon={action.icon} onClick={action.callback} color={action.color} size={20} margin={10} />
+						)}
+					</ActionsContainer>
+				}
+			</>
 		)
 	}
 
@@ -35,15 +51,13 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
 			<Row>
 				{columns.map(({name})=> <HeaderCell key={name}>{name}</HeaderCell>)}
 			</Row>
-			{data.map((item: any, i: number) =>
-				<Row key={Math.random()}>
+			{payload.map(({ data, actions }:DataTablePayload, i: number) =>
+				<Row key={i}>
 					{columns.map((column: Column<any>, i: number) => (
-						<>
-							<Cell key={i}>{item[column.acessor]}
-
-								{(i + 1) === Object.values(column).length && <Actions key={i + 100} /> }
-							</Cell>
-						</>
+						<Cell key={i}>
+							{data[column.acessor]}
+							{ ((i === Object.values(column).length) && actions) && <Actions actions={actions} key={Math.random()} /> }
+						</Cell>
 					))}
 				</Row>
 			)}
@@ -68,19 +82,41 @@ const HeaderCell = styled.div`
 	${defaultCell}
 	display: table-cell;
 	text-align: start;
+	font-weight: 600;
 `
 
 const Row = styled.div`
 	display: table-row;
-	border-bottom: 1px solid aqua;
-	position: relative;
+	border-bottom: 1px solid ${props => props.theme.table.borderRow};
 `
 
 const Cell = styled.div`
 	${defaultCell}
 	display: table-cell;
 
-	border: 1px solid red;
+	position: relative;
+
+	border-bottom: 1px solid ${props => props.theme.table.borderCell};
+`
+
+const ActionsContainer = styled.div`
+	display: none;
+	align-items: center;
+	justify-content: flex-end;
+
+	width: 100%;
+	height: 100%;
+	padding-right: 20px;
+
+	position: absolute;
+
+	top: 0;
+	left: 0;
+
+	${Row}:hover & {
+		background: linear-gradient(90deg, transparent, 0%, transparent, 60%, ${props => props.theme.common.background});
+		display: flex;
+	}
 `
 
 

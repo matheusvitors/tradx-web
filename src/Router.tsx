@@ -28,9 +28,9 @@ export const Router: React.FC = () => {
 			{background && (
 				<Routes>
 					<Route path="ativos/adicionar" element={<PersistAtivoPage />} />
-					<Route path="ativos/editar/:id" element={<PersistAtivoPage />} />
+					<Route path="ativos/editar" element={<PersistAtivoPage />} />
 					<Route path="contas/adicionar" element={<PersistContaPage />} />
-					<Route path="contas/editar/:id" element={<PersistContaPage />} />
+					<Route path="contas/editar" element={<PersistContaPage />} />
 				</Routes>
 			)}
 		</>

@@ -76,6 +76,10 @@ const dark = {
 		hover: secondary,
 	},
 
+	table: {
+		borderCell: primary,
+		borderRow: secondary,
+	}
 
 }
 

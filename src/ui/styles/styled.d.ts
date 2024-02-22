@@ -78,6 +78,11 @@ declare module 'styled-components' {
 			background: string;
 			text: string;
 			shadowColor: string;
+		},
+
+		table: {
+			borderRow: string;
+			borderCell: string;
 		}
 
 	};

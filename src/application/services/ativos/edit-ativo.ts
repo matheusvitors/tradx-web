@@ -1,10 +1,12 @@
+import { Ativo } from "@/application/models";
 import { http } from "@/infra/adapters/http";
 import { httpErrorHandler } from "@/infra/adapters/http-error-handler";
 
-export const removeConta = async (id: string): Promise<void> => {
+export const editAtivo = async (params: Ativo) => {
 	try {
-		await http.delete(`/contas/${id}`);
+		const { data } = await http.put('/ativos', params);
+		return data.response.content;
 	} catch (error: any) {
 		return httpErrorHandler(error);
 	}
-};
+}

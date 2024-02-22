@@ -9,6 +9,8 @@ export default createGlobalStyle`
 		font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
 			Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 		color: ${props => props.theme.common.text};
+		text-rendering: optimizeLegibility;
+		text-shadow: 0 0 0.1px ${props => props.theme.common.text};
 	}
 
 

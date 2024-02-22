@@ -1,14 +1,16 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { TextInput, RadioButton, Button, RadioGroup, Form, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
-import { createAtivo } from "@/application/services/ativos";
+import { createAtivo, editAtivo } from "@/application/services/ativos";
+import { Ativo } from "@/application/models";
 
 export const PersistAtivoPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const params = useParams();
+	const location = useLocation()
 	const queryClient = useQueryClient();
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +28,22 @@ export const PersistAtivoPage: React.FC = () => {
 		}
 	}, [])
 
+	useEffect(() => {
+		location.state.ativo && loadAtivo(location.state.ativo)
+	}, [location])
+
+	const loadAtivo = (ativo: Ativo) => {
+		if(
+			nomeInputRef.current &&
+			acronimoInputRef.current &&
+			acaoRadioButtonInputRef.current &&
+			indiceRadioButtonInputRef.current
+		) {
+			nomeInputRef.current.value = ativo.nome;
+			acronimoInputRef.current.value = ativo.acronimo;
+			ativo.tipo === 'acao' ? acaoRadioButtonInputRef.current.checked = true : indiceRadioButtonInputRef.current.checked = true;
+		}
+	}
 
 	const onChangeTipoInput = () => {
 		if(acaoRadioButtonInputRef.current && acaoRadioButtonInputRef.current.checked) {
@@ -47,7 +65,7 @@ export const PersistAtivoPage: React.FC = () => {
 				await createAtivo({
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
-					acronimo: acronimoInputRef.current.value
+					acronimo: acronimoInputRef.current.value.toUpperCase()
 				});
 			}
 
@@ -63,16 +81,38 @@ export const PersistAtivoPage: React.FC = () => {
 		}
 	}
 
+	const handleEditAtivo = async () => {
+		try {
+			if (location.state.ativo &&
+				nomeInputRef.current &&
+				acronimoInputRef.current &&
+				acaoRadioButtonInputRef.current &&
+				indiceRadioButtonInputRef.current
+			) {
+
+				await editAtivo({
+					id: location.state.ativo.id,
+					nome: nomeInputRef.current.value,
+					tipo: tipoInputValue,
+					acronimo: acronimoInputRef.current.value.toUpperCase()
+				});
+			}
+
+			queryClient.invalidateQueries({queryKey: ['contas']});
+
+		} catch (error) {
+			throw error;
+		}
+	}
+
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		try {
 			setIsLoading(true);
-			// params.id ? handleEditConta() : handleCreateConta();
-			await handleCreateAtivo();
 
+			location.state.ativo ? await handleEditAtivo() : await handleCreateAtivo();
 			queryClient.invalidateQueries({queryKey: ['ativos']});
-
 			navigate('/ativos');
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -82,15 +122,15 @@ export const PersistAtivoPage: React.FC = () => {
 	};
 
 	return (
-		<ModalPage title="Adicionar Ativo">
+		<ModalPage title={location.state.ativo ? "Editar Ativo" : "Adicionar Ativo"}>
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
-				<TextInput label="Acronimo" reference={acronimoInputRef} />
+				<TextInput label="Acronimo" textTransform="uppercase" reference={acronimoInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="indice" label="Índice" onChange={onChangeTipoInput} reference={indiceRadioButtonInputRef} />
 					<RadioButton name="tipo" value="acao" label="Ação" onChange={onChangeTipoInput} reference={acaoRadioButtonInputRef} />
 				</RadioGroup>
-				<Button label={params.id ? "Editar Ativo" : "Criar Ativo"} type="submit" isLoading={isLoading} />
+				<Button label={location.state.ativo ? "Editar Ativo" : "Criar Ativo"} type="submit" isLoading={isLoading} />
 			</Form>
 		</ModalPage>
 	);

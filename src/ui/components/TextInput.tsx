@@ -6,13 +6,14 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
 	type?: HTMLInputTypeAttribute;
 	reference?: RefObject<HTMLInputElement>;
+	textTransform?: string;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ label, type, name, reference, ...rest }) => {
+export const TextInput: React.FC<TextInputProps> = ({ label, type, name, reference, textTransform, ...rest }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input  type={type || 'text'} {...rest} ref={reference} />
+			<Input  type={type || 'text'} {...rest} ref={reference} $textTransform={textTransform} />
 		</Container>
 	);
 }
@@ -34,7 +35,7 @@ const Label = styled.label`
 	font-weight: 400;
 `
 
-const Input = styled.input`
+const Input = styled.input<{ $textTransform?: string; }>`
 	width: 100%;
 	height: 80%;
 
@@ -46,4 +47,5 @@ const Input = styled.input`
 
 	font-size: 16px;
 	color:  ${props => props.theme.textInput.text};
+	text-transform: ${props => props.$textTransform || 'none'};
 `
