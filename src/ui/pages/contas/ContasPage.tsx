@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
-import { AccountCard, Loading, NewAccountCard, PageLoading, Toast } from "@/ui/components";
+import { AccountCard, NewAccountCard, PageLoading, Toast } from "@/ui/components";
 import { listContas, removeConta } from "@/application/services/contas";
 import { STALE_TIME } from "@/infra/config/constants";
 
@@ -46,8 +46,8 @@ export const ContasPage: React.FC = () => {
 	// 	}
 	// }
 
-	const onEdit = (id: string) => {
-		navigate('/contas/editar/'+id, { state: {background: location}})
+	const onEdit = (conta: Conta) => {
+		navigate('/contas/editar', { state: {background: location, conta: conta}})
 	}
 
 	const onRemove = async (conta: Conta) => {
@@ -73,7 +73,7 @@ export const ContasPage: React.FC = () => {
 				<h1>Contas</h1>
 				<ContasContainer>
 					<NewAccountCard />
-					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta.id)} onRemove={() => onRemove(conta)} />))}
+					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta)} onRemove={() => onRemove(conta)} />))}
 				</ContasContainer>
 				<PageLoading visible={isLoading} />
 			</Content>

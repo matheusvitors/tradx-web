@@ -79,6 +79,11 @@ const dark = {
 	table: {
 		borderCell: primary,
 		borderRow: secondary,
+	},
+
+	account: {
+		real: '#69FF1F',
+		simulador: '#FF0000'
 	}
 
 }

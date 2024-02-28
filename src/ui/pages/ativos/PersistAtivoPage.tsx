@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { TextInput, RadioButton, Button, RadioGroup, Form, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
@@ -9,7 +9,6 @@ import { Ativo } from "@/application/models";
 export const PersistAtivoPage: React.FC = () => {
 
 	const navigate = useNavigate();
-	const params = useParams();
 	const location = useLocation()
 	const queryClient = useQueryClient();
 

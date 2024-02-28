@@ -1,6 +1,7 @@
 const primary = '#593C8F'
 const secondary = '#171738'
-const accent = '#6247AA'
+const accent = '#006F62'
+// const accent = '#6247AA'
 const black = '#141414'
 const white = '#F6F1F9'
 const gray= '#c7c3c3'
@@ -54,7 +55,7 @@ const light = {
 		text: white,
 		hover: {
 			background: accent,
-			text: black,
+			text: white,
 		}
 	},
 
@@ -79,6 +80,11 @@ const light = {
 	table: {
 		borderCell: primary,
 		borderRow: secondary,
+	},
+
+	account: {
+		real: '#44CC00',
+		simulador: '#CC0000'
 	}
 
 }

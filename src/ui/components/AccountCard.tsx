@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { FaPlus } from "react-icons/fa6";
 import { hexToRGBA } from "about-colors-js";
 import { Conta } from "@/application/models";
@@ -18,7 +18,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({ conta, onEdit, onRemov
 	const theme = useTheme();
 
 	return (
-		<Container>
+		<Container $isReal={conta.tipo === 'real' ? true : false}>
 			<Content>
 				<Name>{conta.nome}</Name>
 				<Balance>R$ {conta.saldo.toFixed(2)}</Balance>
@@ -45,7 +45,7 @@ export const NewAccountCard: React.FC = () => {
 	);
 };
 
-const Container = styled.div<{ $new?: boolean }>`
+const Container = styled.div<{ $new?: boolean; $isReal?: boolean; }>`
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-evenly;
@@ -55,18 +55,24 @@ const Container = styled.div<{ $new?: boolean }>`
 	height: 100px;
 	padding: 10px;
 
+	/* border-left: 3px solid aqua; */
+	${props => !props.$new && css`
+		border-left: 3px solid;
+		border-left-color: ${props.$isReal ? props.theme.account.real : props.theme.account.simulador} ;
+	` }
+
 	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
-
 	border-radius: 10px;
-
 	background: ${props =>  props.$new ? props.theme.card.background : hexToRGBA(props.theme.card.background, 0.3)};
 `;
 
 const Content = styled.div`
-	width: 70%;
+	width: 92%;
 	height: 100%;
 
-	/* border: 1px solid silver; */
+	${Container}:hover & {
+		width: 70%;
+	}
 `
 
 const Name = styled.p`
@@ -82,12 +88,16 @@ const Balance = styled.p`
 `;
 
 const ActionsContent = styled.div`
-	display: flex;
+	display: none;
 	align-items: center;
 	justify-content: center;
 	flex-direction: row;
 
 	width: 18%;
+
+	${Container}:hover & {
+		display: flex;
+	}
 
 	/* border: 1px solid silver; */
 

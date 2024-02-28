@@ -83,6 +83,11 @@ declare module 'styled-components' {
 		table: {
 			borderRow: string;
 			borderCell: string;
+		},
+
+		account: {
+			real: string;
+			simulador: string;
 		}
 
 	};

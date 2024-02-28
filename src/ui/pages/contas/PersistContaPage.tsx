@@ -1,16 +1,16 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Toast, Button, Form, TextInput, RadioButton, RadioGroup } from "@/ui/components";
-import { createConta, getConta } from "@/application/services/contas";
+import { createConta } from "@/application/services/contas";
 import { ModalPage } from "@/ui/layouts";
 import { editConta } from "@/application/services/contas/edit-conta";
+import { Conta } from "@/application/models";
 
 export const PersistContaPage: React.FC = () => {
 
 	const navigate = useNavigate();
-	const params = useParams();
+	const location = useLocation()
 	const queryClient = useQueryClient();
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -29,25 +29,22 @@ export const PersistContaPage: React.FC = () => {
 	}, [])
 
 	useEffect(() => {
-		if(params.id) {
-			loadConta(params.id);
-		}
-	}, [params]);
+		location.state.conta && loadConta(location.state.conta)
+	}, [location])
 
-	const loadConta = async (id: string) => {
+
+	const loadConta = async (conta: Conta) => {
 		try {
 			setIsLoading(true);
-			const data = await getConta(id);
 			if(
-				data &&
 				nomeInputRef.current &&
 				simuladorRadioButtonInputRef.current &&
 				realRadioButtonInputRef.current &&
 				saldoInicialInputRef.current
 			) {
-				nomeInputRef.current.value = data.nome;
-				saldoInicialInputRef.current.value = data.saldoInicial.toFixed(2).toString();
-				data.tipo === 'simulador' ? simuladorRadioButtonInputRef.current.checked = true : realRadioButtonInputRef.current.checked = true;
+				nomeInputRef.current.value = conta.nome;
+				saldoInicialInputRef.current.value = conta.saldoInicial.toFixed(2).toString();
+				conta.tipo === 'simulador' ? simuladorRadioButtonInputRef.current.checked = true : realRadioButtonInputRef.current.checked = true;
 			}
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -84,7 +81,7 @@ export const PersistContaPage: React.FC = () => {
 
 	const handleEditConta = async () => {
 		try {
-			if (params.id &&
+			if (location.state.conta &&
 				nomeInputRef.current &&
 				simuladorRadioButtonInputRef.current &&
 				realRadioButtonInputRef.current &&
@@ -92,7 +89,7 @@ export const PersistContaPage: React.FC = () => {
 			) {
 
 				await editConta({
-					id: params.id,
+					id: location.state.conta.id,
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
 					saldoInicial: parseFloat(saldoInicialInputRef.current.value)
@@ -111,7 +108,7 @@ export const PersistContaPage: React.FC = () => {
 
 		try {
 			setIsLoading(true);
-			params.id ? handleEditConta() : handleCreateConta();
+			location.state.conta.id ? handleEditConta() : handleCreateConta();
 			navigate('/contas');
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -132,7 +129,7 @@ export const PersistContaPage: React.FC = () => {
 	};
 
 	return (
-		<ModalPage title={params.id ? "Editar Conta" : "Adicionar Conta"}>
+		<ModalPage title={location.state.conta.id ? "Editar Conta" : "Adicionar Conta"}>
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
 				<TextInput label="Saldo Inicial" type="number" step="0.01" placeholder='0.00' reference={saldoInicialInputRef}  />
@@ -140,7 +137,7 @@ export const PersistContaPage: React.FC = () => {
 					<RadioButton name="tipo" value="simulador" label="simulador" onChange={onChangeTipoInput} reference={simuladorRadioButtonInputRef} />
 					<RadioButton name="tipo" value="real" label="real" onChange={onChangeTipoInput} reference={realRadioButtonInputRef} />
 				</RadioGroup>
-				<Button label={params.id ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
+				<Button label={location.state.conta.id ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
 			</Form>
 		</ModalPage>
 	);
