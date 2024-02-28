@@ -108,7 +108,7 @@ export const PersistContaPage: React.FC = () => {
 
 		try {
 			setIsLoading(true);
-			location.state.conta.id ? handleEditConta() : handleCreateConta();
+			location.state.conta ? handleEditConta() : handleCreateConta();
 			navigate('/contas');
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -129,7 +129,7 @@ export const PersistContaPage: React.FC = () => {
 	};
 
 	return (
-		<ModalPage title={location.state.conta.id ? "Editar Conta" : "Adicionar Conta"}>
+		<ModalPage title={location.state.conta ? "Editar Conta" : "Adicionar Conta"}>
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
 				<TextInput label="Saldo Inicial" type="number" step="0.01" placeholder='0.00' reference={saldoInicialInputRef}  />
@@ -137,7 +137,7 @@ export const PersistContaPage: React.FC = () => {
 					<RadioButton name="tipo" value="simulador" label="simulador" onChange={onChangeTipoInput} reference={simuladorRadioButtonInputRef} />
 					<RadioButton name="tipo" value="real" label="real" onChange={onChangeTipoInput} reference={realRadioButtonInputRef} />
 				</RadioGroup>
-				<Button label={location.state.conta.id ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
+				<Button label={location.state.conta ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
 			</Form>
 		</ModalPage>
 	);
