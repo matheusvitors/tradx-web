@@ -31,6 +31,7 @@ export interface Column<T> {
 
 export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 
+	//TODO:  Resolver bug do background transparente nas actions
 
 	const Actions: React.FC<Omit<DataTablePayload, 'data'>> = ({ actions }) => {
 		return (
@@ -56,7 +57,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 					{columns.map((column: Column<any>, i: number) => (
 						<Cell key={i}>
 							{data[column.acessor]}
-							{ ((i === Object.values(column).length) && actions) && <Actions actions={actions} key={Math.random()} /> }
+							{ ((i-1 === Object.values(column).length) && actions) && <Actions actions={actions} key={Math.random()} /> }
 						</Cell>
 					))}
 				</Row>
@@ -114,7 +115,7 @@ const ActionsContainer = styled.div`
 	left: 0;
 
 	${Row}:hover & {
-		background: linear-gradient(90deg, transparent, 0%, transparent, 60%, ${props => props.theme.common.background});
+		background: linear-gradient(90deg, transparent, 0%, transparent, 50%, ${props => props.theme.common.background});
 		display: flex;
 	}
 `

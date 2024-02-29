@@ -3,4 +3,5 @@ export interface Ativo {
 	nome: string;
 	acronimo: string;
 	tipo: string;
+	dataVencimento?: Date | null;
 }

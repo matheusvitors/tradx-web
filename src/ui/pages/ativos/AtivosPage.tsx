@@ -54,12 +54,13 @@ export const AtivosPage: React.FC = () => {
 	const columns: Column<Ativo>[] = [
 		{ name: 'Acrônimo', acessor: 'acronimo'},
 		{ name: 'Nome', acessor: 'nome'},
+		// { name: 'Vencimento', acessor: 'dataVencimento'},
 		{ name: 'Tipo', acessor: 'tipo'},
 	]
 
-	const preparePayloadDataTable = (input: any[]): DataTablePayload[] => {
+	const preparePayloadDataTable = (input: Ativo[]): DataTablePayload[] => {
 		const result: DataTablePayload[]  = input.map((item: any) => ({
-			data: item,
+			data: {...item, nome: item.dataVencimento && (new Date(item.dataVencimento).getTime() <= Date.now())  ?  `${item.nome} - Expirado` : item.nome },
 			actions: [
 				{
 					icon: MdEdit,

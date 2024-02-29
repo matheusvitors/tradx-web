@@ -16,6 +16,7 @@ export const PersistAtivoPage: React.FC = () => {
 
 	const nomeInputRef = useRef<HTMLInputElement>(null);
 	const acronimoInputRef = useRef<HTMLInputElement>(null);
+	const dataVencimentoInputRef = useRef<HTMLInputElement>(null);
 	const acaoRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const indiceRadioButtonInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,7 +37,8 @@ export const PersistAtivoPage: React.FC = () => {
 			nomeInputRef.current &&
 			acronimoInputRef.current &&
 			acaoRadioButtonInputRef.current &&
-			indiceRadioButtonInputRef.current
+			indiceRadioButtonInputRef.current &&
+			acaoRadioButtonInputRef.current
 		) {
 			nomeInputRef.current.value = ativo.nome;
 			acronimoInputRef.current.value = ativo.acronimo;
@@ -59,12 +61,14 @@ export const PersistAtivoPage: React.FC = () => {
 			if (nomeInputRef.current &&
 				acronimoInputRef.current &&
 				acaoRadioButtonInputRef.current &&
-				indiceRadioButtonInputRef.current
+				indiceRadioButtonInputRef.current &&
+				dataVencimentoInputRef.current
 			) {
 				await createAtivo({
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
-					acronimo: acronimoInputRef.current.value.toUpperCase()
+					acronimo: acronimoInputRef.current.value.toUpperCase(),
+					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null
 				});
 			}
 
@@ -86,14 +90,16 @@ export const PersistAtivoPage: React.FC = () => {
 				nomeInputRef.current &&
 				acronimoInputRef.current &&
 				acaoRadioButtonInputRef.current &&
-				indiceRadioButtonInputRef.current
+				indiceRadioButtonInputRef.current &&
+				dataVencimentoInputRef.current
 			) {
 
 				await editAtivo({
 					id: location.state.ativo.id,
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
-					acronimo: acronimoInputRef.current.value.toUpperCase()
+					acronimo: acronimoInputRef.current.value.toUpperCase(),
+					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null
 				});
 			}
 
@@ -125,6 +131,7 @@ export const PersistAtivoPage: React.FC = () => {
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
 				<TextInput label="Acronimo" textTransform="uppercase" reference={acronimoInputRef} />
+				<TextInput type="date" label="Data de Vencimento" reference={dataVencimentoInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="indice" label="Índice" onChange={onChangeTipoInput} reference={indiceRadioButtonInputRef} />
 					<RadioButton name="tipo" value="acao" label="Ação" onChange={onChangeTipoInput} reference={acaoRadioButtonInputRef} />
