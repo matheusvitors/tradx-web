@@ -45,12 +45,12 @@ const Input = styled.input.attrs({ type: 'date' })`
 	font-size: 16px;
 	color:  ${props => props.theme.textInput.text};
 
-	::-webkit-datetime-edit { padding: 1em; }
-	::-webkit-datetime-edit-fields-wrapper { background: silver; }
-	::-webkit-datetime-edit-text { color: red; padding: 0 0.3em; }
-	::-webkit-datetime-edit-month-field { color: blue; }
-	::-webkit-datetime-edit-day-field { color: green; }
-	::-webkit-datetime-edit-year-field { color: purple; }
-	::-webkit-inner-spin-button { display: none; }
-	::-webkit-calendar-picker-indicator { background: orange; }
+	/* &::-webkit-datetime-edit { padding: 1em; }
+	&::-webkit-datetime-edit-fields-wrapper { background: silver; }
+	&::-webkit-datetime-edit-text { color: red; padding: 0 0.3em; }
+	&::-webkit-datetime-edit-month-field { color: blue; }
+	&::-webkit-datetime-edit-day-field { color: green; }
+	&::-webkit-datetime-edit-year-field { color: purple; }
+	&::-webkit-inner-spin-button { display: none; } */
+	/* &::-webkit-calendar-picker-indicator { background: orange; } */
 `

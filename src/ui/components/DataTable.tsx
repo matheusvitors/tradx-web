@@ -26,6 +26,7 @@ export interface DataTablePayload {
 export interface Column<T> {
 	name: string;
 	acessor: keyof T;
+	width?: string;
 }
 
 
@@ -50,14 +51,14 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	return (
 		<Table>
 			<Row>
-				{columns.map(({name})=> <HeaderCell key={name}>{name}</HeaderCell>)}
+				{columns.map((column: Column<any>, i: number) => <HeaderCell key={i} $width={column.width}>{column.name}</HeaderCell>)}
 			</Row>
 			{payload.map(({ data, actions }:DataTablePayload, i: number) =>
 				<Row key={i}>
 					{columns.map((column: Column<any>, i: number) => (
-						<Cell key={i}>
+						<Cell key={i} $width={column.width}>
 							{data[column.acessor]}
-							{ ((i-1 === Object.values(column).length) && actions) && <Actions actions={actions} key={Math.random()} /> }
+							{ ((i + 1  === columns.length) && actions) && <Actions actions={actions} key={Math.random()} /> }
 						</Cell>
 					))}
 				</Row>
@@ -79,11 +80,13 @@ const Table = styled.div`
 	border-collapse: collapse;
 `
 
-const HeaderCell = styled.div`
+const HeaderCell = styled.div<{ $width?: string;}>`
 	${defaultCell}
 	display: table-cell;
 	text-align: start;
 	font-weight: 600;
+
+	width: ${props => props.$width || 'auto'};
 `
 
 const Row = styled.div`
@@ -91,10 +94,11 @@ const Row = styled.div`
 	border-bottom: 1px solid ${props => props.theme.table.borderRow};
 `
 
-const Cell = styled.div`
+const Cell = styled.div<{ $width?: string;}>`
 	${defaultCell}
 	display: table-cell;
 
+	width: ${props => props.$width || 'auto'};
 	position: relative;
 
 	border-bottom: 1px solid ${props => props.theme.table.borderCell};
