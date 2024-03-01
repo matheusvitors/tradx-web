@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { TextInput, RadioButton, Button, RadioGroup, Form, Toast } from "@/ui/components";
+import { TextInput, RadioButton, Button, RadioGroup, Form, Toast, DatePicker } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import { createAtivo, editAtivo } from "@/application/services/ativos";
 import { Ativo } from "@/application/models";
@@ -131,7 +131,7 @@ export const PersistAtivoPage: React.FC = () => {
 			<Form onSubmit={onSubmit}>
 				<TextInput label="Nome" reference={nomeInputRef} />
 				<TextInput label="Acronimo" textTransform="uppercase" reference={acronimoInputRef} />
-				<TextInput type="date" label="Data de Vencimento" reference={dataVencimentoInputRef} />
+				<DatePicker label="Data de Vencimento" reference={dataVencimentoInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="indice" label="Índice" onChange={onChangeTipoInput} reference={indiceRadioButtonInputRef} />
 					<RadioButton name="tipo" value="acao" label="Ação" onChange={onChangeTipoInput} reference={acaoRadioButtonInputRef} />

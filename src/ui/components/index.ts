@@ -1,6 +1,7 @@
 export * from './AccountCard'
 export * from './Button'
 export * from './DataTable'
+export * from './DatePicker'
 export * from './Form'
 export * from './IconButton'
 export * from './Loading'
