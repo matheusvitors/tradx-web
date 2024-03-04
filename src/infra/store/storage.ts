@@ -1,4 +1,4 @@
 import { Store } from "@/application/interfaces";
-import { LocalStorageStore } from "@/ui/store";
+import { LocalStorageStore } from "@/infra/store";
 
 export const storage: Store = LocalStorageStore;

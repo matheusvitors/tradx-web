@@ -2,7 +2,7 @@ import { Credentials } from "@/application/interfaces";
 import { http } from "@/infra/adapters/http";
 import { httpErrorHandler } from "@/infra/adapters/http-error-handler";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
-import { storage } from "@/ui/store/storage";
+import { storage } from "@/infra/store/storage";
 
 export const authenticateUser = async (credentials: Credentials) => {
 	try {

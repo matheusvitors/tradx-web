@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { API_URL } from "@/infra/config/environment";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
-import { storage } from "@/ui/store/storage";
+import { storage } from "@/infra/store/storage";
 
 export const httpClient = axios.create({
 	baseURL: API_URL

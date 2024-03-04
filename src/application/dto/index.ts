@@ -1,1 +1,1 @@
-export * from './ContaDTO'
+export * from './conta-dto'

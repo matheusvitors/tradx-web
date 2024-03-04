@@ -1,6 +1,6 @@
 import { jwt } from "@/infra/adapters/jwt";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
-import { storage } from "@/ui/store/storage";
+import { storage } from "@/infra/store/storage";
 
 export const isTokenExpired = (): boolean => {
 	const token = storage.get(KEY_TOKEN);
