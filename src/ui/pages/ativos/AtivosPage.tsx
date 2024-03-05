@@ -5,9 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Ativo } from '@/application/models';
 import { listAtivos, removeAtivo } from '@/application/services/ativos';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Button, Column, DataTable, DataTablePayload, PageLoading, Toast } from '@/ui/components';
+import { Button, Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MdDelete, MdEdit } from 'react-icons/md';
+import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 
 export const AtivosPage: React.FC = () => {
 
@@ -79,15 +79,17 @@ export const AtivosPage: React.FC = () => {
 	}
 
 	return (
-		<Page>
+		<Page pageName='Ativos'>
 			<Content>
 				<PageHeader>
-					<h1>Ativos</h1>
-					<Button label='Novo' width='100px' onClick={() => navigate('/ativos/adicionar', { state: {background: location}})} />
 				</PageHeader>
 				<TableContainer>
 					<DataTable columns={columns} payload={ativos} />
 				</TableContainer>
+				<FloatingButton
+					icon={MdAdd}
+					label='Novo Ativo'
+					onClick={() => navigate('/ativos/adicionar', { state: {background: location}})}/>
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>

@@ -6,8 +6,11 @@ import { useSystemTheme } from '@/ui/hooks/useSystemTheme';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from '@/application/services/auth';
 
+interface HeaderProps {
+	pageName: string;
+}
 
-export const Header: React.FC = () => {
+export const Header: React.FC<HeaderProps> = ({ pageName }) => {
 	const navigate = useNavigate();
 	const { theme, changeTheme } = useSystemTheme();
 
@@ -22,8 +25,14 @@ export const Header: React.FC = () => {
 
 	return (
 		<Container>
-			<IconButton icon={theme === 'light' ? MdSunny : MdDarkMode} onClick={handleToggleTheme}/>
-			<IconButton onClick={handleLogout} size={30} icon={MdLogout} />
+			<TitleContainer>
+				<PageName>{pageName}</PageName>
+			</TitleContainer>
+
+			<OptionsContainer>
+				<IconButton icon={theme === 'light' ? MdSunny : MdDarkMode} onClick={handleToggleTheme}/>
+				<IconButton onClick={handleLogout} size={30} icon={MdLogout} />
+			</OptionsContainer>
 		</Container>
 	);
 }
@@ -40,5 +49,22 @@ const Container = styled.div`
 	padding-right: 20px;
 
 	border-bottom: 1px solid ${props => props.theme.sidebar.border};
+	`
 
+const TitleContainer = styled.div`
+	width: 40%;
+	padding: 20px;
+`
+
+const PageName = styled.h1`
+
+`
+
+const OptionsContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-end;
+
+	width: 60%;
 `

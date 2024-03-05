@@ -7,9 +7,10 @@ import { Header, Sidebar } from '@/ui/layouts';
 interface PageProps {
 	children: ReactNode;
 	withGrow?: boolean;
+	pageName: string;
 }
 
-export const Page: React.FC<PageProps> = ({ children, withGrow }) => {
+export const Page: React.FC<PageProps> = ({ children, withGrow, pageName }) => {
 
 	const navigate = useNavigate();
 
@@ -23,7 +24,7 @@ export const Page: React.FC<PageProps> = ({ children, withGrow }) => {
 		<Container>
 			<Sidebar />
 			<Content>
-				<Header />
+				<Header pageName={pageName} />
 				<ChildrenContainer withGrow={withGrow}>
 					{ children }
 				</ChildrenContainer>

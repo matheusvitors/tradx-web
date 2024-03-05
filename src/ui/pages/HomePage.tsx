@@ -3,8 +3,8 @@ import React from 'react';
 
 export const HomePage: React.FC = () => {
 	return (
-		<Page>
-			<h1>Home Page</h1>
+		<Page pageName='Home Page'>
+			<h1></h1>
 		</Page>
 	);
 }

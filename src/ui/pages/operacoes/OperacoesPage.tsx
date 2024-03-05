@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
-import { MdEdit, MdDelete } from 'react-icons/md';
+import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 import { Page } from '@/ui/layouts';
 import { Operacao } from '@/application/models';
 import { listOperacoes } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, PageLoading, Toast } from '@/ui/components';
+import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
 
 export const OperacoesPage: React.FC = () => {
 
@@ -64,10 +64,9 @@ export const OperacoesPage: React.FC = () => {
 	}
 
 	return (
-		<Page>
+		<Page pageName='Operações'>
 			<Content>
 				<PageHeader>
-					<h1>Operações</h1>
 				</PageHeader>
 				<TableContainer>
 					{data && data.length > 0 ?
@@ -75,6 +74,7 @@ export const OperacoesPage: React.FC = () => {
 						<span>Não há operações registradas.</span>
 					}
 				</TableContainer>
+				<FloatingButton icon={MdAdd} label='Nova Operação' />
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>

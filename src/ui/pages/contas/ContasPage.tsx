@@ -68,9 +68,8 @@ export const ContasPage: React.FC = () => {
 	}
 
 	return (
-		<Page>
+		<Page pageName="Contas">
 			<Content>
-				<h1>Contas</h1>
 				<ContasContainer>
 					<NewAccountCard />
 					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta)} onRemove={() => onRemove(conta)} />))}
