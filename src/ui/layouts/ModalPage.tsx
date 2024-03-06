@@ -52,6 +52,7 @@ const Card = styled.div`
 	background-color: ${(props) => props.theme.common.background};
 	width: 50%;
 	min-height: 45%;
+	max-height: 90vh;
 
 	border-radius: 10px;
 	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
@@ -87,6 +88,7 @@ const Content = styled.div`
 	width: 100%;
 
 	padding: 20px;
+	margin-bottom: 40px;
 
-	/* overflow-y: scroll; */
+	overflow-y: scroll;
 `;
