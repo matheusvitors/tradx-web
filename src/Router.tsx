@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Navigate, Routes, Route, useLocation } from "react-router-dom";
-import { AtivosPage, ContasPage, HomePage, LoginPage, PersistContaPage, OperacoesPage, PersistAtivoPage } from "@/ui/pages";
+import { AtivosPage, ContasPage, HomePage, LoginPage, PersistContaPage, OperacoesPage, PersistAtivoPage, PersistOperacoesPage } from "@/ui/pages";
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
 
 export const Router: React.FC = () => {
@@ -31,6 +31,8 @@ export const Router: React.FC = () => {
 					<Route path="ativos/editar" element={<PersistAtivoPage />} />
 					<Route path="contas/adicionar" element={<PersistContaPage />} />
 					<Route path="contas/editar" element={<PersistContaPage />} />
+					<Route path="operacoes/adicionar" element={<PersistOperacoesPage />} />
+					<Route path="operacoes/editar" element={<PersistOperacoesPage />} />
 				</Routes>
 			)}
 		</>

@@ -10,7 +10,7 @@ export default createGlobalStyle`
 			Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 		color: ${props => props.theme.common.text};
 		text-rendering: optimizeLegibility;
-		text-shadow: 0 0 0.1px ${props => props.theme.common.text};
+		/* text-shadow: 0 0 0.1px ${props => props.theme.common.text}; */
 	}
 
 
@@ -25,7 +25,7 @@ export default createGlobalStyle`
 		font-family: "Noto Sans", sans-serif;
 		font-optical-sizing: auto;
 		font-style: normal;
-		font-weight: 300;
+		font-weight: 400;
     }
 
     button {

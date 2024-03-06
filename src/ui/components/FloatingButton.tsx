@@ -6,7 +6,7 @@ import { hexToRGBA } from "about-colors-js";
 interface FloatingButtonProps {
 	icon: IconType;
 	label?: string;
-	onClick?: () => void;
+	onClick: () => void;
 }
 
 export const FloatingButton: React.FC<FloatingButtonProps> = ( { icon: Icon, label, onClick }) => {
@@ -33,18 +33,27 @@ const Btn = styled.button<{ $withLabel?: boolean; }>`
 	right: 30px;
 
 	background-color: ${props => props.theme.button.background};
-
 	border-radius: ${props => props.$withLabel ? '60px' : '50%'};;
+	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${(props) => hexToRGBA(props.theme.button.background, 0.45)};
 
 	text-align: center;
 	font-size: 16px;
-	/* box-shadow: 2px 2px 3px #999; */
-	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${(props) => hexToRGBA(props.theme.button.background, 0.45)};
+	color: ${props => props.theme.button.text};
 
+	transition: all .5s;
 
 	svg {
-		fill: ${props => props.theme.white};
+		fill: ${props => props.theme.button.text};
 		font-size: 32px;
+	}
+
+	&:hover {
+		background-color: ${props => props.theme.button.hover.background};
+		color: ${props => props.theme.button.hover.text};
+		svg {
+			fill: ${props => props.theme.button.hover.text};
+		}
+
 	}
 
 `

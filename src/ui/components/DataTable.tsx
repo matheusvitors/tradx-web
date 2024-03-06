@@ -84,7 +84,7 @@ const HeaderCell = styled.div<{ $width?: string;}>`
 	${defaultCell}
 	display: table-cell;
 	text-align: start;
-	font-weight: 600;
+	font-weight: 700;
 
 	width: ${props => props.$width || 'auto'};
 `

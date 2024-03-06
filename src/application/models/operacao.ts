@@ -12,7 +12,7 @@ export interface Operacao {
 	precoSaida?: number;
 	dataEntrada: Date;
 	dataSaida?: Date;
-	margem: number;
+	margem?: number;
 	operacaoPerdida: boolean;
 	operacaoErrada: boolean;
 	motivo?: string;

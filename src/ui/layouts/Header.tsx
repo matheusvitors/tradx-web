@@ -56,7 +56,7 @@ const TitleContainer = styled.div`
 	padding: 20px;
 `
 
-const PageName = styled.h1`
+const PageName = styled.h2`
 
 `
 

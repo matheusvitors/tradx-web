@@ -7,10 +7,13 @@ import { Operacao } from '@/application/models';
 import { listOperacoes } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
 import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const OperacoesPage: React.FC = () => {
 
-	const theme = useTheme()
+	const theme = useTheme();
+	const navigate = useNavigate();
+	const location = useLocation();
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ['operacoes'],
 		queryFn: listOperacoes,
@@ -66,15 +69,23 @@ export const OperacoesPage: React.FC = () => {
 	return (
 		<Page pageName='Operações'>
 			<Content>
-				<PageHeader>
-				</PageHeader>
-				<TableContainer>
-					{data && data.length > 0 ?
-					<DataTable columns={columns} payload={operacoes} /> :
-						<span>Não há operações registradas.</span>
+					{data && data.length > 0 ? (
+						<>
+							<TableContainer>
+								<PageHeader>
+								</PageHeader>
+								<DataTable columns={columns} payload={operacoes} />
+							</TableContainer>
+						</>) :
+						<EmptyContainer>
+							<span>Não há operações registradas.</span>
+						</EmptyContainer>
 					}
-				</TableContainer>
-				<FloatingButton icon={MdAdd} label='Nova Operação' />
+				<FloatingButton
+					icon={MdAdd}
+					label='Nova Operação'
+					onClick={() => navigate('/operacoes/adicionar', { state: {background: location}})}
+				/>
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
@@ -110,4 +121,15 @@ const TableContainer = styled.div`
 	flex-grow: 1;
 
 	width: 100%;
+
+`
+
+const EmptyContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-grow: 1;
+
+	width: 100%;
+
 `
