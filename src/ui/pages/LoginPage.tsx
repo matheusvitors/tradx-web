@@ -62,6 +62,6 @@ const Content = styled.div`
 	justify-content: center;
 	flex-direction: column;
 
-	width: 50%;
+	width: 40%;
 	min-height: 50%;
 `;

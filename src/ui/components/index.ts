@@ -1,5 +1,6 @@
 export * from './AccountCard'
 export * from './Button'
+export * from './Checkbox'
 export * from './DataTable'
 export * from './DatePicker'
 export * from './FloatingButton'

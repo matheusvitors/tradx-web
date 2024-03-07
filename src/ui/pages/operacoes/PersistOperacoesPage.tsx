@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, RadioButton, RadioGroup, TextInput } from "@/ui/components";
+import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, TextInput } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -63,16 +63,11 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
 				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
-				<div>
-					<input type="checkbox" id="scales" name="scales" checked />
-					<label htmlFor="scales">Erro?</label>
-				</div>
-				<div>
-					<input type="checkbox" id="scales" name="scales" checked />
-					<label htmlFor="scales">Operação perdida?</label>
-				</div>
 
-				<label htmlFor="story">Motivo</label>
+				<Checkbox label="Operação errada?" name='errada' reference={operacaoErradaCheckboxInputRef} />
+				<Checkbox label="Operação perdida?" name="perdida" reference={operacaoPerdidaCheckboxInputRef} />
+
+				{/* <label htmlFor="story">Motivo</label>
 				<textarea id="story" name="story" rows={5} cols={30}>
 					It was a dark and stormy night...
 				</textarea>
@@ -80,7 +75,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<label htmlFor="story">Comentários</label>
 				<textarea id="story" name="story" rows={5} cols={30}>
 					It was a dark and stormy night...
-				</textarea>
+				</textarea> */}
 
 
 				<Button label="Salvar" type="submit" isLoading={isLoading} />
