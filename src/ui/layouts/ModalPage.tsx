@@ -1,9 +1,10 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useEffect } from "react";
 import { MdClose } from "react-icons/md";
 import styled, { useTheme } from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "@/ui/components";
+import { isTokenExpired } from "@/application/services";
 
 interface ModalPageProps {
 	title: string;
@@ -11,7 +12,13 @@ interface ModalPageProps {
 
 export const ModalPage: React.FC<PropsWithChildren<ModalPageProps>> = ({ title, children }) => {
 	const navigate = useNavigate();
-	const theme = useTheme()
+	const theme = useTheme();
+
+	useEffect(() => {
+		if(isTokenExpired()){
+			navigate('/login');
+		}
+	}, [])
 
 	return (
 		<Container>

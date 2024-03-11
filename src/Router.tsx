@@ -8,9 +8,7 @@ export const Router: React.FC = () => {
 	const background = location.state && location.state.background;
 
 	const ProtectedRoutes: React.FC = () => {
-		console.log(!isTokenExpired());
-
-		return !isTokenExpired() ? <Outlet /> : <Navigate to="login" />;
+		return isTokenExpired() ? <Navigate to="login" /> : <Outlet />;
 	};
 
 	return (

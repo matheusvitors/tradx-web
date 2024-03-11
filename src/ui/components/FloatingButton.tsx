@@ -49,6 +49,7 @@ const Btn = styled.button<{ $withLabel?: boolean; }>`
 
 	&:hover {
 		background-color: ${props => props.theme.button.hover.background};
+		box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${(props) => hexToRGBA(props.theme.button.hover.background, 0.45)};
 		color: ${props => props.theme.button.hover.text};
 		svg {
 			fill: ${props => props.theme.button.hover.text};

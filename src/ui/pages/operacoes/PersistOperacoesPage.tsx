@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, TextInput } from "@/ui/components";
+import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, TextInput, Textarea } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -18,8 +18,7 @@ export const PersistOperacoesPage: React.FC = () => {
 	const dataSaidaInputRef = useRef<HTMLInputElement>(null);
 	const operacaoPerdidaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const operacaoErradaCheckboxInputRef = useRef<HTMLInputElement>(null);
-	const motivoInputRef = useRef<HTMLInputElement>(null);
-	const comentariosInputRef = useRef<HTMLInputElement>(null);
+	const comentariosTextareaRef = useRef<HTMLTextAreaElement>(null);
 
 	let tipoInputValue = "compra";
 
@@ -44,6 +43,14 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
+
+		if(
+			operacaoErradaCheckboxInputRef.current &&
+			operacaoPerdidaCheckboxInputRef.current
+		) {
+			console.log(operacaoErradaCheckboxInputRef.current.checked, operacaoPerdidaCheckboxInputRef.current.checked);
+
+		}
 		console.log("onsubmit");
 	};
 
@@ -64,22 +71,16 @@ export const PersistOperacoesPage: React.FC = () => {
 				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
 
-				<Checkbox label="Operação errada?" name='errada' reference={operacaoErradaCheckboxInputRef} />
-				<Checkbox label="Operação perdida?" name="perdida" reference={operacaoPerdidaCheckboxInputRef} />
+				<RadioGroup>
+					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
+					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" reference={operacaoPerdidaCheckboxInputRef} />
+				</RadioGroup>
 
-				{/* <label htmlFor="story">Motivo</label>
-				<textarea id="story" name="story" rows={5} cols={30}>
-					It was a dark and stormy night...
-				</textarea>
-
-				<label htmlFor="story">Comentários</label>
-				<textarea id="story" name="story" rows={5} cols={30}>
-					It was a dark and stormy night...
-				</textarea> */}
-
+				<Textarea label="Comentários" name='comentarios' reference={comentariosTextareaRef} />
 
 				<Button label="Salvar" type="submit" isLoading={isLoading} />
 			</Form>
 		</ModalPage>
 	);
 };
+

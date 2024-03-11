@@ -5,13 +5,14 @@ interface CheckboxProps {
 	label: string;
 	name: string;
 	reference?: RefObject<HTMLInputElement>;
+	backgroundColor?: string;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ label, name, reference }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ label, name, reference, backgroundColor }) => {
 	return (
 		<Container>
-			<Input id={name} name={name} ref={reference} />
-			<Label htmlFor={name}>{label}</Label>
+			<Input id={name} name={name} ref={reference} $backgroundColor={backgroundColor} />
+			<Label htmlFor={name} $backgroundColor={backgroundColor}>{label}</Label>
 		</Container>
 	);
 }
@@ -25,34 +26,35 @@ const Container = styled.div`
 	margin: 10px 0px;
 
 	height: 50px;
-	/* width: 200px; */
 	width: 100%;
 `
 
-const Input = styled.input.attrs({ type: 'checkbox'})`
+const Input = styled.input.attrs({ type: 'checkbox'})<{ $backgroundColor?: string }>`
 	margin-right: 10px;
 	display: none;
 
 	&[type="checkbox"]:checked + label {
-		background-color: blue;
+		background-color: ${props => props.$backgroundColor || props.theme.textInput.background};
+		color: ${props => props.theme.textInput.text};
+		border: 1px solid ${props => props.$backgroundColor || props.theme.textInput.background};
 	}
 `
 
-const Label = styled.label`
+const Label = styled.label<{ $backgroundColor?: string }>`
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
 
+	width: 100%;
+	height: 100%;
 	position: relative;
-	width: 100px;
-	height: 70px;
 
-	background-color: rgb(99, 99, 99);
-
-	z-index: 1;
 	cursor: pointer;
 
+	z-index: 1;
+
 	border-radius: 5px;
-	box-shadow: 0px 0px 3px rgb(2, 2, 2) inset;
+	border: 1px solid ${props => props.$backgroundColor || props.theme.textInput.background};
 
 `
