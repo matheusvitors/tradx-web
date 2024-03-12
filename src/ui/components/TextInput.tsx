@@ -13,7 +13,12 @@ export const TextInput: React.FC<TextInputProps> = ({ label, type, name, referen
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input  type={type || 'text'} {...rest} ref={reference} $textTransform={textTransform} />
+			<Input
+				type={type || 'text'}
+				ref={reference}
+				$textTransform={textTransform}
+				{...rest}
+			/>
 		</Container>
 	);
 }

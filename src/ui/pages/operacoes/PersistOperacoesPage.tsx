@@ -1,12 +1,20 @@
-import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, TextInput, Textarea } from "@/ui/components";
+import { OperacaoDTO } from "@/application/dto/operacao-dto";
+import { Ativo, Conta } from "@/application/models";
+import { listAtivos } from "@/application/services/ativos";
+import { listContas } from "@/application/services/contas";
+import { KEY_ATIVOS } from "@/infra/config/storage-keys";
+import { storage } from "@/infra/store/storage";
+import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 export const PersistOperacoesPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
+	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
+	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
 
-	const contaSelectInputRef = useRef<HTMLInputElement>(null);
-	const ativoSelectInputRef = useRef<HTMLInputElement>(null);
+	const contaSelectRef = useRef<HTMLSelectElement>(null);
+	const ativoSelectRef = useRef<HTMLSelectElement>(null);
 	const dataEntradaInputRef = useRef<HTMLInputElement>(null);
 	const quantidadeInputRef = useRef<HTMLInputElement>(null);
 	const compraRadioButtonInputRef = useRef<HTMLInputElement>(null);
@@ -26,9 +34,50 @@ export const PersistOperacoesPage: React.FC = () => {
 		if(compraRadioButtonInputRef.current) {
 			compraRadioButtonInputRef.current.checked = true;
 		}
-	}, [])
 
+		loadContas()
+		loadAtivos();
+	}, []);
 
+	const loadAtivos = async () => {
+		try {
+			const cachedAtivos = storage.get(KEY_ATIVOS);
+			let ativos: Ativo[] = [];
+			if(cachedAtivos && cachedAtivos.expiration && Date.now() < cachedAtivos.expiration) {
+				ativos = JSON.parse(cachedAtivos.data);
+			} else {
+				ativos = await listAtivos();
+			}
+			const options: SelectOptions[] = ativos.map(ativo => ({
+				label: ativo.acronimo,
+				value: ativo.id,
+			}))
+
+			setAtivoOptions(options)
+		} catch (error: any) {
+			Toast.error(error)
+		}
+	}
+
+	const loadContas = async () => {
+		try {
+			const cachedContas = storage.get(KEY_ATIVOS);
+			let contas: Conta[] = [];
+			if(cachedContas && cachedContas.expiration && Date.now() < cachedContas.expiration) {
+				contas = JSON.parse(cachedContas.data);
+			} else {
+				contas = await listContas();
+			}
+			const options: SelectOptions[] = contas.map(conta => ({
+				label: conta.nome,
+				value: conta.id,
+			}))
+
+			setContaOptions(options)
+		} catch (error: any) {
+			Toast.error(error)
+		}
+	}
 
 	const onChangeTipoInput = () => {
 		if(compraRadioButtonInputRef.current && compraRadioButtonInputRef.current.checked) {
@@ -44,21 +93,34 @@ export const PersistOperacoesPage: React.FC = () => {
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
+		let input: OperacaoDTO | null = null;
+
 		if(
+			contaSelectRef.current &&
+			ativoSelectRef.current &&
+			dataEntradaInputRef.current &&
+			quantidadeInputRef.current &&
+			compraRadioButtonInputRef.current &&
+			vendaRadioButtonInputRef.current &&
+			precoEntradaInputRef.current &&
+			stopLossInputRef.current &&
+			alvoInputRef.current &&
+			precoSaidaInputRef.current &&
+			dataSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
-			operacaoPerdidaCheckboxInputRef.current
+			operacaoPerdidaCheckboxInputRef.current &&
+			comentariosTextareaRef.current
 		) {
-			console.log(operacaoErradaCheckboxInputRef.current.checked, operacaoPerdidaCheckboxInputRef.current.checked);
+
 
 		}
-		console.log("onsubmit");
 	};
 
 	return (
 		<ModalPage title="Adicionar Operação">
 			<Form onSubmit={onSubmit}>
-				<TextInput label="Conta" reference={contaSelectInputRef} />
-				<TextInput label="Ativo" reference={ativoSelectInputRef} />
+				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} />
+				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} />
 				<TextInput label="Quantidade" reference={quantidadeInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="compra" label="Compra" onChange={onChangeTipoInput} reference={compraRadioButtonInputRef} />
@@ -70,7 +132,6 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
 				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
-
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
 					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" reference={operacaoPerdidaCheckboxInputRef} />

@@ -5,6 +5,6 @@ export interface Store {
 }
 
 export type StoreData = {
-	expiration: Date | null;
+	expiration: number | null;
 	data: string;
 }

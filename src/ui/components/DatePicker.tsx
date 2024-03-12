@@ -11,7 +11,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({ label, reference, ...res
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input {...rest} ref={reference} />
+			<Input ref={reference} step={300} value={new Date().toLocaleDateString()} {...rest}/>
 		</Container>
 	);
 }
@@ -32,7 +32,7 @@ const Label = styled.label`
 	font-weight: 400;
 `
 
-const Input = styled.input.attrs({ type: 'date' })`
+const Input = styled.input.attrs({ type: 'datetime-local' })`
 	width: 100%;
 	height: 80%;
 
