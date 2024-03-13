@@ -23,10 +23,9 @@ export const Select: React.FC<SelectProps> = ({ label, name, options, reference,
 			<Input
 				name={name}
 				id={name}
-				onChange={onChange}
 				ref={reference}
 			>
-				{options.map(({label, value, isSelected}) => <Option value={value} selected={isSelected}>{label}</Option>)}
+				{options.map(({label, value, isSelected}) => <Option key={value} value={value} selected={isSelected}>{label}</Option>)}
 			</Input>
 		</Container>
 	);

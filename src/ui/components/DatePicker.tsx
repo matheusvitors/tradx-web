@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, RefObject } from 'react';
+import React, { InputHTMLAttributes, RefObject, useEffect } from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
 
@@ -11,7 +11,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({ label, reference, ...res
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input ref={reference} step={300} value={new Date().toLocaleDateString()} {...rest}/>
+			<Input
+				ref={reference}
+				{...rest}
+			/>
 		</Container>
 	);
 }

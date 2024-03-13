@@ -43,11 +43,16 @@ export const PersistOperacoesPage: React.FC = () => {
 		try {
 			const cachedAtivos = storage.get(KEY_ATIVOS);
 			let ativos: Ativo[] = [];
-			if(cachedAtivos && cachedAtivos.expiration && Date.now() < cachedAtivos.expiration) {
-				ativos = JSON.parse(cachedAtivos.data);
+			if(cachedAtivos){
+				if(cachedAtivos.expiration && Date.now() > cachedAtivos.expiration) {
+					ativos = await listAtivos();
+				} else {
+					ativos = JSON.parse(cachedAtivos.data);
+				}
 			} else {
 				ativos = await listAtivos();
 			}
+
 			const options: SelectOptions[] = ativos.map(ativo => ({
 				label: ativo.acronimo,
 				value: ativo.id,
@@ -63,11 +68,17 @@ export const PersistOperacoesPage: React.FC = () => {
 		try {
 			const cachedContas = storage.get(KEY_ATIVOS);
 			let contas: Conta[] = [];
-			if(cachedContas && cachedContas.expiration && Date.now() < cachedContas.expiration) {
-				contas = JSON.parse(cachedContas.data);
+
+			if(cachedContas){
+				if(cachedContas.expiration && Date.now() > cachedContas.expiration) {
+					contas = await listContas();
+				} else {
+					contas = JSON.parse(cachedContas.data);
+				}
 			} else {
 				contas = await listContas();
 			}
+
 			const options: SelectOptions[] = contas.map(conta => ({
 				label: conta.nome,
 				value: conta.id,
@@ -111,8 +122,23 @@ export const PersistOperacoesPage: React.FC = () => {
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
 		) {
-
-
+			// input = {
+			// 	ativoId: ativoSelectRef.current.value,
+			// 	contaId: contaSelectRef.current.value,
+			// 	quantidade: ,
+			// 	tipo: ,
+			// 	precoEntrada: ,
+			// 	stopLoss: ,
+			// 	alvo: ,
+			// 	precoSaida?: ,
+			// 	dataEntrada: ,
+			// 	dataSaida?: ,
+			// 	margem?: ,
+			// 	operacaoPerdida: ,
+			// 	operacaoErrada: ,
+			// 	motivo?: ,
+			// 	comentarios?: ,
+			// }
 		}
 	};
 
@@ -130,7 +156,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
+				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} defaultValue={new Date(new Date().getTime() - 10800000).toISOString().slice(0,16)} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
