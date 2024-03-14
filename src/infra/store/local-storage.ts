@@ -7,6 +7,8 @@ export const LocalStorageStore: Store = {
 	},
 
 	set: function (key: string, data: string, expiration?: number): void {
+		console.log('local', data);
+
 		const payload: StoreData = {
 			data,
 			expiration: expiration || null

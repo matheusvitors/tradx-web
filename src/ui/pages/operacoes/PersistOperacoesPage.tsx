@@ -2,6 +2,7 @@ import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { Ativo, Conta } from "@/application/models";
 import { listAtivos } from "@/application/services/ativos";
 import { listContas } from "@/application/services/contas";
+import { createOperacao } from "@/application/services/operacoes";
 import { KEY_ATIVOS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
@@ -98,8 +99,15 @@ export const PersistOperacoesPage: React.FC = () => {
 		if(vendaRadioButtonInputRef.current && vendaRadioButtonInputRef.current.checked) {
 			tipoInputValue = 'venda';
 		}
+	}
 
-	};
+	const handleSaveOperacao = async (input: OperacaoDTO) => {
+		try {
+			await createOperacao(input)
+		} catch (error) {
+			throw error;
+		}
+	}
 
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -122,23 +130,35 @@ export const PersistOperacoesPage: React.FC = () => {
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
 		) {
-			// input = {
-			// 	ativoId: ativoSelectRef.current.value,
-			// 	contaId: contaSelectRef.current.value,
-			// 	quantidade: ,
-			// 	tipo: ,
-			// 	precoEntrada: ,
-			// 	stopLoss: ,
-			// 	alvo: ,
-			// 	precoSaida?: ,
-			// 	dataEntrada: ,
-			// 	dataSaida?: ,
-			// 	margem?: ,
-			// 	operacaoPerdida: ,
-			// 	operacaoErrada: ,
-			// 	motivo?: ,
-			// 	comentarios?: ,
-			// }
+			input = {
+				ativoId: ativoSelectRef.current.value,
+				contaId: contaSelectRef.current.value,
+				quantidade: parseInt(quantidadeInputRef.current.value),
+				tipo: tipoInputValue,
+				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
+				stopLoss: parseFloat(stopLossInputRef.current.value),
+				alvo: parseFloat(alvoInputRef.current.value),
+				precoSaida: parseFloat(precoSaidaInputRef.current.value),
+				dataEntrada: dataEntradaInputRef.current.value,
+				dataSaida: dataSaidaInputRef.current.value,
+				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
+				operacaoErrada: operacaoErradaCheckboxInputRef.current.checked,
+				comentarios: comentariosTextareaRef.current.value,
+			}
+
+			console.log(input);
+		}
+
+		try {
+			setIsLoading(true);
+			if(input){
+				await handleSaveOperacao(input);
+			}
+
+		} catch (error: any) {
+			Toast.error(error.message);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

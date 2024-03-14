@@ -8,9 +8,8 @@ export interface OperacaoDTO {
 	stopLoss: number;
 	alvo: number;
 	precoSaida?: number;
-	dataEntrada: Date;
-	dataSaida?: Date;
-	margem?: number;
+	dataEntrada: string;
+	dataSaida?: string;
 	operacaoPerdida: boolean;
 	operacaoErrada: boolean;
 	motivo?: string;
