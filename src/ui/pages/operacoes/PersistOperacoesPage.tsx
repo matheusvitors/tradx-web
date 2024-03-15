@@ -1,15 +1,21 @@
+import React, { FormEvent, useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
+import { listAtivos, listContas, createOperacao } from "@/application/services";
 import { Ativo, Conta } from "@/application/models";
-import { listAtivos } from "@/application/services/ativos";
-import { listContas } from "@/application/services/contas";
-import { createOperacao } from "@/application/services/operacoes";
-import { KEY_ATIVOS } from "@/infra/config/storage-keys";
+import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
-import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 export const PersistOperacoesPage: React.FC = () => {
+
+	const navigate = useNavigate();
+	const location = useLocation()
+	const queryClient = useQueryClient();
+
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
@@ -67,7 +73,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const loadContas = async () => {
 		try {
-			const cachedContas = storage.get(KEY_ATIVOS);
+			const cachedContas = storage.get(KEY_CONTAS);
 			let contas: Conta[] = [];
 
 			if(cachedContas){
@@ -147,6 +153,9 @@ export const PersistOperacoesPage: React.FC = () => {
 			}
 
 			console.log(input);
+			await handleSaveOperacao(input);
+
+			queryClient.invalidateQueries({queryKey: ['operacoes']});
 		}
 
 		try {
@@ -154,6 +163,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			if(input){
 				await handleSaveOperacao(input);
 			}
+			navigate('/operacoes');
 
 		} catch (error: any) {
 			Toast.error(error.message);

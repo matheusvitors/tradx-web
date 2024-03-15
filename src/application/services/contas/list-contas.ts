@@ -7,8 +7,10 @@ import { storage } from "@/infra/store/storage";
 export const listContas = async (): Promise<Conta[]> => {
 	try {
 		const { data } = await http.get('/contas');
+
 		storage.remove(KEY_CONTAS);
 		storage.set(KEY_CONTAS, JSON.stringify(data.response.content))
+
 		return data.response.content;
 	} catch (error: any) {
 		return httpErrorHandler(error);
