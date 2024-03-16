@@ -2,12 +2,24 @@ import React, { useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Page } from '@/ui/layouts';
 import { Operacao } from '@/application/models';
 import { listOperacoes } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
 import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
-import { useNavigate, useLocation } from 'react-router-dom';
+
+// interface OperacaoColumns {
+// 	id: string;
+// 	ativo: string;
+// 	tipo: string;
+// 	precoEntrada: string;
+// 	stopLoss: string;
+// 	alvo: string;
+// 	precoSaida: string;
+// 	dataEntrada: string;
+// 	dataSaida: string;
+// }
 
 export const OperacoesPage: React.FC = () => {
 
@@ -39,7 +51,12 @@ export const OperacoesPage: React.FC = () => {
 	}
 
 	const columns: Column<Operacao>[] = [
+	// const columns: Column<OperacaoColumns>[] = [
+		{ name: 'Ativo', acessor: 'ativo.acronimo'},
+		{ name: 'Tipo', acessor: 'tipo'},
 		{ name: 'Preço - Entrada', acessor: 'precoEntrada'},
+		{ name: 'Stop Loss', acessor: 'stopLoss'},
+		{ name: 'Alvo', acessor: 'alvo'},
 		{ name: 'Preço - Saída', acessor: 'precoSaida'},
 		{ name: 'Horário - Entrada', acessor: 'dataEntrada'},
 		{ name: 'Horário - Saída', acessor: 'dataSaida'},
