@@ -64,7 +64,11 @@ export const OperacoesPage: React.FC = () => {
 
 	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
 		const result: DataTablePayload[] = input.map((item: Operacao) => ({
-			data: item,
+			data: {
+				...item,
+				dataEntrada: new Date(item.dataEntrada).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
+				dataSaida: item.dataSaida ? new Date(item.dataSaida).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : undefined,
+			},
 			actions: [
 				{
 					icon: MdEdit,
