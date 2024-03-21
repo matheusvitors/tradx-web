@@ -37,7 +37,6 @@ export interface DataTablePayload {
 
 export interface Column<T> {
 	name: string;
-	// acessor: keyof T;
 	acessor: Paths<T>;
 	width?: string;
 }
@@ -46,9 +45,6 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	//TODO: Resolver bug do background transparente nas actions
 	//TODO: Descobrir como acessar um item do objeto nested com string
 	// https://www.google.com/search?q=access+nested+atribute+using+string&sca_esv=a62499659915de61&sxsrf=ACQVn09YWAUlKx8JO2S-Kh_Q2LvwMp5dfQ%3A1710625455266&ei=rxL2ZfHoD_yI4dUP54yE0A8&udm=&ved=0ahUKEwix_Oq04PmEAxV8RLgEHWcGAfoQ4dUDCBA&uact=5&oq=access+nested+atribute+using+string&gs_lp=Egxnd3Mtd2l6LXNlcnAiI2FjY2VzcyBuZXN0ZWQgYXRyaWJ1dGUgdXNpbmcgc3RyaW5nMgkQIRgKGKABGApIniFQrQZY3R5wAngBkAEAmAH1AaABwR2qAQYwLjkuMTC4AQPIAQD4AQGYAhCgAoUYwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAgYQABgWGB7CAgYQIRgVGAqYAwDiAwUSATEgQIgGAZAGCJIHBjIuMy4xMaAHwWA&sclient=gws-wiz-serp
-
-	console.log(payload);
-
 
 	const Actions: React.FC<Omit<DataTablePayload, "data">> = ({ actions }) => {
 		return (
@@ -77,7 +73,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 				<Row key={i}>
 					{columns.map((column: Column<any>, i: number) => (
 						<Cell key={i} $width={column.width}>
-							{data[column.acessor]}
+							{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
 							{i + 1 === columns.length && actions && <Actions actions={actions} key={Math.random()} />}
 						</Cell>
 					))}

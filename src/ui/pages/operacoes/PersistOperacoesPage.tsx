@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { listAtivos, listContas, createOperacao } from "@/application/services";
-import { Ativo, Conta } from "@/application/models";
+import { Ativo, Conta, Operacao } from "@/application/models";
 import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
@@ -42,9 +42,14 @@ export const PersistOperacoesPage: React.FC = () => {
 			compraRadioButtonInputRef.current.checked = true;
 		}
 
-		loadContas()
+		loadContas();
 		loadAtivos();
 	}, []);
+
+	useEffect(() => {
+		location.state.operacao && loadOperacao(location.state.operacao)
+		// console.log(location.state.operacao)
+	}, [location])
 
 	const loadAtivos = async () => {
 		try {
@@ -95,6 +100,42 @@ export const PersistOperacoesPage: React.FC = () => {
 		} catch (error: any) {
 			Toast.error(error)
 		}
+	}
+
+	const loadOperacao = (operacao: Operacao) => {
+		setIsLoading(true);
+
+		if(
+			contaSelectRef.current &&
+			ativoSelectRef.current &&
+			dataEntradaInputRef.current &&
+			quantidadeInputRef.current &&
+			compraRadioButtonInputRef.current &&
+			vendaRadioButtonInputRef.current &&
+			precoEntradaInputRef.current &&
+			stopLossInputRef.current &&
+			alvoInputRef.current &&
+			precoSaidaInputRef.current &&
+			dataSaidaInputRef.current &&
+			operacaoErradaCheckboxInputRef.current &&
+			operacaoPerdidaCheckboxInputRef.current &&
+			comentariosTextareaRef.current
+		) {
+			// contaSelectRef.current.value = operacao.conta.id;
+			// ativoSelectRef.current.value = operacao.ativo.id;
+
+			quantidadeInputRef.current.value = `${operacao.quantidade}`;
+			precoEntradaInputRef.current.value = `${operacao.precoEntrada}`
+			stopLossInputRef.current.value = `${operacao.stopLoss}`
+			alvoInputRef.current.value = `${operacao.alvo}`
+			precoSaidaInputRef.current.value = `${operacao.precoSaida}`
+			dataEntradaInputRef.current.value = `${operacao.dataEntrada}`.substring(0,16);
+			console.log(operacao.dataEntrada.toLocaleString('pt-BR'));
+
+
+		}
+
+		setIsLoading(false);
 	}
 
 	const onChangeTipoInput = () => {

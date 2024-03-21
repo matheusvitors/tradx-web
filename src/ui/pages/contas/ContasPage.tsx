@@ -47,7 +47,7 @@ export const ContasPage: React.FC = () => {
 	// }
 
 	const onEdit = (conta: Conta) => {
-		navigate('/contas/editar', { state: {background: location, conta: conta}})
+		navigate('/contas/editar', { state: {background: location, conta }})
 	}
 
 	const onRemove = async (conta: Conta) => {

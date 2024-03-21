@@ -5,21 +5,9 @@ import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Page } from '@/ui/layouts';
 import { Operacao } from '@/application/models';
-import { listOperacoes } from '@/application/services/operacoes';
+import { listOperacoes, removeOperacao } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
 import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
-
-// interface OperacaoColumns {
-// 	id: string;
-// 	ativo: string;
-// 	tipo: string;
-// 	precoEntrada: string;
-// 	stopLoss: string;
-// 	alvo: string;
-// 	precoSaida: string;
-// 	dataEntrada: string;
-// 	dataSaida: string;
-// }
 
 export const OperacoesPage: React.FC = () => {
 
@@ -43,15 +31,27 @@ export const OperacoesPage: React.FC = () => {
 	}, [error]);
 
 	const onEdit = async (operacao: Operacao) => {
-
+		navigate('/operacoes/editar', { state: {background: location, operacao: operacao }})
 	}
 
 	const onRemove = async (operacao: Operacao) => {
+		Toast.confirm(
+			`Excluir Operação?`,
+			`Deseja excluir a operação iniciada em ${formatData(operacao.dataEntrada)}?`,
+			'Excluir',
+			async () => {await onRemoveOperacao(operacao.id); refetch()},
+		)
+	}
 
+	const onRemoveOperacao = async (id: string) => {
+		try {
+			await removeOperacao(id)
+		} catch (error: any) {
+			Toast.error(error.message);
+		}
 	}
 
 	const columns: Column<Operacao>[] = [
-	// const columns: Column<OperacaoColumns>[] = [
 		{ name: 'Ativo', acessor: 'ativo.acronimo'},
 		{ name: 'Tipo', acessor: 'tipo'},
 		{ name: 'Preço - Entrada', acessor: 'precoEntrada'},
@@ -61,6 +61,10 @@ export const OperacoesPage: React.FC = () => {
 		{ name: 'Horário - Entrada', acessor: 'dataEntrada'},
 		{ name: 'Horário - Saída', acessor: 'dataSaida'},
 	]
+
+	const formatData = (date: Date): string => {
+		return new Date(date).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'})
+	}
 
 	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
 		const result: DataTablePayload[] = input.map((item: Operacao) => ({
