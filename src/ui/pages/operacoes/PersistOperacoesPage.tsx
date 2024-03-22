@@ -48,7 +48,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		location.state.operacao && loadOperacao(location.state.operacao)
-		// console.log(location.state.operacao)
+		//console.log(location.state.operacao)
 	}, [location])
 
 	const loadAtivos = async () => {
@@ -129,8 +129,11 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current.value = `${operacao.stopLoss}`
 			alvoInputRef.current.value = `${operacao.alvo}`
 			precoSaidaInputRef.current.value = `${operacao.precoSaida}`
-			dataEntradaInputRef.current.value = `${operacao.dataEntrada}`.substring(0,16);
-			console.log(operacao.dataEntrada.toLocaleString('pt-BR'));
+
+			const dateTest = `${new Date(operacao.dataEntrada)}`
+			// dataEntradaInputRef.current.value = `${operacao.dataEntrada.toLocaleString('pt-BR')}`.substring(0,16);
+			dataEntradaInputRef.current.value = `${dateTest}`;
+			console.log(new Date(operacao.dataEntrada).toISOString());
 
 
 		}
@@ -194,16 +197,18 @@ export const PersistOperacoesPage: React.FC = () => {
 			}
 
 			console.log(input);
-			await handleSaveOperacao(input);
+			// await handleSaveOperacao(input);
 
-			queryClient.invalidateQueries({queryKey: ['operacoes']});
 		}
 
 		try {
 			setIsLoading(true);
+
 			if(input){
 				await handleSaveOperacao(input);
 			}
+
+			queryClient.invalidateQueries({queryKey: ['operacoes']});
 			navigate('/operacoes');
 
 		} catch (error: any) {
