@@ -81,8 +81,8 @@ export const AtivosPage: React.FC = () => {
 	return (
 		<Page pageName='Ativos'>
 			<Content>
-				<PageHeader>
-				</PageHeader>
+				{/* <PageHeader>
+				</PageHeader> */}
 				<TableContainer>
 					<DataTable columns={columns} payload={ativos} />
 				</TableContainer>

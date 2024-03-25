@@ -2,12 +2,13 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
-import { listAtivos, listContas, createOperacao } from "@/application/services";
+import { listAtivos, listContas, createOperacao, editOperacao,  } from "@/application/services";
 import { Ativo, Conta, Operacao } from "@/application/models";
 import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
+import { formatDate } from "@/utils/format-date";
 
 export const PersistOperacoesPage: React.FC = () => {
 
@@ -47,9 +48,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		location.state.operacao && loadOperacao(location.state.operacao)
-		//console.log(location.state.operacao)
-	}, [location])
+		location.state.operacao && loadOperacao(location.state.operacao);
+	}, [location]);
 
 	const loadAtivos = async () => {
 		try {
@@ -68,6 +68,8 @@ export const PersistOperacoesPage: React.FC = () => {
 			const options: SelectOptions[] = ativos.map(ativo => ({
 				label: ativo.acronimo,
 				value: ativo.id,
+				isSelected: ativo.id === location.state.operacao.ativoId ? true : false
+
 			}))
 
 			setAtivoOptions(options)
@@ -96,7 +98,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				value: conta.id,
 			}))
 
-			setContaOptions(options)
+			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
 		}
@@ -121,21 +123,18 @@ export const PersistOperacoesPage: React.FC = () => {
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
 		) {
-			// contaSelectRef.current.value = operacao.conta.id;
-			// ativoSelectRef.current.value = operacao.ativo.id;
-
 			quantidadeInputRef.current.value = `${operacao.quantidade}`;
+			operacao.tipo === 'acao' ? compraRadioButtonInputRef.current.checked = true : vendaRadioButtonInputRef.current.checked = true;
+
 			precoEntradaInputRef.current.value = `${operacao.precoEntrada}`
 			stopLossInputRef.current.value = `${operacao.stopLoss}`
 			alvoInputRef.current.value = `${operacao.alvo}`
-			precoSaidaInputRef.current.value = `${operacao.precoSaida}`
-
-			const dateTest = `${new Date(operacao.dataEntrada)}`
-			// dataEntradaInputRef.current.value = `${operacao.dataEntrada.toLocaleString('pt-BR')}`.substring(0,16);
-			dataEntradaInputRef.current.value = `${dateTest}`;
-			console.log(new Date(operacao.dataEntrada).toISOString());
-
-
+			precoSaidaInputRef.current.value = operacao.precoSaida ? `${operacao.precoSaida}` : '';
+			dataEntradaInputRef.current.value = formatDate(new Date(operacao.dataEntrada));
+			dataSaidaInputRef.current.value = operacao.dataSaida ? formatDate(new Date(operacao.dataSaida)) : '';
+			operacaoErradaCheckboxInputRef.current.checked = operacao.operacaoErrada || false;
+			operacaoPerdidaCheckboxInputRef.current.checked = operacao.operacaoPerdida || false;
+			comentariosTextareaRef.current.value = operacao.comentarios || '';
 		}
 
 		setIsLoading(false);
@@ -156,6 +155,19 @@ export const PersistOperacoesPage: React.FC = () => {
 			await createOperacao(input)
 		} catch (error) {
 			throw error;
+		}
+	}
+
+	const handleEditOperacao = async (operacao: OperacaoDTO) => {
+		const input = {
+			...operacao,
+			id: location.state.operacao.id
+		}
+
+		try {
+			await editOperacao(input);
+		} catch (error: any) {
+			Toast.error(error.message);
 		}
 	}
 
@@ -188,24 +200,20 @@ export const PersistOperacoesPage: React.FC = () => {
 				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
 				stopLoss: parseFloat(stopLossInputRef.current.value),
 				alvo: parseFloat(alvoInputRef.current.value),
-				precoSaida: parseFloat(precoSaidaInputRef.current.value),
+				precoSaida: parseFloat(precoSaidaInputRef.current.value) || undefined,
 				dataEntrada: dataEntradaInputRef.current.value,
 				dataSaida: dataSaidaInputRef.current.value,
 				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
 				operacaoErrada: operacaoErradaCheckboxInputRef.current.checked,
 				comentarios: comentariosTextareaRef.current.value,
 			}
-
-			console.log(input);
-			// await handleSaveOperacao(input);
-
 		}
 
 		try {
 			setIsLoading(true);
 
 			if(input){
-				await handleSaveOperacao(input);
+				location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
 			}
 
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
@@ -221,8 +229,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	return (
 		<ModalPage title="Adicionar Operação">
 			<Form onSubmit={onSubmit}>
-				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} />
-				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} />
+				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} defaultValue={location.state.operacao.conta.id} />
+				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} defaultValue={location.state.operacao.ativo.id}/>
 				<TextInput label="Quantidade" reference={quantidadeInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="compra" label="Compra" onChange={onChangeTipoInput} reference={compraRadioButtonInputRef} />
@@ -232,7 +240,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} defaultValue={new Date(new Date().getTime() - 10800000).toISOString().slice(0,16)} />
+				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />

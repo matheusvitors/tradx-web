@@ -8,6 +8,7 @@ interface SelectProps {
 	options: SelectOptions[];
 	reference?: RefObject<HTMLSelectElement>;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
+	defaultValue?: string;
 }
 
 export interface SelectOptions {
@@ -16,7 +17,7 @@ export interface SelectOptions {
 	isSelected?: boolean;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, options, reference, onChange }) => {
+export const Select: React.FC<SelectProps> = ({ label, name, options, reference, defaultValue, onChange }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
@@ -24,8 +25,10 @@ export const Select: React.FC<SelectProps> = ({ label, name, options, reference,
 				name={name}
 				id={name}
 				ref={reference}
+				value={defaultValue}
+				onChange={() => {}}
 			>
-				{options.map(({label, value, isSelected}) => <Option key={value} value={value} selected={isSelected}>{label}</Option>)}
+				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
 			</Input>
 		</Container>
 	);
