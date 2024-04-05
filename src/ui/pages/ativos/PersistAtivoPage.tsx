@@ -5,6 +5,7 @@ import { TextInput, RadioButton, Button, RadioGroup, Form, Toast, DatePicker } f
 import { ModalPage } from "@/ui/layouts";
 import { createAtivo, editAtivo } from "@/application/services/ativos";
 import { Ativo } from "@/application/models";
+import { formatDate } from "@/utils/format-date";
 
 export const PersistAtivoPage: React.FC = () => {
 
@@ -38,11 +39,13 @@ export const PersistAtivoPage: React.FC = () => {
 			acronimoInputRef.current &&
 			acaoRadioButtonInputRef.current &&
 			indiceRadioButtonInputRef.current &&
-			acaoRadioButtonInputRef.current
+			dataVencimentoInputRef.current
 		) {
 			nomeInputRef.current.value = ativo.nome;
 			acronimoInputRef.current.value = ativo.acronimo;
+			dataVencimentoInputRef.current.value = ativo.dataVencimento ? formatDate(new Date(ativo.dataVencimento)) : '';
 			ativo.tipo === 'acao' ? acaoRadioButtonInputRef.current.checked = true : indiceRadioButtonInputRef.current.checked = true;
+
 		}
 	}
 
