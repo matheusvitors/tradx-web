@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Page } from '@/ui/layouts';
-import { Operacao } from '@/application/models';
+import { Conta, Operacao } from '@/application/models';
 import { listOperacoes, removeOperacao } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
+import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Select, SelectOptions, Toast } from '@/ui/components';
+import { listContas } from '@/application/services';
+import { KEY_CONTAS } from '@/infra/config/storage-keys';
+import { storage } from '@/infra/store/storage';
 
 export const OperacoesPage: React.FC = () => {
 
@@ -21,6 +24,13 @@ export const OperacoesPage: React.FC = () => {
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
+	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
+
+	const contaSelectRef = useRef<HTMLSelectElement>(null);
+
+	useEffect(() => {
+		loadContas();
+	}, [])
 
 	useEffect(() => {
 		data && setOperacoes(preparePayloadDataTable(data));
@@ -29,6 +39,33 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		error && Toast.error(error.message);
 	}, [error]);
+
+	const loadContas = async () => {
+		try {
+			const cachedContas = storage.get(KEY_CONTAS);
+			let contas: Conta[] = [];
+
+			if(cachedContas){
+				if(cachedContas.expiration && Date.now() > cachedContas.expiration) {
+					contas = await listContas();
+				} else {
+					contas = JSON.parse(cachedContas.data);
+				}
+			} else {
+				contas = await listContas();
+			}
+
+			const options: SelectOptions[] = contas.map(conta => ({
+				label: conta.nome,
+				value: conta.id,
+			}))
+
+			setContaOptions(options);
+		} catch (error: any) {
+			Toast.error(error)
+		}
+	}
+
 
 	const onEdit = async (operacao: Operacao) => {
 		navigate('/operacoes/editar', { state: {background: location, operacao: operacao }})
@@ -98,6 +135,8 @@ export const OperacoesPage: React.FC = () => {
 						<>
 							<TableContainer>
 								<PageHeader>
+									<Select label='' name='conta' options={contaOptions} reference={contaSelectRef}  />
+
 								</PageHeader>
 								<DataTable columns={columns} payload={operacoes} />
 							</TableContainer>

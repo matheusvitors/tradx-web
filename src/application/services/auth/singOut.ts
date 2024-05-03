@@ -1,5 +1,6 @@
 import { KEY_TOKEN } from "@/infra/config/storage-keys";
+import { storage } from "@/infra/store/storage";
 
 export const signOut = () => {
-	localStorage.removeItem(KEY_TOKEN);
+	storage.remove(KEY_TOKEN);
 }

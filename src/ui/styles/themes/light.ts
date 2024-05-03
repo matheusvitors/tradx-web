@@ -77,6 +77,12 @@ const light = {
 		hover: secondary,
 	},
 
+	modalPage: {
+		background: white,
+		text: black,
+		shadowColor: black,
+	},
+
 	table: {
 		borderCell: primary,
 		borderRow: secondary,

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { css, styled } from 'styled-components';
+import { css, styled, useTheme } from 'styled-components';
+import { hexToRGBA } from "about-colors-js";
 import { SystemName } from '@/ui/components';
+
 
 export const Sidebar: React.FC = () => {
 
-	// const theme = useTheme();
+	const theme = useTheme();
 	const location = useLocation();
 
 	const paths = [
@@ -18,8 +20,8 @@ export const Sidebar: React.FC = () => {
 	return (
 		<Container>
 			<HeaderSidebar>
-				{/* <SystemName color={theme ? theme.common.text : 'red'} width='150px' height='100px' /> */}
-				<SystemName />
+				<SystemName color={theme.common.text || 'red'} width='150' height='100' />
+				{/* <SystemName /> */}
 			</HeaderSidebar>
 
 			{ paths.map(item => <MenuItem key={item.path} to={location.pathname === item.path ? '#' : item.path} active={(location.pathname === item.path).toString()}>{item.label}</MenuItem>)}
@@ -37,7 +39,8 @@ const Container = styled.div`
 	min-height: 100vh;
 
 	border-right: 1px solid ${props => props.theme.sidebar.border};
-`
+
+	`
 
 const HeaderSidebar = styled.div`
 	display: flex;
@@ -49,7 +52,7 @@ const HeaderSidebar = styled.div`
 	height: 70px;
 
 	margin-bottom: 30px;
-`
+	`
 
 const MenuItem = styled(Link)<{ active?: string; }>`
 	display: flex;
@@ -59,7 +62,7 @@ const MenuItem = styled(Link)<{ active?: string; }>`
 	width: 90%;
 	height: 50px;
 
-	margin: 5px 0;
+	margin: 10px 0;
 
 	border-radius: 10px;
 
@@ -71,13 +74,16 @@ const MenuItem = styled(Link)<{ active?: string; }>`
 	transition: all .3s ;
 
 	${props => props.active === 'true' && css`
-		background-color: ${props => props.theme.sidebar.active.background};
-		color: ${props => props.theme.sidebar.active.text};
+	background-color: ${props => props.theme.sidebar.active.background};
+	color: ${props => props.theme.sidebar.active.text};
+	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${props => hexToRGBA(props.theme.sidebar.active.background, 0.45)};
 	`}
 
 	&:hover {
 		background-color: ${props => props.theme.sidebar.hover.background};
 		color: ${props => props.theme.sidebar.hover.text};
 	}
+
+	/* border: 1px solid white; */
 
 `

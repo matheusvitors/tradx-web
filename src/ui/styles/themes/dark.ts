@@ -76,6 +76,12 @@ const dark = {
 		hover: secondary,
 	},
 
+	modalPage: {
+		background: black,
+		text: white,
+		shadowColor: white,
+	},
+
 	table: {
 		borderCell: primary,
 		borderRow: secondary,
