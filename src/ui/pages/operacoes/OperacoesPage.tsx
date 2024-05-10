@@ -7,7 +7,7 @@ import { Page } from '@/ui/layouts';
 import { Conta, Operacao } from '@/application/models';
 import { listOperacoes, removeOperacao } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Select, SelectOptions, Toast } from '@/ui/components';
+import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, PageLoading, Select, SelectOptions, Toast } from '@/ui/components';
 import { listContas } from '@/application/services';
 import { KEY_CONTAS } from '@/infra/config/storage-keys';
 import { storage } from '@/infra/store/storage';
@@ -135,8 +135,7 @@ export const OperacoesPage: React.FC = () => {
 						<>
 							<TableContainer>
 								<PageHeader>
-									<Select label='' name='conta' options={contaOptions} reference={contaSelectRef}  />
-
+									<HeaderSelector label='' name='conta' options={contaOptions} reference={contaSelectRef}  />
 								</PageHeader>
 								<DataTable columns={columns} payload={operacoes} />
 							</TableContainer>
@@ -172,9 +171,11 @@ const PageHeader = styled.div`
 	gap: 20px;
 
 	width: 100%;
-	height: 50px;
+	height: 70px;
 
 	margin-bottom: 20px;
+
+	/* border: 1px solid white; */
 `
 
 const TableContainer = styled.div`

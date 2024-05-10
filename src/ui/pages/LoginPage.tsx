@@ -1,11 +1,12 @@
 import React, { FormEvent, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { authenticateUser } from "@/application/services/auth";
-import { TextInput, Button, Toast, Form } from "@/ui/components";
+import { TextInput, Button, Toast, Form, SystemName } from "@/ui/components";
 
 export const LoginPage: React.FC = () => {
 	const navigate = useNavigate();
+	const theme = useTheme();
 
 	const [loading, setLoading] = useState(false);
 
@@ -32,7 +33,7 @@ export const LoginPage: React.FC = () => {
 	return (
 		<Container>
 			<Content>
-				{/* <SystemName color={theme ? theme.common.text : 'red'} width='250px' height='100px' /> */}
+				<SystemName color={theme.common.text || 'red'} width='250px' height='100px' />
 				<Form onSubmit={onSubmit}>
 					<TextInput label="Usuário" name="username" reference={usernameRef} />
 					<TextInput label="Senha" type="password" name="password"  reference={passwordRef} />

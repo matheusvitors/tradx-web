@@ -5,13 +5,13 @@ import { hexToRGBA } from 'about-colors-js';
 interface HeaderSelectorProps {
 	label: string;
 	name: string;
-	options: SelectOptions[];
+	options: HeaderSelectorOptions[];
 	reference?: RefObject<HTMLSelectElement>;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 	defaultValue?: string;
 }
 
-export interface SelectOptions {
+export interface HeaderSelectorOptions {
 	label: string;
 	value: string | number;
 	isSelected?: boolean;
@@ -26,7 +26,7 @@ export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ label, name, opt
 				id={name}
 				ref={reference}
 				value={defaultValue}
-				onChange={() => {}}
+				onChange={onChange}
 			>
 				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
 			</Input>
@@ -41,28 +41,31 @@ const Container = styled.div`
 	justify-content: center;
 
 	height: 70px;
-	width: 80%;
+	width: 100%;
 
-	margin: 15px 10px;
+	appearance: none;
+	background-color: transparent;
+
+	/* margin: 15px 10px; */
 `
 
 const Label = styled.label`
-	margin: 5px 0;
+	/* margin: 5px 0; */
 	font-weight: 400;
-`
+	`
 
 const Input = styled.select`
 	width: 100%;
 	height: 80%;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)};
+	/* border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)}; */
 	border-radius: 5px;
 
 	padding: 0 10px;
 
-	font-size: 16px;
-	color:  ${props => props.theme.textInput.text};
+	font-size: 22px;
+	color: ${props => props.theme.accent}
 `
 
 const Option = styled.option`
