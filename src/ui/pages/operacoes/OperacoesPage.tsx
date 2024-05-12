@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Page } from '@/ui/layouts';
 import { Conta, Operacao } from '@/application/models';
-import { listOperacoes, removeOperacao } from '@/application/services/operacoes';
+import { listOperacaoByConta, removeOperacao } from '@/application/services/operacoes';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, PageLoading, Select, SelectOptions, Toast } from '@/ui/components';
+import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, PageLoading, SelectOptions, Toast } from '@/ui/components';
 import { listContas } from '@/application/services';
-import { KEY_CONTAS } from '@/infra/config/storage-keys';
+import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
 import { storage } from '@/infra/store/storage';
 
 export const OperacoesPage: React.FC = () => {
@@ -19,17 +19,20 @@ export const OperacoesPage: React.FC = () => {
 	const location = useLocation();
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ['operacoes'],
-		queryFn: listOperacoes,
-		staleTime: STALE_TIME
+		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ''),
+		staleTime: STALE_TIME,
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
+	const [selectedConta, setSelectedConta] = useState('');
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
 		loadContas();
+		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
+		setSelectedConta(storagedConta?.data || '');
 	}, [])
 
 	useEffect(() => {
@@ -61,6 +64,9 @@ export const OperacoesPage: React.FC = () => {
 			}))
 
 			setContaOptions(options);
+
+			const defaultConta = storage.get(KEY_CONTA_SELECIONADA);
+			defaultConta && setSelectedConta(defaultConta.data);
 		} catch (error: any) {
 			Toast.error(error)
 		}
@@ -128,22 +134,39 @@ export const OperacoesPage: React.FC = () => {
 		return result;
 	}
 
+	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {
+		event.preventDefault();
+		try {
+			contaSelectRef.current && storage.set(KEY_CONTA_SELECIONADA, contaSelectRef.current.value);
+			setSelectedConta(event.target.value);
+			const result = await listOperacaoByConta(event.target.value);
+			setOperacoes(preparePayloadDataTable(result));
+		} catch (error: any) {
+			Toast.error(error.message)
+		}
+	}
+
 	return (
 		<Page pageName='Operações'>
 			<Content>
-					{data && data.length > 0 ? (
-						<>
+
+
 							<TableContainer>
 								<PageHeader>
-									<HeaderSelector label='' name='conta' options={contaOptions} reference={contaSelectRef}  />
+									<HeaderSelector label='' name='conta' value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta}  />
 								</PageHeader>
-								<DataTable columns={columns} payload={operacoes} />
+
+								{operacoes && operacoes.length > 0 ?
+									<DataTable columns={columns} payload={operacoes} />
+								:
+									<EmptyContainer>
+										<span>Não há operações registradas.</span>
+									</EmptyContainer>
+								}
 							</TableContainer>
-						</>) :
-						<EmptyContainer>
-							<span>Não há operações registradas.</span>
-						</EmptyContainer>
-					}
+
+
+
 				<FloatingButton
 					icon={MdAdd}
 					label='Nova Operação'

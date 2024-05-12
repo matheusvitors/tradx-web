@@ -7,8 +7,8 @@ interface SelectProps {
 	name: string;
 	options: SelectOptions[];
 	reference?: RefObject<HTMLSelectElement>;
-	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 	defaultValue?: string;
+	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
 export interface SelectOptions {
@@ -26,7 +26,7 @@ export const Select: React.FC<SelectProps> = ({ label, name, options, reference,
 				id={name}
 				ref={reference}
 				value={defaultValue}
-				onChange={() => {}}
+				onChange={onChange}
 			>
 				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
 			</Input>

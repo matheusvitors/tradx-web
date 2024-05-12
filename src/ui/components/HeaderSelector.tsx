@@ -7,8 +7,8 @@ interface HeaderSelectorProps {
 	name: string;
 	options: HeaderSelectorOptions[];
 	reference?: RefObject<HTMLSelectElement>;
+	value?: string;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
-	defaultValue?: string;
 }
 
 export interface HeaderSelectorOptions {
@@ -17,7 +17,7 @@ export interface HeaderSelectorOptions {
 	isSelected?: boolean;
 }
 
-export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ label, name, options, reference, defaultValue, onChange }) => {
+export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ label, name, options, reference, value, onChange }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
@@ -25,7 +25,7 @@ export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ label, name, opt
 				name={name}
 				id={name}
 				ref={reference}
-				value={defaultValue}
+				value={value}
 				onChange={onChange}
 			>
 				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
@@ -43,8 +43,7 @@ const Container = styled.div`
 	height: 70px;
 	width: 100%;
 
-	appearance: none;
-	background-color: transparent;
+	/* background-color: transparent; */
 
 	/* margin: 15px 10px; */
 `
@@ -65,7 +64,10 @@ const Input = styled.select`
 	padding: 0 10px;
 
 	font-size: 22px;
-	color: ${props => props.theme.accent}
+	color: ${props => props.theme.accent};
+
+	appearance: none;
+
 `
 
 const Option = styled.option`
