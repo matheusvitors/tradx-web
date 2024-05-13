@@ -1,50 +1,34 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
-import { AccountCard, NewAccountCard, PageLoading, Toast } from "@/ui/components";
+import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from "@/ui/components";
 import { listContas, removeConta } from "@/application/services/contas";
 import { STALE_TIME } from "@/infra/config/constants";
+import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
 
 export const ContasPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const location = useLocation();
+	const theme = useTheme()
 	const { data, isLoading, error, refetch } = useQuery<Conta[]>({
 		queryKey: ['contas'],
 		queryFn: listContas,
 		staleTime: STALE_TIME
 	})
 
-	const [contas, setContas] = useState<Conta[]>([]);
+	const [contas, setContas] = useState<DataTablePayload[]>([]);
 
 	useEffect(() => {
-		data && setContas(data);
+		data && setContas(preparePayloadDataTable(data));
 	}, [data])
 
 	useEffect(() => {
 		error && Toast.error(error.message);
 	}, [error])
-
-	// const [loading, setLoading] = useState(false);
-
-	// useEffect(() => {
-	// 	loadContas();
-	// }, []);
-
-	// const loadContas = async () => {
-	// 	try {
-	// 		setLoading(true);
-	// 		const data = await listContas();
-	// 		data.length >= 0 && setContas(data);
-	// 	} catch (error: any) {
-	// 		Toast.error(error.message);
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// }
 
 	const onEdit = (conta: Conta) => {
 		navigate('/contas/editar', { state: {background: location, conta }})
@@ -67,12 +51,44 @@ export const ContasPage: React.FC = () => {
 		}
 	}
 
+	const columns: Column<Conta & { isAtivo: string; }>  [] = [
+		{ name: 'Nome', acessor: 'nome'},
+		{ name: 'Tipo', acessor: 'tipo'},
+		{ name: 'Saldo Inicial', acessor: 'saldoInicial'},
+		{ name: 'Saldo Atual', acessor: 'saldo'},
+	]
+
+	const preparePayloadDataTable = (input: Conta[]): DataTablePayload[] => {
+		const result: DataTablePayload[]  = input.map((item: any) => ({
+			data: {...item},
+			actions: [
+				{
+					icon: MdEdit,
+					callback: () => onEdit(item),
+					color: theme.semantic.attention
+				},
+				{
+					icon: MdDelete,
+					callback: () => onRemove(item),
+					color: theme.semantic.warning
+				},
+			]
+		}))
+
+		return result;
+	}
+
+
 	return (
 		<Page pageName="Contas">
 			<Content>
 				<ContasContainer>
-					<NewAccountCard />
-					{contas.map((conta) => (<AccountCard key={conta.id} conta={conta} onEdit={() => onEdit(conta)} onRemove={() => onRemove(conta)} />))}
+					<DataTable columns={columns} payload={contas} />
+					<FloatingButton
+						icon={MdAdd}
+						label='Nova Conta'
+						onClick={() => navigate('/contas/adicionar', { state: {background: location}})}
+					/>
 				</ContasContainer>
 				<PageLoading visible={isLoading} />
 			</Content>

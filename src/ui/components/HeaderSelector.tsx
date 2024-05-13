@@ -1,6 +1,5 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components';
-import { hexToRGBA } from 'about-colors-js';
 
 interface HeaderSelectorProps {
 	label: string;
@@ -42,23 +41,17 @@ const Container = styled.div`
 
 	height: 70px;
 	width: 100%;
-
-	/* background-color: transparent; */
-
-	/* margin: 15px 10px; */
 `
 
 const Label = styled.label`
-	/* margin: 5px 0; */
 	font-weight: 400;
-	`
+`
 
 const Input = styled.select`
 	width: 100%;
 	height: 80%;
 
 	background-color: transparent;
-	/* border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)}; */
 	border-radius: 5px;
 
 	padding: 0 10px;
@@ -67,13 +60,9 @@ const Input = styled.select`
 	color: ${props => props.theme.accent};
 
 	appearance: none;
-
 `
 
 const Option = styled.option`
 	background-color: ${props => props.theme.common.background};
 	color:  ${props => props.theme.textInput.text};
-
-	&:hover {
-	}
 `

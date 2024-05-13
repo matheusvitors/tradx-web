@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Ativo } from '@/application/models';
 import { listAtivos, removeAtivo } from '@/application/services/ativos';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Button, Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
+import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 
@@ -104,18 +104,18 @@ const Content = styled.div`
 	flex-grow: 1;
 `
 
-const PageHeader = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	flex-direction: row;
-	gap: 20px;
+// const PageHeader = styled.div`
+// 	display: flex;
+// 	align-items: center;
+// 	justify-content: flex-start;
+// 	flex-direction: row;
+// 	gap: 20px;
 
-	width: 100%;
-	height: 50px;
+// 	width: 100%;
+// 	height: 50px;
 
-	margin-bottom: 20px;
-`
+// 	margin-bottom: 20px;
+// `
 
 const TableContainer = styled.div`
 	display: flex;
