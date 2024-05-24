@@ -3,5 +3,6 @@ export interface Ativo {
 	nome: string;
 	acronimo: string;
 	tipo: string;
+	multiplicador: string;
 	dataVencimento?: Date | null;
 }

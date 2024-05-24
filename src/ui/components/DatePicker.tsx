@@ -36,7 +36,7 @@ const Label = styled.label`
 	font-weight: 400;
 `
 
-const Input = styled.input.attrs({ type: 'datetime-local' })`
+const Input = styled.input.attrs({ type: 'date' })`
 	width: 100%;
 	height: 80%;
 

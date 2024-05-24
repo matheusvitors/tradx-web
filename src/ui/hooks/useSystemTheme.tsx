@@ -15,8 +15,6 @@ export const useSystemTheme = () => {
 
 	const getTheme = () => {
 		const theme =  storage.get(KEY_THEME);
-		console.log(theme);
-
 		return theme && theme.data === 'light' ? light : dark;
 	}
 

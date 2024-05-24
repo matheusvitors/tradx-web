@@ -55,6 +55,7 @@ export const AtivosPage: React.FC = () => {
 		{ name: 'Acrônimo', acessor: 'acronimo', width: '10%'},
 		{ name: '', acessor: 'isAtivo', width: '10%'},
 		{ name: 'Nome', acessor: 'nome'},
+		{ name: 'Multiplicador', acessor: 'multiplicador'},
 		{ name: 'Tipo', acessor: 'tipo'},
 	]
 

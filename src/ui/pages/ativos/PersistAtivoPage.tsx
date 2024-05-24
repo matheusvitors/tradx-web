@@ -18,6 +18,7 @@ export const PersistAtivoPage: React.FC = () => {
 	const nomeInputRef = useRef<HTMLInputElement>(null);
 	const acronimoInputRef = useRef<HTMLInputElement>(null);
 	const dataVencimentoInputRef = useRef<HTMLInputElement>(null);
+	const multiplicadorInputRef = useRef<HTMLInputElement>(null);
 	const acaoRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const indiceRadioButtonInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,10 +40,12 @@ export const PersistAtivoPage: React.FC = () => {
 			acronimoInputRef.current &&
 			acaoRadioButtonInputRef.current &&
 			indiceRadioButtonInputRef.current &&
+			multiplicadorInputRef.current &&
 			dataVencimentoInputRef.current
 		) {
 			nomeInputRef.current.value = ativo.nome;
 			acronimoInputRef.current.value = ativo.acronimo;
+			multiplicadorInputRef.current.value = `${ativo.multiplicador}`;
 			dataVencimentoInputRef.current.value = ativo.dataVencimento ? formatDate(new Date(ativo.dataVencimento)) : '';
 			ativo.tipo === 'acao' ? acaoRadioButtonInputRef.current.checked = true : indiceRadioButtonInputRef.current.checked = true;
 
@@ -65,13 +68,15 @@ export const PersistAtivoPage: React.FC = () => {
 				acronimoInputRef.current &&
 				acaoRadioButtonInputRef.current &&
 				indiceRadioButtonInputRef.current &&
+				multiplicadorInputRef.current &&
 				dataVencimentoInputRef.current
 			) {
 				await createAtivo({
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
 					acronimo: acronimoInputRef.current.value.toUpperCase(),
-					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null
+					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null,
+					multiplicador: multiplicadorInputRef.current.value.length > 0 ? multiplicadorInputRef.current.value : '1'
 				});
 			}
 
@@ -92,6 +97,7 @@ export const PersistAtivoPage: React.FC = () => {
 			if (location.state.ativo &&
 				nomeInputRef.current &&
 				acronimoInputRef.current &&
+				multiplicadorInputRef.current &&
 				acaoRadioButtonInputRef.current &&
 				indiceRadioButtonInputRef.current &&
 				dataVencimentoInputRef.current
@@ -102,7 +108,8 @@ export const PersistAtivoPage: React.FC = () => {
 					nome: nomeInputRef.current.value,
 					tipo: tipoInputValue,
 					acronimo: acronimoInputRef.current.value.toUpperCase(),
-					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null
+					dataVencimento: dataVencimentoInputRef.current.value.length > 0 ? new Date(dataVencimentoInputRef.current.value) : null,
+					multiplicador: multiplicadorInputRef.current.value
 				});
 			}
 
@@ -135,6 +142,7 @@ export const PersistAtivoPage: React.FC = () => {
 				<TextInput label="Nome" reference={nomeInputRef} />
 				<TextInput label="Acronimo" textTransform="uppercase" reference={acronimoInputRef} />
 				<DatePicker label="Data de Vencimento" reference={dataVencimentoInputRef} />
+				<TextInput label="Multiplicador" type="number" step="0.01" reference={multiplicadorInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="indice" label="Índice" onChange={onChangeTipoInput} reference={indiceRadioButtonInputRef} />
 					<RadioButton name="tipo" value="acao" label="Ação" onChange={onChangeTipoInput} reference={acaoRadioButtonInputRef} />
