@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { IconButton } from "@/ui/components";
 import { IconType } from "react-icons";
+import { IconButton } from "@/ui/components";
 
 /**
  * Referencia => https://stackoverflow.com/questions/73001042/how-i-do-to-access-key-of-nested-object-in-my-interface-with-type-generics

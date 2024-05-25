@@ -85,7 +85,13 @@ export const AtivosPage: React.FC = () => {
 				{/* <PageHeader>
 				</PageHeader> */}
 				<TableContainer>
+				{ativos && ativos.length > 0 ? (
 					<DataTable columns={columns} payload={ativos} />
+				) : (
+					<EmptyContainer>
+						<span>Não há ativos cadastrados.</span>
+					</EmptyContainer>
+				)}
 				</TableContainer>
 				<FloatingButton
 					icon={MdAdd}
@@ -127,3 +133,13 @@ const TableContainer = styled.div`
 
 	width: 100%;
 `
+
+const EmptyContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-grow: 1;
+
+	width: 100%;
+`;
+

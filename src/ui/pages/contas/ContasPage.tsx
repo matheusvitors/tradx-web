@@ -82,14 +82,21 @@ export const ContasPage: React.FC = () => {
 	return (
 		<Page pageName="Contas">
 			<Content>
-				<ContasContainer>
-					<DataTable columns={columns} payload={contas} />
+				{/* <ContasContainer> */}
+					{contas && contas.length > 0 ? (
+						<DataTable columns={columns} payload={contas} />
+					) : (
+						<EmptyContainer>
+							<span>Não há contas cadastradas.</span>
+						</EmptyContainer>
+					)}
+
 					<FloatingButton
 						icon={MdAdd}
 						label='Nova Conta'
 						onClick={() => navigate('/contas/adicionar', { state: {background: location}})}
 					/>
-				</ContasContainer>
+				{/* </ContasContainer> */}
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
@@ -116,4 +123,13 @@ const ContasContainer = styled.div`
 
 	width: 100%;
 	height: auto;
+`;
+
+const EmptyContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-grow: 1;
+
+	width: 100%;
 `;

@@ -1,39 +1,39 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import styled, { useTheme } from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
-import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Page } from '@/ui/layouts';
-import { Conta, Operacao } from '@/application/models';
-import { listOperacaoByConta, removeOperacao } from '@/application/services/operacoes';
-import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, PageLoading, SelectOptions, Toast } from '@/ui/components';
-import { listContas } from '@/application/services';
-import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
-import { storage } from '@/infra/store/storage';
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import styled, { useTheme } from "styled-components";
+import { useQuery } from "@tanstack/react-query";
+import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Page } from "@/ui/layouts";
+import { Conta, Operacao } from "@/application/models";
+import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
+import { STALE_TIME } from "@/infra/config/constants";
+import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, PageLoading, SelectOptions, Toast } from "@/ui/components";
+import { listContas } from "@/application/services";
+import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
+import { storage } from "@/infra/store/storage";
 
 export const OperacoesPage: React.FC = () => {
-
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
-		queryKey: ['operacoes'],
-		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ''),
+		queryKey: ["operacoes"],
+		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ""),
 		staleTime: STALE_TIME,
+		enabled: storage.get(KEY_CONTA_SELECIONADA)?.data ? true : false
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
-	const [selectedConta, setSelectedConta] = useState('');
+	const [selectedConta, setSelectedConta] = useState("");
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
 		loadContas();
 		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
-		setSelectedConta(storagedConta?.data || '');
-	}, [])
+		setSelectedConta(storagedConta?.data || "");
+	}, []);
 
 	useEffect(() => {
 		data && setOperacoes(preparePayloadDataTable(data));
@@ -48,8 +48,8 @@ export const OperacoesPage: React.FC = () => {
 			const cachedContas = storage.get(KEY_CONTAS);
 			let contas: Conta[] = [];
 
-			if(cachedContas){
-				if(cachedContas.expiration && Date.now() > cachedContas.expiration) {
+			if (cachedContas) {
+				if (cachedContas.expiration && Date.now() > cachedContas.expiration) {
 					contas = await listContas();
 				} else {
 					contas = JSON.parse(cachedContas.data);
@@ -58,81 +58,77 @@ export const OperacoesPage: React.FC = () => {
 				contas = await listContas();
 			}
 
-			const options: SelectOptions[] = contas.map(conta => ({
+			const options: SelectOptions[] = contas.map((conta) => ({
 				label: conta.nome,
 				value: conta.id,
-			}))
+			}));
 
 			setContaOptions(options);
 
 			const defaultConta = storage.get(KEY_CONTA_SELECIONADA);
 			defaultConta && setSelectedConta(defaultConta.data);
 		} catch (error: any) {
-			Toast.error(error)
+			Toast.error(error);
 		}
-	}
-
+	};
 
 	const onEdit = async (operacao: Operacao) => {
-		navigate('/operacoes/editar', { state: {background: location, operacao: operacao }})
-	}
+		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
+	};
 
 	const onRemove = async (operacao: Operacao) => {
-		Toast.confirm(
-			`Excluir Operação?`,
-			`Deseja excluir a operação iniciada em ${formatData(operacao.dataEntrada)}?`,
-			'Excluir',
-			async () => {await onRemoveOperacao(operacao.id); refetch()},
-		)
-	}
+		Toast.confirm(`Excluir Operação?`, `Deseja excluir a operação iniciada em ${formatData(operacao.dataEntrada)}?`, "Excluir", async () => {
+			await onRemoveOperacao(operacao.id);
+			refetch();
+		});
+	};
 
 	const onRemoveOperacao = async (id: string) => {
 		try {
-			await removeOperacao(id)
+			await removeOperacao(id);
 		} catch (error: any) {
 			Toast.error(error.message);
 		}
-	}
+	};
 
 	const columns: Column<Operacao>[] = [
-		{ name: 'Ativo', acessor: 'ativo.acronimo'},
-		{ name: 'Tipo', acessor: 'tipo'},
-		{ name: 'Preço - Entrada', acessor: 'precoEntrada'},
-		{ name: 'Stop Loss', acessor: 'stopLoss'},
-		{ name: 'Alvo', acessor: 'alvo'},
-		{ name: 'Preço - Saída', acessor: 'precoSaida'},
-		{ name: 'Horário - Entrada', acessor: 'dataEntrada'},
-		{ name: 'Horário - Saída', acessor: 'dataSaida'},
-	]
+		{ name: "Ativo", acessor: "ativo.acronimo" },
+		{ name: "Tipo", acessor: "tipo" },
+		{ name: "Preço - Entrada", acessor: "precoEntrada" },
+		{ name: "Stop Loss", acessor: "stopLoss" },
+		{ name: "Alvo", acessor: "alvo" },
+		{ name: "Preço - Saída", acessor: "precoSaida" },
+		{ name: "Horário - Entrada", acessor: "dataEntrada" },
+		{ name: "Horário - Saída", acessor: "dataSaida" },
+	];
 
 	const formatData = (date: Date): string => {
-		return new Date(date).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'})
-	}
+		return new Date(date).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+	};
 
 	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
 		const result: DataTablePayload[] = input.map((item: Operacao) => ({
 			data: {
 				...item,
-				dataEntrada: new Date(item.dataEntrada).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
-				dataSaida: item.dataSaida ? new Date(item.dataSaida).toLocaleString('pt-BR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : undefined,
+				dataEntrada: new Date(item.dataEntrada).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+				dataSaida: item.dataSaida ? new Date(item.dataSaida).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : undefined,
 			},
 			actions: [
 				{
 					icon: MdEdit,
 					callback: () => onEdit(item),
-					color: theme.semantic.attention
+					color: theme.semantic.attention,
 				},
 				{
 					icon: MdDelete,
 					callback: () => onRemove(item),
-					color: theme.semantic.warning
+					color: theme.semantic.warning,
 				},
-
-			]
-		}))
+			],
+		}));
 
 		return result;
-	}
+	};
 
 	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
@@ -142,41 +138,43 @@ export const OperacoesPage: React.FC = () => {
 			const result = await listOperacaoByConta(event.target.value);
 			setOperacoes(preparePayloadDataTable(result));
 		} catch (error: any) {
-			Toast.error(error.message)
+			Toast.error(error.message);
 		}
-	}
+	};
 
 	return (
-		<Page pageName='Operações'>
+		<Page pageName="Operações">
 			<Content>
+				{ contaOptions && contaOptions.length > 0 ? (
+					<>
+				<TableContainer>
+					<PageHeader>
+						<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
+					</PageHeader>
+
+					{operacoes && operacoes.length > 0 ? (
+						<DataTable columns={columns} payload={operacoes} />
+					) : (
+						<EmptyContainer>
+							<span>Não há operações registradas.</span>
+						</EmptyContainer>
+					)}
+				</TableContainer>
+
+				<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
+				</>
+			) : (
+				<EmptyContainer>
+					<span>Não há operações registradas.</span>
+				</EmptyContainer>
+			)}
 
 
-							<TableContainer>
-								<PageHeader>
-									<HeaderSelector label='' name='conta' value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta}  />
-								</PageHeader>
-
-								{operacoes && operacoes.length > 0 ?
-									<DataTable columns={columns} payload={operacoes} />
-								:
-									<EmptyContainer>
-										<span>Não há operações registradas.</span>
-									</EmptyContainer>
-								}
-							</TableContainer>
-
-
-
-				<FloatingButton
-					icon={MdAdd}
-					label='Nova Operação'
-					onClick={() => navigate('/operacoes/adicionar', { state: {background: location}})}
-				/>
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
 	);
-}
+};
 
 const Content = styled.div`
 	display: flex;
@@ -184,7 +182,7 @@ const Content = styled.div`
 	justify-content: flex-start;
 	flex-direction: column;
 	flex-grow: 1;
-`
+`;
 
 const PageHeader = styled.div`
 	display: flex;
@@ -199,7 +197,7 @@ const PageHeader = styled.div`
 	margin-bottom: 20px;
 
 	/* border: 1px solid white; */
-`
+`;
 
 const TableContainer = styled.div`
 	display: flex;
@@ -209,8 +207,7 @@ const TableContainer = styled.div`
 	flex-grow: 1;
 
 	width: 100%;
-
-`
+`;
 
 const EmptyContainer = styled.div`
 	display: flex;
@@ -219,5 +216,4 @@ const EmptyContainer = styled.div`
 	flex-grow: 1;
 
 	width: 100%;
-
-`
+`;
