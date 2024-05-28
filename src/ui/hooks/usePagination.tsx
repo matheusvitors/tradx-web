@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export const usePagination = <T,>() => {
-	const totalPerPage = 15;
+export const usePagination = () => {
+	const totalPerPage = 5;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 
-	const paginate = (array: T[]) => {
+	const paginate = (array: any[]) => {
 		setTotalPages(Math.trunc(array.length / totalPerPage < 1 ? 1 : array.length / totalPerPage));
 		if (array.length / totalPerPage < 1) {
 			return array;
