@@ -3,6 +3,7 @@ import styled, { css } from "styled-components";
 import { IconType } from "react-icons";
 import { IconButton } from "@/ui/components";
 import { usePagination } from "@/ui/hooks";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 /**
  * Referencia => https://stackoverflow.com/questions/73001042/how-i-do-to-access-key-of-nested-object-in-my-interface-with-type-generics
@@ -46,13 +47,13 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	//TODO: Resolver bug do background transparente nas actions
 	// https://www.google.com/search?q=access+nested+atribute+using+string&sca_esv=a62499659915de61&sxsrf=ACQVn09YWAUlKx8JO2S-Kh_Q2LvwMp5dfQ%3A1710625455266&ei=rxL2ZfHoD_yI4dUP54yE0A8&udm=&ved=0ahUKEwix_Oq04PmEAxV8RLgEHWcGAfoQ4dUDCBA&uact=5&oq=access+nested+atribute+using+string&gs_lp=Egxnd3Mtd2l6LXNlcnAiI2FjY2VzcyBuZXN0ZWQgYXRyaWJ1dGUgdXNpbmcgc3RyaW5nMgkQIRgKGKABGApIniFQrQZY3R5wAngBkAEAmAH1AaABwR2qAQYwLjkuMTC4AQPIAQD4AQGYAhCgAoUYwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAgYQABgWGB7CAgYQIRgVGAqYAwDiAwUSATEgQIgGAZAGCJIHBjIuMy4xMaAHwWA&sclient=gws-wiz-serp
 
-	const { currentPage, totalPages, setTotalPages, firstPage, nextPage, prevPage, paginate } = usePagination();
+	const { currentPage, totalPages, firstPage, lastPage, nextPage, prevPage, paginate } = usePagination();
 
 	const [items, setItems] = useState<any>([]);
 
 	useEffect(() => {
 		setItems(paginate(payload));
-	}, [payload])
+	}, [payload, currentPage])
 
 	const Actions: React.FC<Omit<DataTablePayload, "data">> = ({ actions }) => {
 		return (
@@ -69,7 +70,9 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	};
 
 	return (
+
 		<Container>
+			<TableContainer>
 			<Table>
 				<Row>
 					{columns.map((column: Column<any>, i: number) => (
@@ -78,7 +81,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						</HeaderCell>
 					))}
 				</Row>
-				{payload.map(({ data, actions }: DataTablePayload, i: number) => (
+				{items.map(({ data, actions }: DataTablePayload, i: number) => (
 					<Row key={i}>
 						{columns.map((column: Column<any>, i: number) => (
 							<Cell key={i} $width={column.width}>
@@ -89,9 +92,16 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 					</Row>
 				))}
 			</Table>
-			<PaginationContainer>
-				Paginação
-			</PaginationContainer>
+			</TableContainer>
+			{ totalPages > 1 &&
+				<PaginationContainer>
+					<IconButton icon={MdKeyboardDoubleArrowLeft} onClick={firstPage} />
+					<IconButton icon={MdKeyboardArrowLeft} onClick={prevPage} />
+					<span>Página {currentPage} de {totalPages}</span>
+					<IconButton icon={MdKeyboardArrowRight} onClick={nextPage} />
+					<IconButton icon={MdKeyboardDoubleArrowRight} onClick={lastPage} />
+				</PaginationContainer>
+			}
 		</Container>
 
 	);
@@ -110,16 +120,19 @@ const Container = styled.div`
 	flex-direction: column;
 
 	width: 100%;
-
-	border: 1px solid red;
+	height: 90%;
 `
+
+const TableContainer = styled.div`
+	width: 100%;
+	height: 100%;
+`;
 
 const Table = styled.div`
 	display: table;
 	width: 100%;
 
 	border-collapse: collapse;
-	border: 1px solid white;
 `;
 
 const HeaderCell = styled.div<{ $width?: string }>`
@@ -170,10 +183,10 @@ const PaginationContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	align-self: flex-end;
+	gap: 20px;
 
 	width: 100%;
 	height: 60px;
 	margin-top: 15px;
-
-	border: 1px solid forestgreen;
 `

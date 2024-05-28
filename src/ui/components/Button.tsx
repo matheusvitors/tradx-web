@@ -12,7 +12,7 @@ interface ButtonProps {
 
 export const Button: React.FC<ButtonProps> = ({ label, type, width, height, isLoading, onClick }) => {
 	return (
-		<Container type={type} onClick={onClick} width={width} height={height} >
+		<Container type={type} onClick={onClick} width={width} height={height}>
 			{!isLoading ? label : 'Carregando...'}
 		</Container>
 	);

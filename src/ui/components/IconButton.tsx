@@ -10,7 +10,7 @@ interface IconButtonProps {
 	margin?: number;
 }
 
-export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, color, margin }) => {
+export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, color, margin}) => {
 
 	return (
 		<Button onClick={onClick} size={size || 32} color={color} $margin={margin}>
