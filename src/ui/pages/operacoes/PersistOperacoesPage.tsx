@@ -6,7 +6,7 @@ import { listAtivos, listContas, createOperacao, editOperacao,  } from "@/applic
 import { Ativo, Conta, Operacao } from "@/application/models";
 import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
-import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, Toast } from "@/ui/components";
+import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import { formatDate } from "@/utils/format-date";
 
@@ -49,6 +49,8 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		location.state.operacao && loadOperacao(location.state.operacao);
+		console.log('location',location.state);
+
 	}, [location]);
 
 	const loadAtivos = async () => {
@@ -74,7 +76,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			setAtivoOptions(options)
 		} catch (error: any) {
-			Toast.error(error)
+			Toast.error(error.message)
 		}
 	}
 
@@ -229,8 +231,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	return (
 		<ModalPage title="Adicionar Operação">
 			<Form onSubmit={onSubmit}>
-				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} defaultValue={location.state.operacao.conta.id} />
-				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} defaultValue={location.state.operacao.ativo.id}/>
+				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} />
+				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} />
 				<TextInput label="Quantidade" reference={quantidadeInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="compra" label="Compra" onChange={onChangeTipoInput} reference={compraRadioButtonInputRef} />
@@ -240,8 +242,10 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				<DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
-				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} />
+				{/* <DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
+				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} /> */}
+				<TimePicker label="Data de Entrada" reference={dataEntradaInputRef} />
+				<TimePicker label="Data de Saída" reference={dataSaidaInputRef} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
 					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" reference={operacaoPerdidaCheckboxInputRef} />

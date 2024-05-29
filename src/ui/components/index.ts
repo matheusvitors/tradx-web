@@ -13,6 +13,7 @@ export * from './RadioGroup'
 export * from './Select'
 export * from './Textarea'
 export * from './TextInput'
+export * from './TimePicker'
 export * from './Toast'
 export * from './SystemName'
 
