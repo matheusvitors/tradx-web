@@ -23,7 +23,6 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 	const ativoSelectRef = useRef<HTMLSelectElement>(null);
-	const dataEntradaInputRef = useRef<HTMLInputElement>(null);
 	const quantidadeInputRef = useRef<HTMLInputElement>(null);
 	const compraRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const vendaRadioButtonInputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +30,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	const stopLossInputRef = useRef<HTMLInputElement>(null);
 	const alvoInputRef = useRef<HTMLInputElement>(null);
 	const precoSaidaInputRef = useRef<HTMLInputElement>(null);
-	const dataSaidaInputRef = useRef<HTMLInputElement>(null);
+	let dataEntradaInputRef = '';
+	let dataSaidaInputRef = '';
 	const operacaoPerdidaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const operacaoErradaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const comentariosTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,9 +49,12 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		location.state.operacao && loadOperacao(location.state.operacao);
-		console.log('location',location.state);
-
 	}, [location]);
+
+	useEffect(() => {
+		console.log('dataEntradaInputRef', dataEntradaInputRef)
+		console.log('dataSaidaInputRef', dataSaidaInputRef)
+	}, [dataEntradaInputRef, dataSaidaInputRef])
 
 	const loadAtivos = async () => {
 		try {
@@ -70,12 +73,14 @@ export const PersistOperacoesPage: React.FC = () => {
 			const options: SelectOptions[] = ativos.map(ativo => ({
 				label: ativo.acronimo,
 				value: ativo.id,
-				isSelected: ativo.id === location.state.operacao.ativoId ? true : false
+				isSelected: ativo.id === location.state.operacao?.ativoId ? true : false
 
 			}))
 
 			setAtivoOptions(options)
 		} catch (error: any) {
+			console.log(error);
+
 			Toast.error(error.message)
 		}
 	}
@@ -112,7 +117,7 @@ export const PersistOperacoesPage: React.FC = () => {
 		if(
 			contaSelectRef.current &&
 			ativoSelectRef.current &&
-			dataEntradaInputRef.current &&
+			// dataEntradaInputRef.current &&
 			quantidadeInputRef.current &&
 			compraRadioButtonInputRef.current &&
 			vendaRadioButtonInputRef.current &&
@@ -120,7 +125,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current &&
 			alvoInputRef.current &&
 			precoSaidaInputRef.current &&
-			dataSaidaInputRef.current &&
+			// dataSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
@@ -132,8 +137,8 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current.value = `${operacao.stopLoss}`
 			alvoInputRef.current.value = `${operacao.alvo}`
 			precoSaidaInputRef.current.value = operacao.precoSaida ? `${operacao.precoSaida}` : '';
-			dataEntradaInputRef.current.value = formatDate(new Date(operacao.dataEntrada));
-			dataSaidaInputRef.current.value = operacao.dataSaida ? formatDate(new Date(operacao.dataSaida)) : '';
+			// dataEntradaInputRef.current.value = formatDate(new Date(operacao.dataEntrada));
+			// dataSaidaInputRef.current.value = operacao.dataSaida ? formatDate(new Date(operacao.dataSaida)) : '';
 			operacaoErradaCheckboxInputRef.current.checked = operacao.operacaoErrada || false;
 			operacaoPerdidaCheckboxInputRef.current.checked = operacao.operacaoPerdida || false;
 			comentariosTextareaRef.current.value = operacao.comentarios || '';
@@ -178,10 +183,11 @@ export const PersistOperacoesPage: React.FC = () => {
 
 		let input: OperacaoDTO | null = null;
 
+
 		if(
 			contaSelectRef.current &&
 			ativoSelectRef.current &&
-			dataEntradaInputRef.current &&
+			// dataEntradaInputRef.current &&
 			quantidadeInputRef.current &&
 			compraRadioButtonInputRef.current &&
 			vendaRadioButtonInputRef.current &&
@@ -189,7 +195,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current &&
 			alvoInputRef.current &&
 			precoSaidaInputRef.current &&
-			dataSaidaInputRef.current &&
+			// dataSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
@@ -203,8 +209,10 @@ export const PersistOperacoesPage: React.FC = () => {
 				stopLoss: parseFloat(stopLossInputRef.current.value),
 				alvo: parseFloat(alvoInputRef.current.value),
 				precoSaida: parseFloat(precoSaidaInputRef.current.value) || undefined,
-				dataEntrada: dataEntradaInputRef.current.value,
-				dataSaida: dataSaidaInputRef.current.value,
+				dataEntrada: dataEntradaInputRef,
+				dataSaida: dataSaidaInputRef,
+				// dataEntrada: dataEntradaInputRef.current.value,
+				// dataSaida: dataSaidaInputRef.current.value,
 				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
 				operacaoErrada: operacaoErradaCheckboxInputRef.current.checked,
 				comentarios: comentariosTextareaRef.current.value,
