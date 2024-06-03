@@ -1,4 +1,4 @@
-import React, { FormEvent, InputHTMLAttributes, RefObject, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { format } from "date-fns";
@@ -6,14 +6,16 @@ import { format } from "date-fns";
 interface TimePickerProps {
 	// interface TimePickerProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
-	reference?: string;
+	setValue: React.Dispatch<React.SetStateAction<string>>;
 	// reference?: RefObject<HTMLInputElement>;
 	defaultValue?: Date;
 }
 
-export const TimePicker: React.FC<TimePickerProps> = ({ label, reference, defaultValue }) => {
-	const date = defaultValue || new Date();
-	const defaultValueString = format(date, "yyyy-MM-dd");
+export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
+	console.log('default value', defaultValue);
+
+	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
+	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
 	const dateRef = useRef<HTMLInputElement>(null);
 	const timeRef = useRef<HTMLInputElement>(null);
@@ -27,14 +29,11 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, reference, defaul
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
 		console.log(event.target.value);
-		console.log('logic', reference, dateRef, timeRef);
 
 		if ((dateRef && dateRef.current) && (timeRef && timeRef.current)) {
 			console.log('foi?');
 
-			reference = `${dateRef.current.value} ${timeRef.current.value}`;
-			console.log('reference', reference);
-
+			setValue(`${dateRef.current.value} ${timeRef.current.value}`);
 		}
 
 	};
@@ -43,8 +42,8 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, reference, defaul
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
-				<DateInput defaultValue={defaultValueString} onChange={handleChange} ref={dateRef} />
-				<TimeInput onChange={handleChange} ref={timeRef} />
+				<DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
+				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} />
 			</InputContainer>
 		</Container>
 	);

@@ -6,9 +6,8 @@ import { listAtivos, listContas, createOperacao, editOperacao,  } from "@/applic
 import { Ativo, Conta, Operacao } from "@/application/models";
 import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
-import { Button, Checkbox, DatePicker, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
+import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
-import { formatDate } from "@/utils/format-date";
 
 export const PersistOperacoesPage: React.FC = () => {
 
@@ -21,6 +20,9 @@ export const PersistOperacoesPage: React.FC = () => {
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
 
+	const [dataEntrada, setDataEntrada] = useState('');
+	const [dataSaida, setDataSaida] = useState('')
+
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 	const ativoSelectRef = useRef<HTMLSelectElement>(null);
 	const quantidadeInputRef = useRef<HTMLInputElement>(null);
@@ -30,8 +32,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	const stopLossInputRef = useRef<HTMLInputElement>(null);
 	const alvoInputRef = useRef<HTMLInputElement>(null);
 	const precoSaidaInputRef = useRef<HTMLInputElement>(null);
-	let dataEntradaInputRef = '';
-	let dataSaidaInputRef = '';
 	const operacaoPerdidaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const operacaoErradaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const comentariosTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -52,9 +52,9 @@ export const PersistOperacoesPage: React.FC = () => {
 	}, [location]);
 
 	useEffect(() => {
-		console.log('dataEntradaInputRef', dataEntradaInputRef)
-		console.log('dataSaidaInputRef', dataSaidaInputRef)
-	}, [dataEntradaInputRef, dataSaidaInputRef])
+		console.log('dataEntrada', dataEntrada)
+		console.log('dataSaida', dataSaida)
+	}, [dataEntrada, dataSaida])
 
 	const loadAtivos = async () => {
 		try {
@@ -209,8 +209,8 @@ export const PersistOperacoesPage: React.FC = () => {
 				stopLoss: parseFloat(stopLossInputRef.current.value),
 				alvo: parseFloat(alvoInputRef.current.value),
 				precoSaida: parseFloat(precoSaidaInputRef.current.value) || undefined,
-				dataEntrada: dataEntradaInputRef,
-				dataSaida: dataSaidaInputRef,
+				dataEntrada: dataEntrada,
+				dataSaida: dataSaida,
 				// dataEntrada: dataEntradaInputRef.current.value,
 				// dataSaida: dataSaidaInputRef.current.value,
 				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
@@ -252,8 +252,8 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
 				{/* <DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
 				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} /> */}
-				<TimePicker label="Data de Entrada" reference={dataEntradaInputRef} />
-				<TimePicker label="Data de Saída" reference={dataSaidaInputRef} />
+				<TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
+				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
 					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" reference={operacaoPerdidaCheckboxInputRef} />
