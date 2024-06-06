@@ -21,10 +21,10 @@ export const PersistOperacoesPage: React.FC = () => {
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
 
 	const [dataEntrada, setDataEntrada] = useState('');
-	const [dataSaida, setDataSaida] = useState('')
+	const [dataSaida, setDataSaida] = useState('');
+	const [selectAtivo, setSelectAtivo] = useState(location.state.operacao?.ativo.id || '')
+	const [selectConta, setSelectConta] = useState(location.state.operacao?.conta.id || '');
 
-	const contaSelectRef = useRef<HTMLSelectElement>(null);
-	const ativoSelectRef = useRef<HTMLSelectElement>(null);
 	const quantidadeInputRef = useRef<HTMLInputElement>(null);
 	const compraRadioButtonInputRef = useRef<HTMLInputElement>(null);
 	const vendaRadioButtonInputRef = useRef<HTMLInputElement>(null);
@@ -51,10 +51,10 @@ export const PersistOperacoesPage: React.FC = () => {
 		location.state.operacao && loadOperacao(location.state.operacao);
 	}, [location]);
 
-	useEffect(() => {
-		console.log('dataEntrada', dataEntrada)
-		console.log('dataSaida', dataSaida)
-	}, [dataEntrada, dataSaida])
+	// useEffect(() => {
+	// 	console.log('dataEntrada', dataEntrada)
+	// 	console.log('dataSaida', dataSaida)
+	// }, [dataEntrada, dataSaida])
 
 	const loadAtivos = async () => {
 		try {
@@ -73,7 +73,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			const options: SelectOptions[] = ativos.map(ativo => ({
 				label: ativo.acronimo,
 				value: ativo.id,
-				isSelected: ativo.id === location.state.operacao?.ativoId ? true : false
+				isSelected: ativo.id === location.state.operacao?.ativo.id ? true : false
 
 			}))
 
@@ -103,6 +103,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			const options: SelectOptions[] = contas.map(conta => ({
 				label: conta.nome,
 				value: conta.id,
+				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
 			setContaOptions(options);
@@ -115,9 +116,6 @@ export const PersistOperacoesPage: React.FC = () => {
 		setIsLoading(true);
 
 		if(
-			contaSelectRef.current &&
-			ativoSelectRef.current &&
-			// dataEntradaInputRef.current &&
 			quantidadeInputRef.current &&
 			compraRadioButtonInputRef.current &&
 			vendaRadioButtonInputRef.current &&
@@ -125,7 +123,6 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current &&
 			alvoInputRef.current &&
 			precoSaidaInputRef.current &&
-			// dataSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
@@ -137,8 +134,6 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current.value = `${operacao.stopLoss}`
 			alvoInputRef.current.value = `${operacao.alvo}`
 			precoSaidaInputRef.current.value = operacao.precoSaida ? `${operacao.precoSaida}` : '';
-			// dataEntradaInputRef.current.value = formatDate(new Date(operacao.dataEntrada));
-			// dataSaidaInputRef.current.value = operacao.dataSaida ? formatDate(new Date(operacao.dataSaida)) : '';
 			operacaoErradaCheckboxInputRef.current.checked = operacao.operacaoErrada || false;
 			operacaoPerdidaCheckboxInputRef.current.checked = operacao.operacaoPerdida || false;
 			comentariosTextareaRef.current.value = operacao.comentarios || '';
@@ -183,11 +178,10 @@ export const PersistOperacoesPage: React.FC = () => {
 
 		let input: OperacaoDTO | null = null;
 
+		console.log('datas', dataEntrada, dataSaida);
+
 
 		if(
-			contaSelectRef.current &&
-			ativoSelectRef.current &&
-			// dataEntradaInputRef.current &&
 			quantidadeInputRef.current &&
 			compraRadioButtonInputRef.current &&
 			vendaRadioButtonInputRef.current &&
@@ -195,24 +189,21 @@ export const PersistOperacoesPage: React.FC = () => {
 			stopLossInputRef.current &&
 			alvoInputRef.current &&
 			precoSaidaInputRef.current &&
-			// dataSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
 			operacaoPerdidaCheckboxInputRef.current &&
 			comentariosTextareaRef.current
 		) {
 			input = {
-				ativoId: ativoSelectRef.current.value,
-				contaId: contaSelectRef.current.value,
+				ativoId: selectAtivo,
+				contaId: selectAtivo,
 				quantidade: parseInt(quantidadeInputRef.current.value),
 				tipo: tipoInputValue,
 				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
 				stopLoss: parseFloat(stopLossInputRef.current.value),
 				alvo: parseFloat(alvoInputRef.current.value),
 				precoSaida: parseFloat(precoSaidaInputRef.current.value) || undefined,
-				dataEntrada: dataEntrada,
-				dataSaida: dataSaida,
-				// dataEntrada: dataEntradaInputRef.current.value,
-				// dataSaida: dataSaidaInputRef.current.value,
+				dataEntrada,
+				dataSaida,
 				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
 				operacaoErrada: operacaoErradaCheckboxInputRef.current.checked,
 				comentarios: comentariosTextareaRef.current.value,
@@ -237,10 +228,10 @@ export const PersistOperacoesPage: React.FC = () => {
 	};
 
 	return (
-		<ModalPage title="Adicionar Operação">
+		<ModalPage title={location.state ? "Editar Operação" : "Adicionar Operação"}>
 			<Form onSubmit={onSubmit}>
-				<Select label='Conta' name='conta' options={contaOptions} reference={contaSelectRef} />
-				<Select label='Ativo' name='ativo' options={ativoOptions} reference={ativoSelectRef} />
+				<Select label='Conta' name='conta' options={contaOptions} value={selectConta} onChange={(e) => setSelectConta(e.target.value)} />
+				<Select label='Ativo' name='ativo' options={ativoOptions} value={selectAtivo} onChange={(e) => setSelectAtivo(e.target.value)} />
 				<TextInput label="Quantidade" reference={quantidadeInputRef} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="compra" label="Compra" onChange={onChangeTipoInput} reference={compraRadioButtonInputRef} />
@@ -250,8 +241,6 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				{/* <DatePicker label="Data de Entrada" reference={dataEntradaInputRef} />
-				<DatePicker label="Data de Saída" reference={dataSaidaInputRef} /> */}
 				<TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
 				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} />
 				<RadioGroup>

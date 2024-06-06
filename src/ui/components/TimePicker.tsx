@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { format } from "date-fns";
@@ -12,13 +12,17 @@ interface TimePickerProps {
 }
 
 export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
-	console.log('default value', defaultValue);
+	// console.log('default value', defaultValue);
 
 	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
 	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
 	const dateRef = useRef<HTMLInputElement>(null);
 	const timeRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		defaultDateString && defaultTimeString && setValue(`${defaultDateString} ${defaultTimeString}`);
+	}, [])
 
 	// useEffect(() => {
 	// 	if (reference && reference.current) {
@@ -35,7 +39,6 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, default
 
 			setValue(`${dateRef.current.value} ${timeRef.current.value}`);
 		}
-
 	};
 
 	return (

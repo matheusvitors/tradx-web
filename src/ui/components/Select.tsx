@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
 
@@ -6,26 +6,24 @@ interface SelectProps {
 	label: string;
 	name: string;
 	options: SelectOptions[];
-	reference?: RefObject<HTMLSelectElement>;
-	defaultValue?: string;
+	value: string;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
 export interface SelectOptions {
 	label: string;
 	value: string | number;
-	isSelected?: boolean;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, options, reference, defaultValue, onChange }) => {
+export const Select: React.FC<SelectProps> = ({ label, name, options, value, onChange }) => {
+
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<Input
 				name={name}
 				id={name}
-				ref={reference}
-				value={defaultValue}
+				value={value}
 				onChange={onChange}
 			>
 				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
