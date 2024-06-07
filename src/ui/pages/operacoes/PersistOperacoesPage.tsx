@@ -9,6 +9,8 @@ import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 
+//FIXME: Ao salvar dar erro de conta não encontrada
+
 export const PersistOperacoesPage: React.FC = () => {
 
 	const navigate = useNavigate();
@@ -77,6 +79,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			}))
 
+			setSelectAtivo(ativos[0]);
 			setAtivoOptions(options)
 		} catch (error: any) {
 			console.log(error);
@@ -106,6 +109,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
+			setSelectConta(contas[0])
 			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
@@ -195,7 +199,7 @@ export const PersistOperacoesPage: React.FC = () => {
 		) {
 			input = {
 				ativoId: selectAtivo,
-				contaId: selectAtivo,
+				contaId: selectConta,
 				quantidade: parseInt(quantidadeInputRef.current.value),
 				tipo: tipoInputValue,
 				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
@@ -228,7 +232,7 @@ export const PersistOperacoesPage: React.FC = () => {
 	};
 
 	return (
-		<ModalPage title={location.state ? "Editar Operação" : "Adicionar Operação"}>
+		<ModalPage title={location.state.operacao ? "Editar Operação" : "Adicionar Operação"}>
 			<Form onSubmit={onSubmit}>
 				<Select label='Conta' name='conta' options={contaOptions} value={selectConta} onChange={(e) => setSelectConta(e.target.value)} />
 				<Select label='Ativo' name='ativo' options={ativoOptions} value={selectAtivo} onChange={(e) => setSelectAtivo(e.target.value)} />

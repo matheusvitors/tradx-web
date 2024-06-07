@@ -12,6 +12,8 @@ import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 
+//FIXME: Mudança de conta as vezes não carrega suas operações corretamente
+
 export const OperacoesPage: React.FC = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();

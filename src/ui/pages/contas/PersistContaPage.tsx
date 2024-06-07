@@ -30,6 +30,8 @@ export const PersistContaPage: React.FC = () => {
 
 	useEffect(() => {
 		location.state.conta && loadConta(location.state.conta)
+		console.log(location.state.conta);
+
 	}, [location])
 
 
