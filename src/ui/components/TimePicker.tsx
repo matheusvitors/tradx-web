@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { format } from "date-fns";
@@ -6,47 +6,55 @@ import { format } from "date-fns";
 interface TimePickerProps {
 	// interface TimePickerProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
-	setValue: React.Dispatch<React.SetStateAction<string>>;
+	setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
 	// reference?: RefObject<HTMLInputElement>;
 	defaultValue?: Date;
 }
 
 export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
-	// console.log('default value', defaultValue);
+	//FIXME: Input retornar undefined caso ele não tenha defaultValue e nem tenha o seu valor mudado
 
 	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
 	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
-	const dateRef = useRef<HTMLInputElement>(null);
-	const timeRef = useRef<HTMLInputElement>(null);
+	const [date, setDate] = useState();
+	const [time, setTime] = useState()
+
+	// const dateRef = useRef<HTMLInputElement>(null);
+	// const timeRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		defaultDateString && defaultTimeString && setValue(`${defaultDateString} ${defaultTimeString}`);
+		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
 	}, [])
 
-	// useEffect(() => {
-	// 	if (reference && reference.current) {
-	// 		reference.current.value = '';
-	// 	}
-	// }, []);
-
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		event.preventDefault();
-		console.log(event.target.value);
-
-		if ((dateRef && dateRef.current) && (timeRef && timeRef.current)) {
-			console.log('foi?');
-
-			setValue(`${dateRef.current.value} ${timeRef.current.value}`);
+	useEffect(() => {
+		console.log(label, `${date || format(new Date(), "yyyy-MM-dd")} ${time || format(new Date(), "HH:mm")}`);
+		if(defaultValue) {
+			setValue(`${date || format(new Date(), "yyyy-MM-dd")} ${time || format(new Date(), "HH:mm")}`);
+		} else {
+			setValue(undefined)
 		}
-	};
+	}, [date, time])
+
+	// const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+	// 	event.preventDefault();
+	// 	console.log('target value',event.target.value);
+
+	// 	if ((dateRef && dateRef.current) && (timeRef && timeRef.current)) {
+	// 		setValue(`${dateRef.current.value} ${timeRef.current.value}`);
+	// 		console.log('data tempo', `${dateRef.current.value} ${timeRef.current.value}`);
+	// 	}
+	// };
+
 
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
-				<DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
-				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} />
+				<DateInput value={defaultDateString} onChange={(event) => setDate(event.target.value)} />
+				<TimeInput value={defaultTimeString} onChange={(event) => setTime(event.target.value)}  />
+				{/* <DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
+				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} /> */}
 			</InputContainer>
 		</Container>
 	);

@@ -24,8 +24,8 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const [dataEntrada, setDataEntrada] = useState('');
 	const [dataSaida, setDataSaida] = useState('');
-	const [selectAtivo, setSelectAtivo] = useState(location.state.operacao?.ativo.id || '')
-	const [selectConta, setSelectConta] = useState(location.state.operacao?.conta.id || '');
+	const [selectAtivo, setSelectAtivo] = useState<string>(location.state.operacao?.ativo.id || '')
+	const [selectConta, setSelectConta] = useState<string>(location.state.operacao?.conta.id || '');
 
 	const quantidadeInputRef = useRef<HTMLInputElement>(null);
 	const compraRadioButtonInputRef = useRef<HTMLInputElement>(null);
@@ -79,7 +79,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			}))
 
-			setSelectAtivo(ativos[0]);
+			setSelectAtivo(ativos[0].id);
 			setAtivoOptions(options)
 		} catch (error: any) {
 			console.log(error);
@@ -109,7 +109,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
-			setSelectConta(contas[0])
+			setSelectConta(contas[0].id)
 			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
