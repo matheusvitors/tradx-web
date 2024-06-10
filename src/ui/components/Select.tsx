@@ -16,7 +16,6 @@ export interface SelectOptions {
 }
 
 export const Select: React.FC<SelectProps> = ({ label, name, options, value, onChange }) => {
-
 	return (
 		<Container>
 			<Label>{label}</Label>

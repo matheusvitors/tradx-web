@@ -9,8 +9,6 @@ import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 
-//FIXME: Ao salvar dar erro de conta não encontrada
-
 export const PersistOperacoesPage: React.FC = () => {
 
 	const navigate = useNavigate();
@@ -22,8 +20,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
 
-	const [dataEntrada, setDataEntrada] = useState('');
-	const [dataSaida, setDataSaida] = useState('');
+	const [dataEntrada, setDataEntrada] = useState<string | undefined>();
+	const [dataSaida, setDataSaida] = useState<string | undefined>();
 	const [selectAtivo, setSelectAtivo] = useState<string>(location.state.operacao?.ativo.id || '')
 	const [selectConta, setSelectConta] = useState<string>(location.state.operacao?.conta.id || '');
 
@@ -79,11 +77,10 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			}))
 
-			setSelectAtivo(ativos[0].id);
+			setSelectAtivo(location.state.operacao?.ativo.id || ativos[0].id);
 			setAtivoOptions(options)
 		} catch (error: any) {
 			console.log(error);
-
 			Toast.error(error.message)
 		}
 	}
@@ -109,7 +106,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
-			setSelectConta(contas[0].id)
+			setSelectConta(location.state.operacao?.conta.id || contas[0].id)
 			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
@@ -184,6 +181,19 @@ export const PersistOperacoesPage: React.FC = () => {
 
 		console.log('datas', dataEntrada, dataSaida);
 
+		if(!dataEntrada) {
+			console.log('dataEntrada', dataEntrada);
+
+			Toast.error('A data de entrada é obrigatória.')
+		}
+
+		if(quantidadeInputRef.current){
+			if(!parseInt(quantidadeInputRef.current.value) || parseInt(quantidadeInputRef.current.value) <= 0 ){
+				Toast.error('A quantidade é obrigatória e deve ser maior que zero.');
+				return;
+			}
+		}
+
 
 		if(
 			quantidadeInputRef.current &&
@@ -195,7 +205,8 @@ export const PersistOperacoesPage: React.FC = () => {
 			precoSaidaInputRef.current &&
 			operacaoErradaCheckboxInputRef.current &&
 			operacaoPerdidaCheckboxInputRef.current &&
-			comentariosTextareaRef.current
+			comentariosTextareaRef.current &&
+			dataEntrada
 		) {
 			input = {
 				ativoId: selectAtivo,
@@ -219,6 +230,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			if(input){
 				location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
+				console.log('intput', input);
 			}
 
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
