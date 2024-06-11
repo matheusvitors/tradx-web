@@ -15,33 +15,39 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, default
 	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
 	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
-	console.log('defaultValue', label, defaultDateString, defaultTimeString);
+	// console.log('defaultValue', label, defaultDateString, defaultTimeString);
 
-	const [date, setDate] = useState('');
-	const [time, setTime] = useState('')
+	const [date, setDate] = useState<string>();
+	const [time, setTime] = useState<string>()
 
-	useEffect(() => {
-		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
-		setDate(defaultDateString || '');
-		setTime(defaultTimeString || '');
-	}, [])
-
-	useEffect(() => {
-		setValue(`${date} ${time  || format(new Date(), "HH:mm")}`);
-		console.log(label, 'date', date, time);
-	}, [date]);
+	// useEffect(() => {
+	// 	defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
+	// 	defaultValue && setDate(defaultDateString || '');
+	// 	defaultValue && setTime(defaultTimeString || '');
+	// }, [])
 
 	useEffect(() => {
-		setValue(`${date || format(new Date(), "yyyy-MM-dd")} ${time}`);
-		console.log(label, 'time', date, time);
-	}, [time]);
+		console.log(label, date, time);
+		if(!date) {
+			setDate(format(new Date(), "yyyy-MM-dd"))
+		}
+
+		if(!time) {
+			setTime(format(new Date(), "HH:mm"))
+		}
+		console.log(`${date} ${time}`)
+		// console.log(`${date ?  format(date, "yyyy-MM-dd") :  format(new Date(), "yyyy-MM-dd") } ${time || format(new Date(), "HH:mm")}`)
+
+	}, [date, time])
+
 
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
-				<DateInput value={date} onChange={(event) => {console.log('event', event.target.value); setDate(event.target.value)}} />
-				<TimeInput value={time} onChange={(event) => setTime(event.target.value)}  />
+				{/* <DateInput value={date} onChange={(event) => setDate(event.target.value)} />
+				<TimeInput value={time} onChange={(event) => setTime(event.target.value)}  /> */}
+				<input type="datetime-local" />
 				{/* <DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
 				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} /> */}
 			</InputContainer>

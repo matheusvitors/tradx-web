@@ -53,8 +53,11 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	// useEffect(() => {
 	// 	console.log('dataEntrada', dataEntrada)
-	// 	console.log('dataSaida', dataSaida)
-	// }, [dataEntrada, dataSaida])
+	// }, [dataEntrada])
+
+	useEffect(() => {
+		console.log('dataSAida', dataSaida)
+	}, [dataSaida])
 
 	const loadAtivos = async () => {
 		try {
@@ -184,7 +187,8 @@ export const PersistOperacoesPage: React.FC = () => {
 		if(!dataEntrada) {
 			console.log('dataEntrada', dataEntrada);
 
-			Toast.error('A data de entrada é obrigatória.')
+			Toast.error('A data de entrada é obrigatória.');
+			return;
 		}
 
 		if(quantidadeInputRef.current){
@@ -257,7 +261,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				<TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
+				{/* <TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} /> */}
 				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
