@@ -198,6 +198,24 @@ export const PersistOperacoesPage: React.FC = () => {
 			}
 		}
 
+		if(!dataEntrada || dataEntrada.length === 0) {
+			Toast.error('A data/hora de entrada é obrigatória.');
+			return;
+		}
+
+		const dateRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
+
+		if(!dateRegex.test(dataEntrada)) {
+			Toast.error('A data/hora de entrada está incorreta.');
+			return;
+		}
+		console.log(dataSaida);
+
+		if(dataSaida && !dateRegex.test(dataSaida)) {
+			Toast.error('A data/hora de saída está incorreta.');
+			return;
+		}
+
 
 		if(
 			quantidadeInputRef.current &&
@@ -261,7 +279,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />
 				<TextInput label="Alvo" reference={alvoInputRef} />
 				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				{/* <TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} /> */}
+				<TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
 				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />

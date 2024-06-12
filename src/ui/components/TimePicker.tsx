@@ -17,37 +17,25 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, default
 
 	// console.log('defaultValue', label, defaultDateString, defaultTimeString);
 
-	const [date, setDate] = useState<string>();
-	const [time, setTime] = useState<string>()
-
-	// useEffect(() => {
-	// 	defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
-	// 	defaultValue && setDate(defaultDateString || '');
-	// 	defaultValue && setTime(defaultTimeString || '');
-	// }, [])
+	const [date, setDate] = useState(defaultDateString);
+	const [time, setTime] = useState(defaultTimeString)
 
 	useEffect(() => {
-		console.log(label, date, time);
-		if(!date) {
-			setDate(format(new Date(), "yyyy-MM-dd"))
-		}
+		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
+		defaultValue && setDate(defaultDateString || '');
+		defaultValue && setTime(defaultTimeString || '');
+	}, [])
 
-		if(!time) {
-			setTime(format(new Date(), "HH:mm"))
-		}
-		console.log(`${date} ${time}`)
-		// console.log(`${date ?  format(date, "yyyy-MM-dd") :  format(new Date(), "yyyy-MM-dd") } ${time || format(new Date(), "HH:mm")}`)
-
+	useEffect(() => {
+		setValue(`${date} ${time}`)
 	}, [date, time])
-
 
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
-				{/* <DateInput value={date} onChange={(event) => setDate(event.target.value)} />
-				<TimeInput value={time} onChange={(event) => setTime(event.target.value)}  /> */}
-				<input type="datetime-local" />
+				<DateInput value={date} onChange={(event) => setDate(event.target.value)} />
+				<TimeInput value={time} onChange={(event) => setTime(event.target.value)}  />
 				{/* <DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
 				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} /> */}
 			</InputContainer>
@@ -82,7 +70,7 @@ const InputContainer = styled.div`
 	height: 100%;
 `;
 
-const DateInput = styled.input.attrs({ type: "date" })`
+const DateInput = styled.input.attrs({ type: 'date' })`
 	width: 50%;
 	height: 100%;
 
