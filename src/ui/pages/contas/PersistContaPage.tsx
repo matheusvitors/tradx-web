@@ -45,7 +45,7 @@ export const PersistContaPage: React.FC = () => {
 				saldoInicialInputRef.current
 			) {
 				nomeInputRef.current.value = conta.nome;
-				saldoInicialInputRef.current.value = conta.saldoInicial.toFixed(2).toString();
+				saldoInicialInputRef.current.value = typeof conta.saldoInicial === 'string' ? conta.saldoInicial : conta.saldoInicial.toFixed(2).toString();
 				conta.tipo === 'simulador' ? simuladorRadioButtonInputRef.current.checked = true : realRadioButtonInputRef.current.checked = true;
 			}
 		} catch (error: any) {
