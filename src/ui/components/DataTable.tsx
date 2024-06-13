@@ -77,7 +77,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 				<Row>
 					{columns.map((column: Column<any>, i: number) => (
 						<HeaderCell key={i} $width={column.width}>
-							{column.name}
+							<a style={{cursor: 'pointer', display: 'block'}} onClick={() => console.log(column.name)}>{column.name}</a>
 						</HeaderCell>
 					))}
 				</Row>

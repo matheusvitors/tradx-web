@@ -60,8 +60,12 @@ export const AtivosPage: React.FC = () => {
 	]
 
 	const preparePayloadDataTable = (input: Ativo[]): DataTablePayload[] => {
-		const result: DataTablePayload[]  = input.map((item: any) => ({
-			data: {...item, isAtivo: item.dataVencimento && (new Date(item.dataVencimento).getTime() <= Date.now())  ?  'Expirado' : 'Ativo' },
+		const result: DataTablePayload[]  = input.map((item: Ativo) => ({
+			data: {
+				...item,
+				isAtivo: item.dataVencimento && (new Date(item.dataVencimento).getTime() <= Date.now())  ?  'Expirado' : 'Ativo',
+				tipo: item.tipo === 'acao' ? 'Ação' : 'Índice'
+			},
 			actions: [
 				{
 					icon: MdEdit,
