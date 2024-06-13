@@ -51,14 +51,6 @@ export const PersistOperacoesPage: React.FC = () => {
 		location.state.operacao && loadOperacao(location.state.operacao);
 	}, [location]);
 
-	// useEffect(() => {
-	// 	console.log('dataEntrada', dataEntrada)
-	// }, [dataEntrada])
-
-	useEffect(() => {
-		console.log('dataSAida', dataSaida)
-	}, [dataSaida])
-
 	const loadAtivos = async () => {
 		try {
 			const cachedAtivos = storage.get(KEY_ATIVOS);
@@ -83,7 +75,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			setSelectAtivo(location.state.operacao?.ativo.id || ativos[0].id);
 			setAtivoOptions(options)
 		} catch (error: any) {
-			console.log(error);
+			console.error(error);
 			Toast.error(error.message)
 		}
 	}
@@ -182,11 +174,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 		let input: OperacaoDTO | null = null;
 
-		console.log('datas', dataEntrada, dataSaida);
-
 		if(!dataEntrada) {
-			console.log('dataEntrada', dataEntrada);
-
 			Toast.error('A data de entrada é obrigatória.');
 			return;
 		}
@@ -209,7 +197,6 @@ export const PersistOperacoesPage: React.FC = () => {
 			Toast.error('A data/hora de entrada está incorreta.');
 			return;
 		}
-		console.log(dataSaida);
 
 		if(dataSaida && !dateRegex.test(dataSaida)) {
 			Toast.error('A data/hora de saída está incorreta.');
@@ -252,7 +239,6 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			if(input){
 				location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
-				console.log('intput', input);
 			}
 
 			queryClient.invalidateQueries({queryKey: ['operacoes']});

@@ -14,7 +14,6 @@ export const usePagination = () => {
 
 		console.log('slice', totalPerPage * currentPage - totalPerPage, totalPerPage * currentPage);
 
-
 		return array.slice(totalPerPage * currentPage - totalPerPage, totalPerPage * currentPage);
 	};
 

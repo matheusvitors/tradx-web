@@ -10,34 +10,29 @@ interface TimePickerProps {
 }
 
 export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
-	//FIXME: Input retornar undefined caso ele não tenha defaultValue e nem tenha o seu valor mudado
 
 	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
 	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
-	// console.log('defaultValue', label, defaultDateString, defaultTimeString);
-
 	const [date, setDate] = useState(defaultDateString);
-	const [time, setTime] = useState(defaultTimeString)
+	const [hour, setHour] = useState(defaultTimeString)
 
 	useEffect(() => {
 		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
 		defaultValue && setDate(defaultDateString || '');
-		defaultValue && setTime(defaultTimeString || '');
+		defaultValue && setHour(defaultTimeString || '');
 	}, [])
 
 	useEffect(() => {
-		setValue(`${date} ${time}`)
-	}, [date, time])
+		setValue(date && hour ? `${date} ${hour}`: undefined);
+	}, [date, hour])
 
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
 				<DateInput value={date} onChange={(event) => setDate(event.target.value)} />
-				<TimeInput value={time} onChange={(event) => setTime(event.target.value)}  />
-				{/* <DateInput defaultValue={defaultDateString} onChange={handleChange} ref={dateRef} />
-				<TimeInput defaultValue={defaultTimeString} onChange={handleChange} ref={timeRef} /> */}
+				<TimeInput value={hour} onChange={(event) => setHour(event.target.value)}  />
 			</InputContainer>
 		</Container>
 	);
@@ -63,7 +58,7 @@ const InputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-between;
 	flex-direction: row;
 
 	width: 100%;
@@ -71,7 +66,7 @@ const InputContainer = styled.div`
 `;
 
 const DateInput = styled.input.attrs({ type: 'date' })`
-	width: 50%;
+	width: 49%;
 	height: 100%;
 
 	background-color: transparent;
@@ -94,7 +89,7 @@ const DateInput = styled.input.attrs({ type: 'date' })`
 `;
 
 const TimeInput = styled.input.attrs({ type: "time" })`
-	width: 50%;
+	width: 49%;
 	height: 100%;
 
 	background-color: transparent;
