@@ -10,13 +10,12 @@ interface ModalProps {
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-
 export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, setIsOpen, children }) => {
 
 	const theme = useTheme();
 
 	return (
-		<Container>
+		<Container visible={isOpen}>
 			<Card>
 				<Header>
 					<PageName>{title}</PageName>
@@ -28,8 +27,8 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, 
 	);
 }
 
-const Container = styled.div`
-	display: flex;
+const Container = styled.div<{ visible?: boolean; }>`
+	display: ${props => props.visible ? 'flex' : 'none'};
 	align-items: center;
 	justify-content: center;
 

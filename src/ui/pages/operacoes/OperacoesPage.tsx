@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList, MdOutlineFilterAlt } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Page } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
+import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, SideView, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
@@ -147,31 +147,31 @@ export const OperacoesPage: React.FC = () => {
 	return (
 		<Page pageName="Operações">
 			<Content>
+				<SideView />
 				{ contaOptions && contaOptions.length > 0 ? (
 					<>
-				<TableContainer>
-					<PageHeader>
-						<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
-						<IconButton icon={MdFilterList} size={36} onClick={() => console.log('filter')} />
-					</PageHeader>
+						<TableContainer>
+							<PageHeader>
+								<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
+								<IconButton icon={MdFilterList} size={36} onClick={() => console.log('filter')} />
+							</PageHeader>
 
-					{operacoes && operacoes.length > 0 ? (
-						<DataTable columns={columns} payload={operacoes} />
-					) : (
-						<EmptyContainer>
-							<span>Não há operações registradas.</span>
-						</EmptyContainer>
-					)}
-				</TableContainer>
+							{operacoes && operacoes.length > 0 ? (
+								<DataTable columns={columns} payload={operacoes} />
+							) : (
+								<EmptyContainer>
+									<span>Não há operações registradas.</span>
+								</EmptyContainer>
+							)}
+						</TableContainer>
 
-				<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
-				</>
-			) : (
-				<EmptyContainer>
-					<span>Não há operações registradas.</span>
-				</EmptyContainer>
-			)}
-
+						<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
+					</>
+				) : (
+					<EmptyContainer>
+						<span>Não há operações registradas.</span>
+					</EmptyContainer>
+				)}
 
 				<PageLoading visible={isLoading} />
 			</Content>
