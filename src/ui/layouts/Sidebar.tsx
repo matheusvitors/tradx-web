@@ -39,8 +39,7 @@ const Container = styled.div`
 	min-height: 100vh;
 
 	border-right: 1px solid ${props => props.theme.sidebar.border};
-
-	`
+`
 
 const HeaderSidebar = styled.div`
 	display: flex;
@@ -52,7 +51,7 @@ const HeaderSidebar = styled.div`
 	height: 70px;
 
 	margin-bottom: 30px;
-	`
+`
 
 const MenuItem = styled(Link)<{ active?: string; }>`
 	display: flex;

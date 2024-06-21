@@ -49,7 +49,7 @@ const Container = styled.div`
 	padding-right: 20px;
 
 	border-bottom: 1px solid ${props => props.theme.sidebar.border};
-	`
+`
 
 const TitleContainer = styled.div`
 	width: 40%;

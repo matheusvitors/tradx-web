@@ -28,6 +28,7 @@ export const OperacoesPage: React.FC = () => {
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [selectedConta, setSelectedConta] = useState("");
+	const [isOpenFilters, setIsOpenFilters] = useState(false);
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
@@ -147,13 +148,15 @@ export const OperacoesPage: React.FC = () => {
 	return (
 		<Page pageName="Operações">
 			<Content>
-				<SideView />
+				<SideView open={isOpenFilters} setOpen={setIsOpenFilters}>
+					Teste
+				</SideView>
 				{ contaOptions && contaOptions.length > 0 ? (
 					<>
 						<TableContainer>
 							<PageHeader>
 								<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
-								<IconButton icon={MdFilterList} size={36} onClick={() => console.log('filter')} />
+								<IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />
 							</PageHeader>
 
 							{operacoes && operacoes.length > 0 ? (
@@ -185,6 +188,10 @@ const Content = styled.div`
 	justify-content: flex-start;
 	flex-direction: column;
 	flex-grow: 1;
+
+	overflow-x: hidden;
+	white-space: nowrap;
+
 `;
 
 const PageHeader = styled.div`
