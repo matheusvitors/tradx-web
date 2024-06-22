@@ -11,6 +11,7 @@ import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, Ic
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
+import { uniqueValues } from "@/utils/unique-values";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -40,6 +41,7 @@ export const OperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		data && setOperacoes(preparePayloadDataTable(data));
+		data && loadFiltersOptions(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -74,6 +76,12 @@ export const OperacoesPage: React.FC = () => {
 			Toast.error(error);
 		}
 	};
+
+	const loadFiltersOptions = (operacoes: Operacao[]) => {
+		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada', 'dataSaida'])
+		// console.log(JSON.stringify(options.ativo[1].acronimo));
+
+	}
 
 	const onEdit = async (operacao: Operacao) => {
 		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });

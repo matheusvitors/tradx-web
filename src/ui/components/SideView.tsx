@@ -1,7 +1,7 @@
 import { IconButton } from '@/ui/components';
 import React, { PropsWithChildren } from 'react';
 import { MdClose } from 'react-icons/md';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 interface SideViewProps {
 	open: boolean;
@@ -11,9 +11,17 @@ interface SideViewProps {
 //TODO: Deixar a animação de entrada suave
 
 export const SideView: React.FC<PropsWithChildren<SideViewProps>> = ({ open, setOpen, children }) => {
+	const theme = useTheme();
+
 	return (
 		<Container open={open}>
-			<IconButton icon={MdClose} onClick={() => setOpen(false)} />
+			<Header>
+				<CloseContainer>
+					<IconButton icon={MdClose} color={theme.semantic.warning} onClick={() => setOpen(false)} />
+				</CloseContainer>
+				<Title>Teste</Title>
+			</Header>
+
 			{children}
 		</Container>
 	);
@@ -47,5 +55,30 @@ const Container = styled.div<{ open: boolean; }>`
 
 	overflow-x: hidden;
 	white-space: nowrap;
+`
 
+const Header = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: 100%;
+	height: 70px;
+`
+
+const Title = styled.h2`
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	width: 75%;
+	height: 100%;
+
+	padding-left: 20px;
+`
+
+const CloseContainer = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 `
