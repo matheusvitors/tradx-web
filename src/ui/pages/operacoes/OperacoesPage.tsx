@@ -7,11 +7,11 @@ import { Page } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Column, DataTable, DataTablePayload, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, SideView, Toast } from "@/ui/components";
+import { Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, SideView, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
-import { uniqueValues } from "@/utils/unique-values";
+import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -30,6 +30,7 @@ export const OperacoesPage: React.FC = () => {
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [selectedConta, setSelectedConta] = useState("");
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
+	const [filters, setFilters] = useState<UniqueValues>()
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
@@ -79,8 +80,8 @@ export const OperacoesPage: React.FC = () => {
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada', 'dataSaida'])
-		// console.log(JSON.stringify(options.ativo[1].acronimo));
-
+		console.log(options.ativo.acronimo);
+		setFilters(options)
 	}
 
 	const onEdit = async (operacao: Operacao) => {
@@ -157,8 +158,20 @@ export const OperacoesPage: React.FC = () => {
 		<Page pageName="Operações">
 			<Content>
 				<SideView open={isOpenFilters} setOpen={setIsOpenFilters}>
-					Teste
+					{filters && (
+						<>
+							<>
+								Ativos: <br />
+								{filters.ativo.acronimo.map((item: string, key: number) => <Checkbox key={key} label={item} name={item} />)}
+							</>
+							<>
+								Tipo: <br />
+								{filters.tipo.map((item: string, key: number) => <Checkbox key={key} label={item} name={item} />)}
+							</>
+						</>
+					)}
 				</SideView>
+
 				{ contaOptions && contaOptions.length > 0 ? (
 					<>
 						<TableContainer>

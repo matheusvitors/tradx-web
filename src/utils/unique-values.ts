@@ -1,21 +1,56 @@
+// interface AnyObject {
+// 	[key: string]: any;
+// }
+
+// export const uniqueValues = <T extends AnyObject>(array: T[], fields: (keyof T)[]): { [K in keyof T]?: T[K][] | { min: T[K], max: T[K] } } => {
+// 	const uniqueValues: { [K in keyof T]?: T[K][] } = {};
+
+// 	fields.forEach((field) => {
+// 		uniqueValues[field] = array.map((item) => item[field]).filter((value, index, self) => self.indexOf(value) === index);
+// 	});
+
+// 	return uniqueValues;
+// };
+
 interface AnyObject {
 	[key: string]: any;
 }
 
-export const uniqueValues = <T extends AnyObject>(array: T[], fields: (keyof T)[]): { [K in keyof T]?: T[K][] | { min: T[K], max: T[K] } } => {
-	const uniqueValues: { [K in keyof T]?: T[K][] } = {};
+export interface UniqueValues {
+	[key: string]: any;
+}
 
-	fields.forEach((field) => {
-		uniqueValues[field] = array.map((item) => item[field]).filter((value, index, self) => self.indexOf(value) === index);
+function isDateField(field: string): boolean {
+	return field.toLowerCase().includes("data") || field.toLowerCase().includes("date");
+}
+
+function getNestedUniqueValues<T extends AnyObject, K extends keyof T>(array: T[], field: K, nestedFields: (keyof T[K])[]): { [NK in keyof T[K]]?: T[K][NK][] } {
+	const uniqueValues: { [NK in keyof T[K]]?: T[K][NK][] } = {};
+
+	nestedFields.forEach((nestedField) => {
+		uniqueValues[nestedField] = array.map((item) => item[field]?.[nestedField]).filter((value, index, self) => self.indexOf(value) === index);
 	});
 
 	return uniqueValues;
-};
+}
 
-[
-	{ item: 123, type: "number" },
-	{ item: "jose", type: "string" },
-	{ item: "joao", type: "string" },
-	{ item: 554, type: "number" },
-	{ item: "2024-06-20 11:50", type: "date" },
-];
+export function uniqueValues<T extends AnyObject>(array: T[], fields: (keyof T)[]): UniqueValues {
+	const uniqueValues: UniqueValues = {};
+
+	fields.forEach((field) => {
+		if (array[0][field] && typeof array[0][field] === "object" && !Array.isArray(array[0][field])) {
+			uniqueValues[field as string] = getNestedUniqueValues(array, field, Object.keys(array[0][field]) as (keyof T[keyof T])[]);
+		} else if (isDateField(field as string)) {
+			const dates = array.map((item) => new Date(item[field])).filter((date) => !isNaN(date.getTime()));
+			if (dates.length > 0) {
+				const minDate = new Date(Math.min(...dates.map((date) => date.getTime())));
+				const maxDate = new Date(Math.max(...dates.map((date) => date.getTime())));
+				uniqueValues[field as string] = { min: minDate.toISOString(), max: maxDate.toISOString() };
+			}
+		} else {
+			uniqueValues[field as string] = array.map((item) => item[field]).filter((value, index, self) => self.indexOf(value) === index);
+		}
+	});
+
+	return uniqueValues;
+}

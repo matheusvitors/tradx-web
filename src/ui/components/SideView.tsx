@@ -41,6 +41,7 @@ const Container = styled.div<{ open: boolean; }>`
 	height: calc(100% - 70px);
 
 	margin-top: -20px;
+	padding: 10px;
 
 	position: absolute;
 	right: 0;
