@@ -169,6 +169,7 @@ export const PersistOperacoesPage: React.FC = () => {
 		}
 	}
 
+	//FIXME: Compra/venda não está funcionando
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 

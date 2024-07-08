@@ -6,20 +6,21 @@ import styled, { useTheme } from 'styled-components';
 interface SideViewProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	title?: string;
 }
 
 //TODO: Deixar a animação de entrada suave
 
-export const SideView: React.FC<PropsWithChildren<SideViewProps>> = ({ open, setOpen, children }) => {
+export const SideView: React.FC<PropsWithChildren<SideViewProps>> = ({ open, setOpen, title, children }) => {
 	const theme = useTheme();
 
 	return (
 		<Container open={open}>
 			<Header>
 				<CloseContainer>
-					<IconButton icon={MdClose} color={theme.semantic.warning} onClick={() => setOpen(false)} />
+					<IconButton icon={MdClose} margin={1} color={theme.semantic.warning} onClick={() => setOpen(false)} />
 				</CloseContainer>
-				<Title>Teste</Title>
+				<Title>{title}</Title>
 			</Header>
 
 			{children}
@@ -52,7 +53,7 @@ const Container = styled.div<{ open: boolean; }>`
 
 	background: ${props => props.theme.common.background};
 
-	border: 1px solid yellow;
+	border-left: 1px solid ${props => props.theme.secondary};
 
 	overflow-x: hidden;
 	white-space: nowrap;
@@ -72,7 +73,7 @@ const Title = styled.h2`
 	justify-content: flex-start;
 	align-items: center;
 
-	width: 75%;
+	width: 90%;
 	height: 100%;
 
 	padding-left: 20px;
@@ -80,6 +81,8 @@ const Title = styled.h2`
 
 const CloseContainer = styled.div`
 	display: flex;
-	justify-content: center;
-	align-items: center;
+	justify-content: flex-start;
+	align-items: flex-start;
+
+	width: 20%;
 `

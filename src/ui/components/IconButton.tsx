@@ -42,5 +42,6 @@ const Button = styled.button<{ size?: number; color?: string; $margin?: number; 
 			fill: ${props => props.color || props.theme.button.hover.background};
 		}
 	}
+
 `
 

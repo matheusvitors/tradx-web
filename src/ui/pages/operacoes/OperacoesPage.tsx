@@ -3,11 +3,12 @@ import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Page } from "@/ui/layouts";
+import { hexToRGBA } from 'about-colors-js'
+import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, SideView, Toast } from "@/ui/components";
+import { Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
@@ -30,7 +31,8 @@ export const OperacoesPage: React.FC = () => {
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [selectedConta, setSelectedConta] = useState("");
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
-	const [filters, setFilters] = useState<UniqueValues>()
+	const [filters, setFilters] = useState<UniqueValues>();
+	const [activeFilters, setActiveFilters] = useState();
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
@@ -80,8 +82,11 @@ export const OperacoesPage: React.FC = () => {
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada', 'dataSaida'])
-		console.log(options.ativo.acronimo);
-		setFilters(options)
+		// console.log(options.ativo.acronimo);
+		setFilters(options);
+
+		console.log(Object.values(options));
+
 	}
 
 	const onEdit = async (operacao: Operacao) => {
@@ -157,18 +162,35 @@ export const OperacoesPage: React.FC = () => {
 	return (
 		<Page pageName="Operações">
 			<Content>
-				<SideView open={isOpenFilters} setOpen={setIsOpenFilters}>
+				<SideView open={isOpenFilters} setOpen={setIsOpenFilters} title="Filtros">
 					{filters && (
-						<>
-							<>
-								Ativos: <br />
-								{filters.ativo.acronimo.map((item: string, key: number) => <Checkbox key={key} label={item} name={item} />)}
-							</>
-							<>
-								Tipo: <br />
-								{filters.tipo.map((item: string, key: number) => <Checkbox key={key} label={item} name={item} />)}
-							</>
-						</>
+						<FilterContent>
+							{filters.ativo.acronimo.length > 1 && (
+								<FilterSection>
+									<FilterTitle>
+										Ativos
+									</FilterTitle>
+									<FilterOptions>
+										{filters.ativo.acronimo.map((item: string, key: number) => (
+											<Checkbox key={key} label={item} name={item} width="100px" height="35px" onChange={(e) => console.log(item, e.target.checked)} />
+										))}
+									</FilterOptions>
+								</FilterSection>
+							)}
+
+							{filters.tipo.length > 1 && (
+								<FilterSection>
+									<FilterTitle>
+										Tipos
+									</FilterTitle>
+									<FilterOptions>
+										{filters.tipo.map((item: string, key: number) => (
+											<Checkbox key={key} label={item} name={item} width="100px" height="35px" />
+										))}
+									</FilterOptions>
+								</FilterSection>
+							)}
+						</FilterContent>
 					)}
 				</SideView>
 
@@ -180,13 +202,13 @@ export const OperacoesPage: React.FC = () => {
 								<IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />
 							</PageHeader>
 
-							{operacoes && operacoes.length > 0 ? (
+							{operacoes && operacoes.length > 0 ?
 								<DataTable columns={columns} payload={operacoes} />
-							) : (
+							:
 								<EmptyContainer>
 									<span>Não há operações registradas.</span>
 								</EmptyContainer>
-							)}
+							}
 						</TableContainer>
 
 						<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
@@ -248,3 +270,29 @@ const EmptyContainer = styled.div`
 
 	width: 100%;
 `;
+
+const FilterTitle = styled.div`
+
+`
+
+const FilterContent = styled.div`
+
+`
+
+const FilterSection = styled.div`
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-direction: column;
+	gap: 15px;
+
+	padding-bottom: 10px;
+	border-bottom: 1px solid ${props => hexToRGBA(props.theme.accent, 0.2)};
+`
+
+const FilterOptions = styled.div`
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 10px;
+`

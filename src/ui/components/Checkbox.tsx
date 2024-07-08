@@ -1,32 +1,34 @@
-import React, { RefObject } from 'react';
+import React, { InputHTMLAttributes, RefObject } from 'react';
 import styled from 'styled-components';
 
-interface CheckboxProps {
+interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
 	label: string;
 	name: string;
 	reference?: RefObject<HTMLInputElement>;
 	backgroundColor?: string;
+	width?: string;
+	height?: string;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ label, name, reference, backgroundColor }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ label, name, reference, backgroundColor ,width, height, ...rest }) => {
 	return (
-		<Container>
-			<Input id={name} name={name} ref={reference} $backgroundColor={backgroundColor} />
+		<Container width={width} height={height}>
+			<Input id={name} name={name} ref={reference} $backgroundColor={backgroundColor} {...rest}/>
 			<Label htmlFor={name} $backgroundColor={backgroundColor}>{label}</Label>
 		</Container>
 	);
 }
 
-const Container = styled.div`
+const Container = styled.div<{ width?: string; height?: string; }>`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-evenly;
 
-	margin: 10px 0px;
+	margin: 5px 0px;
 
-	height: 50px;
-	width: 100%;
+	height: ${props => props.height || '50px'};
+	width: ${props => props.width || '100%'};
 `
 
 const Input = styled.input.attrs({ type: 'checkbox'})<{ $backgroundColor?: string }>`
