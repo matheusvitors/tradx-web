@@ -16,6 +16,10 @@ import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
+interface Filter {
+	ativos: Array<string>; tipos: Array<string>
+}
+
 export const OperacoesPage: React.FC = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
@@ -32,7 +36,11 @@ export const OperacoesPage: React.FC = () => {
 	const [selectedConta, setSelectedConta] = useState("");
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
-	const [activeFilters, setActiveFilters] = useState();
+	const [activeFilters, setActiveFilters] = useState<Filter>({
+		ativos: [],
+		tipos: []
+	});
+
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
@@ -40,6 +48,7 @@ export const OperacoesPage: React.FC = () => {
 		loadContas();
 		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
 		setSelectedConta(storagedConta?.data || "");
+		// activeFilters.ativos.push('WINFUT');
 	}, []);
 
 	useEffect(() => {
@@ -50,6 +59,22 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		error && Toast.error(error.message);
 	}, [error]);
+
+	useEffect(() => {
+		// console.log(ativosFilter);
+		console.log(JSON.stringify(activeFilters));
+		if(data) {
+			if(activeFilters.ativos.length > 0 || activeFilters.tipos.length > 0) {
+				const filteredData = data.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo) || activeFilters.tipos.includes(operacao.tipo)))
+				setOperacoes(preparePayloadDataTable(filteredData));
+			} else {
+				setOperacoes(preparePayloadDataTable(data))
+			}
+		}
+
+
+
+	}, [ activeFilters])
 
 	const loadContas = async () => {
 		try {
@@ -81,12 +106,8 @@ export const OperacoesPage: React.FC = () => {
 	};
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
-		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada', 'dataSaida'])
-		// console.log(options.ativo.acronimo);
+		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']);
 		setFilters(options);
-
-		console.log(Object.values(options));
-
 	}
 
 	const onEdit = async (operacao: Operacao) => {
@@ -159,6 +180,21 @@ export const OperacoesPage: React.FC = () => {
 		}
 	};
 
+	const onChangeFilter = (filter: keyof Filter, item: string, checked: boolean) => {
+		if(checked){
+			setActiveFilters(prevState => ({
+				...prevState,
+				[filter]: [...prevState[filter], item]
+			}));
+		} else {
+			setActiveFilters(prevState => ({
+				...prevState,
+				[filter]: prevState[filter].filter(f => f !== item)
+			}))
+		}
+
+	}
+
 	return (
 		<Page pageName="Operações">
 			<Content>
@@ -172,7 +208,13 @@ export const OperacoesPage: React.FC = () => {
 									</FilterTitle>
 									<FilterOptions>
 										{filters.ativo.acronimo.map((item: string, key: number) => (
-											<Checkbox key={key} label={item} name={item} width="100px" height="35px" onChange={(e) => console.log(item, e.target.checked)} />
+											<Checkbox key={key}
+												label={item}
+												name={item}
+												width="100px" height="35px"
+												onChange={(e) => onChangeFilter('ativos', item, e.target.checked)}
+												// onChange={(e) => console.log(item, e.target.checked)}
+											/>
 										))}
 									</FilterOptions>
 								</FilterSection>
