@@ -29,7 +29,7 @@ const Container = styled.div`
 	height: 70px;
 	width: 80%;
 
-	margin: 15px 10px;
+	/* margin: 15px 10px; */
 `
 const Label = styled.label`
 	margin: 5px 0;

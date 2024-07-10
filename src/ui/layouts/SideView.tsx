@@ -32,13 +32,13 @@ const Container = styled.div<{ open: boolean; }>`
 	/* display: flex; */
 	display: ${({ open }) => open ? 'flex' : 'none'};
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: center;
 	justify-content: flex-start;
 	align-self: flex-start;
 
 	gap: 20px;
 
-	width: 300px;
+	width: 350px;
 	height: calc(100% - 70px);
 
 	margin-top: -20px;

@@ -8,7 +8,7 @@ import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
+import { Button, Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
@@ -17,7 +17,27 @@ import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
 interface Filter {
-	ativos: Array<string>; tipos: Array<string>
+	ativos: Array<string>;
+	tipos: Array<string>;
+}
+
+interface Range {
+	dataEntrada: {
+		min: Date | null;
+		max: Date | null;
+	}
+}
+
+const DEFAULT_FILTER_VALUES: Filter = {
+	ativos: [],
+	tipos: [],
+}
+
+const DEFAULT_RANGES_VALUES: Range = {
+	dataEntrada: {
+		min: null,
+		max: null
+	}
 }
 
 export const OperacoesPage: React.FC = () => {
@@ -36,10 +56,8 @@ export const OperacoesPage: React.FC = () => {
 	const [selectedConta, setSelectedConta] = useState("");
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
-	const [activeFilters, setActiveFilters] = useState<Filter>({
-		ativos: [],
-		tipos: []
-	});
+	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
+	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
@@ -65,16 +83,21 @@ export const OperacoesPage: React.FC = () => {
 		console.log(JSON.stringify(activeFilters));
 		if(data) {
 			if(activeFilters.ativos.length > 0 || activeFilters.tipos.length > 0) {
-				const filteredData = data.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo) || activeFilters.tipos.includes(operacao.tipo)))
+				let filteredData: Operacao[] = []
+
+				if(activeFilters.ativos.length > 0) {
+					filteredData = data.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo)))
+				}
+				if(activeFilters.tipos.length > 0) {
+					filteredData = filteredData.filter(operacao => (activeFilters.tipos.includes(operacao.tipo)))
+				}
+
 				setOperacoes(preparePayloadDataTable(filteredData));
 			} else {
 				setOperacoes(preparePayloadDataTable(data))
 			}
 		}
-
-
-
-	}, [ activeFilters])
+	}, [activeFilters, activeRanges])
 
 	const loadContas = async () => {
 		try {
@@ -108,6 +131,9 @@ export const OperacoesPage: React.FC = () => {
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']);
 		setFilters(options);
+		console.log(options.dataEntrada.min.slice(0,10));
+		console.log(options.dataEntrada.max.slice(0,10));
+
 	}
 
 	const onEdit = async (operacao: Operacao) => {
@@ -192,7 +218,6 @@ export const OperacoesPage: React.FC = () => {
 				[filter]: prevState[filter].filter(f => f !== item)
 			}))
 		}
-
 	}
 
 	return (
@@ -200,6 +225,7 @@ export const OperacoesPage: React.FC = () => {
 			<Content>
 				<SideView open={isOpenFilters} setOpen={setIsOpenFilters} title="Filtros">
 					{filters && (
+						<>
 						<FilterContent>
 							{filters.ativo.acronimo.length > 1 && (
 								<FilterSection>
@@ -232,7 +258,19 @@ export const OperacoesPage: React.FC = () => {
 									</FilterOptions>
 								</FilterSection>
 							)}
+
+							<FilterSection>
+								<FilterTitle>Data de Entrada</FilterTitle>
+								<FilterOptions>
+									<DatePicker label="Inicio" min={filters.dataEntrada.min.slice(0,10)} max={filters.dataEntrada.max.slice(0,10)} onChange={(e) => console.log('inicio', e.target.value)} />
+									<DatePicker label="Fim" max={filters.dataEntrada.min.slice(0,10)} onChange={(e) => console.log('fim', e.target.value)} />
+								</FilterOptions>
+							</FilterSection>
 						</FilterContent>
+							<FilterFooter>
+								<Button label="Limpar Filtros" onClick={() => setActiveFilters(DEFAULT_FILTER_VALUES)} />
+							</FilterFooter>
+							</>
 					)}
 				</SideView>
 
@@ -314,11 +352,19 @@ const EmptyContainer = styled.div`
 `;
 
 const FilterTitle = styled.div`
+	display: flex;
+	align-items: flex-start;
 
+	width: 100%;
 `
 
 const FilterContent = styled.div`
+	display: flex;
+	align-items: center;
+	flex-direction: column;
 
+	width: 100%;
+	height: 100%;
 `
 
 const FilterSection = styled.div`
@@ -328,7 +374,11 @@ const FilterSection = styled.div`
 	flex-direction: column;
 	gap: 15px;
 
-	padding-bottom: 10px;
+	width: 95%;
+
+	margin: 10px 0;
+	padding-bottom: 20px;
+
 	border-bottom: 1px solid ${props => hexToRGBA(props.theme.accent, 0.2)};
 `
 
@@ -337,4 +387,12 @@ const FilterOptions = styled.div`
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 10px;
+`
+
+const FilterFooter = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
 `
