@@ -13,6 +13,7 @@ import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
+import { format } from "date-fns";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -59,14 +60,12 @@ export const OperacoesPage: React.FC = () => {
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 
-
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
 		loadContas();
 		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
 		setSelectedConta(storagedConta?.data || "");
-		// activeFilters.ativos.push('WINFUT');
 	}, []);
 
 	useEffect(() => {
@@ -79,23 +78,49 @@ export const OperacoesPage: React.FC = () => {
 	}, [error]);
 
 	useEffect(() => {
-		// console.log(ativosFilter);
-		console.log(JSON.stringify(activeFilters));
+		// console.log(activeRanges);
+		// console.log(JSON.stringify(activeFilters));
 		if(data) {
-			if(activeFilters.ativos.length > 0 || activeFilters.tipos.length > 0) {
-				let filteredData: Operacao[] = []
+			if(activeFilters.ativos.length > 0 || activeFilters.tipos.length > 0 || activeRanges.dataEntrada.min) {
+				let filteredData: Operacao[] = [];
+
+				if(activeRanges.dataEntrada.min) {
+					filteredData = [];
+					filteredData = data.filter(operacao => {
+						if(activeRanges.dataEntrada.min) {
+							const inicio = activeRanges.dataEntrada.min;
+							const fim =  activeRanges.dataEntrada.max || new Date();
+							// console.log('inicio', format(inicio, "yyyy-MM-dd"), 'data', format(operacao.dataEntrada, "yyyy-MM-dd"), 'fim', format(fim, "yyyy-MM-dd"), operacao.dataEntrada >= inicio && operacao.dataEntrada <= fim);
+
+							return new Date(operacao.dataEntrada) >= new Date(inicio) && new Date(operacao.dataEntrada) <= new Date(fim)
+						}
+						return null;
+					})
+				}
 
 				if(activeFilters.ativos.length > 0) {
-					filteredData = data.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo)))
+					if(filteredData.length > 0) {
+						filteredData = filteredData.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo)))
+					} else {
+						filteredData = data.filter(operacao => (activeFilters.ativos.includes(operacao.ativo.acronimo)))
+					}
 				}
+
 				if(activeFilters.tipos.length > 0) {
-					filteredData = filteredData.filter(operacao => (activeFilters.tipos.includes(operacao.tipo)))
+					if(filteredData.length > 0) {
+						filteredData = filteredData.filter(operacao => (activeFilters.tipos.includes(operacao.tipo)))
+					} else {
+						filteredData = data.filter(operacao => (activeFilters.tipos.includes(operacao.tipo)))
+					}
 				}
+
+				console.log(filteredData)
 
 				setOperacoes(preparePayloadDataTable(filteredData));
 			} else {
 				setOperacoes(preparePayloadDataTable(data))
 			}
+
 		}
 	}, [activeFilters, activeRanges])
 
@@ -131,8 +156,8 @@ export const OperacoesPage: React.FC = () => {
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']);
 		setFilters(options);
-		console.log(options.dataEntrada.min.slice(0,10));
-		console.log(options.dataEntrada.max.slice(0,10));
+		// console.log(options.dataEntrada.min.slice(0,10));
+		// console.log(options.dataEntrada.max.slice(0,10));
 
 	}
 
@@ -206,18 +231,29 @@ export const OperacoesPage: React.FC = () => {
 		}
 	};
 
-	const onChangeFilter = (filter: keyof Filter, item: string, checked: boolean) => {
+	const onChangeFilter = (filter: keyof Filter, value: string, checked: boolean) => {
 		if(checked){
 			setActiveFilters(prevState => ({
 				...prevState,
-				[filter]: [...prevState[filter], item]
+				[filter]: [...prevState[filter], value]
 			}));
 		} else {
 			setActiveFilters(prevState => ({
 				...prevState,
-				[filter]: prevState[filter].filter(f => f !== item)
+				[filter]: prevState[filter].filter(f => f !== value)
 			}))
 		}
+	}
+
+	const onChangeRanges = (filter: keyof Range, field: 'min' | 'max', value: string ) => {
+		setActiveRanges(prevState => ({
+			...prevState,
+			[filter]: {
+				...prevState[filter],
+				[field]: new Date(value)
+			}
+		}))
+
 	}
 
 	return (
@@ -235,11 +271,10 @@ export const OperacoesPage: React.FC = () => {
 									<FilterOptions>
 										{filters.ativo.acronimo.map((item: string, key: number) => (
 											<Checkbox key={key}
-												label={item}
-												name={item}
+												label={item} name={item}
+												checked={activeFilters.ativos.includes(item)}
 												width="100px" height="35px"
 												onChange={(e) => onChangeFilter('ativos', item, e.target.checked)}
-												// onChange={(e) => console.log(item, e.target.checked)}
 											/>
 										))}
 									</FilterOptions>
@@ -253,7 +288,12 @@ export const OperacoesPage: React.FC = () => {
 									</FilterTitle>
 									<FilterOptions>
 										{filters.tipo.map((item: string, key: number) => (
-											<Checkbox key={key} label={item} name={item} width="100px" height="35px" />
+											<Checkbox key={key}
+												label={item} name={item}
+												width="100px" height="35px"
+												checked={activeFilters.tipos.includes(item)}
+												onChange={(e) => onChangeFilter('tipos', item, e.target.checked)}
+											/>
 										))}
 									</FilterOptions>
 								</FilterSection>
@@ -262,13 +302,22 @@ export const OperacoesPage: React.FC = () => {
 							<FilterSection>
 								<FilterTitle>Data de Entrada</FilterTitle>
 								<FilterOptions>
-									<DatePicker label="Inicio" min={filters.dataEntrada.min.slice(0,10)} max={filters.dataEntrada.max.slice(0,10)} onChange={(e) => console.log('inicio', e.target.value)} />
-									<DatePicker label="Fim" max={filters.dataEntrada.min.slice(0,10)} onChange={(e) => console.log('fim', e.target.value)} />
+									<DatePicker label="Inicio"
+										min={filters.dataEntrada.min.slice(0,10)}
+										max={filters.dataEntrada.max.slice(0,10)}
+										// onChange={(e) => console.log('dataEntrada','min', e.target.value)}
+										onChange={(e) => onChangeRanges('dataEntrada','min', e.target.value)}
+									/>
+									<DatePicker label="Fim"
+										min={activeRanges.dataEntrada.min ? formatData(activeRanges.dataEntrada.min) : undefined}
+										max={filters.dataEntrada.max.slice(0,10)}
+										onChange={(e) => onChangeRanges('dataEntrada','max', e.target.value)}
+									/>
 								</FilterOptions>
 							</FilterSection>
 						</FilterContent>
 							<FilterFooter>
-								<Button label="Limpar Filtros" onClick={() => setActiveFilters(DEFAULT_FILTER_VALUES)} />
+								<Button label="Limpar Filtros" onClick={() => {setActiveFilters(DEFAULT_FILTER_VALUES); setActiveRanges(DEFAULT_RANGES_VALUES)}} />
 							</FilterFooter>
 							</>
 					)}
