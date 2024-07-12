@@ -36,7 +36,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	const operacaoErradaCheckboxInputRef = useRef<HTMLInputElement>(null);
 	const comentariosTextareaRef = useRef<HTMLTextAreaElement>(null);
 
-	let tipoInputValue = "compra";
 
 	useEffect(() => {
 		if(compraRadioButtonInputRef.current) {
@@ -49,6 +48,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		location.state.operacao && loadOperacao(location.state.operacao);
+		console.log(location.state.operacao);
 	}, [location]);
 
 	const loadAtivos = async () => {
@@ -133,19 +133,17 @@ export const PersistOperacoesPage: React.FC = () => {
 			operacaoErradaCheckboxInputRef.current.checked = operacao.operacaoErrada || false;
 			operacaoPerdidaCheckboxInputRef.current.checked = operacao.operacaoPerdida || false;
 			comentariosTextareaRef.current.value = operacao.comentarios || '';
+
+			if(operacao.tipo === 'compra') {
+				compraRadioButtonInputRef.current.checked = true;
+			}
+
+			if(operacao.tipo === 'venda') {
+				vendaRadioButtonInputRef.current.checked = true;
+			}
 		}
 
 		setIsLoading(false);
-	}
-
-	const onChangeTipoInput = () => {
-		if(compraRadioButtonInputRef.current && compraRadioButtonInputRef.current.checked) {
-			tipoInputValue = 'compra';
-		}
-
-		if(vendaRadioButtonInputRef.current && vendaRadioButtonInputRef.current.checked) {
-			tipoInputValue = 'venda';
-		}
 	}
 
 	const handleSaveOperacao = async (input: OperacaoDTO) => {
@@ -169,7 +167,6 @@ export const PersistOperacoesPage: React.FC = () => {
 		}
 	}
 
-	//FIXME: Compra/venda não está funcionando
 	const onSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
@@ -222,7 +219,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				ativoId: selectAtivo,
 				contaId: selectConta,
 				quantidade: parseInt(quantidadeInputRef.current.value),
-				tipo: tipoInputValue,
+				tipo: compraRadioButtonInputRef.current.checked ? 'compra' : 'venda',
 				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
 				stopLoss: parseFloat(stopLossInputRef.current.value),
 				alvo: parseFloat(alvoInputRef.current.value),
@@ -259,8 +256,8 @@ export const PersistOperacoesPage: React.FC = () => {
 				<Select label='Ativo' name='ativo' options={ativoOptions} value={selectAtivo} onChange={(e) => setSelectAtivo(e.target.value)} />
 				<TextInput label="Quantidade" reference={quantidadeInputRef} />
 				<RadioGroup>
-					<RadioButton name="tipo" value="compra" label="Compra" onChange={onChangeTipoInput} reference={compraRadioButtonInputRef} />
-					<RadioButton name="tipo" value="venda" label="Venda" onChange={onChangeTipoInput} reference={vendaRadioButtonInputRef} />
+					<RadioButton name="tipo" value="compra" label="Compra" reference={compraRadioButtonInputRef} />
+					<RadioButton name="tipo" value="venda" label="Venda" reference={vendaRadioButtonInputRef} />
 				</RadioGroup>
 				<TextInput label="Entrada" reference={precoEntradaInputRef} />
 				<TextInput label="Stop Loss" reference={stopLossInputRef} />

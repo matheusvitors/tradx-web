@@ -13,7 +13,6 @@ import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
-import { format } from "date-fns";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -61,6 +60,8 @@ export const OperacoesPage: React.FC = () => {
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 
 	const contaSelectRef = useRef<HTMLSelectElement>(null);
+	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
+	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		loadContas();
@@ -71,6 +72,7 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		data && setOperacoes(preparePayloadDataTable(data));
 		data && loadFiltersOptions(data);
+		// console.log(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -78,8 +80,6 @@ export const OperacoesPage: React.FC = () => {
 	}, [error]);
 
 	useEffect(() => {
-		// console.log(activeRanges);
-		// console.log(JSON.stringify(activeFilters));
 		if(data) {
 			if(activeFilters.ativos.length > 0 || activeFilters.tipos.length > 0 || activeRanges.dataEntrada.min) {
 				let filteredData: Operacao[] = [];
@@ -90,7 +90,6 @@ export const OperacoesPage: React.FC = () => {
 						if(activeRanges.dataEntrada.min) {
 							const inicio = activeRanges.dataEntrada.min;
 							const fim =  activeRanges.dataEntrada.max || new Date();
-							// console.log('inicio', format(inicio, "yyyy-MM-dd"), 'data', format(operacao.dataEntrada, "yyyy-MM-dd"), 'fim', format(fim, "yyyy-MM-dd"), operacao.dataEntrada >= inicio && operacao.dataEntrada <= fim);
 
 							return new Date(operacao.dataEntrada) >= new Date(inicio) && new Date(operacao.dataEntrada) <= new Date(fim)
 						}
@@ -113,8 +112,6 @@ export const OperacoesPage: React.FC = () => {
 						filteredData = data.filter(operacao => (activeFilters.tipos.includes(operacao.tipo)))
 					}
 				}
-
-				console.log(filteredData)
 
 				setOperacoes(preparePayloadDataTable(filteredData));
 			} else {
@@ -154,11 +151,7 @@ export const OperacoesPage: React.FC = () => {
 	};
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
-		const options = uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']);
-		setFilters(options);
-		// console.log(options.dataEntrada.min.slice(0,10));
-		// console.log(options.dataEntrada.max.slice(0,10));
-
+		setFilters(uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']));
 	}
 
 	const onEdit = async (operacao: Operacao) => {
@@ -246,14 +239,25 @@ export const OperacoesPage: React.FC = () => {
 	}
 
 	const onChangeRanges = (filter: keyof Range, field: 'min' | 'max', value: string ) => {
-		setActiveRanges(prevState => ({
-			...prevState,
-			[filter]: {
-				...prevState[filter],
-				[field]: new Date(value)
-			}
-		}))
+		if(value.length > 0) {
+			setActiveRanges(prevState => ({
+				...prevState,
+				[filter]: {
+					...prevState[filter],
+					[field]: new Date(value)
+				}
+			}))
+		} else {
+			setActiveRanges(DEFAULT_RANGES_VALUES);
+		}
+	}
 
+	const onClearFilters = () => {
+		setActiveFilters(DEFAULT_FILTER_VALUES);
+		setActiveRanges(DEFAULT_RANGES_VALUES);
+
+		if (dataEntradaInicioRef && dataEntradaInicioRef.current) dataEntradaInicioRef.current.value = '';
+		if (dataEntradaFimRef && dataEntradaFimRef.current) dataEntradaFimRef.current.value = '';
 	}
 
 	return (
@@ -303,12 +307,13 @@ export const OperacoesPage: React.FC = () => {
 								<FilterTitle>Data de Entrada</FilterTitle>
 								<FilterOptions>
 									<DatePicker label="Inicio"
+										reference={dataEntradaInicioRef}
 										min={filters.dataEntrada.min.slice(0,10)}
 										max={filters.dataEntrada.max.slice(0,10)}
-										// onChange={(e) => console.log('dataEntrada','min', e.target.value)}
 										onChange={(e) => onChangeRanges('dataEntrada','min', e.target.value)}
 									/>
 									<DatePicker label="Fim"
+										reference={dataEntradaFimRef}
 										min={activeRanges.dataEntrada.min ? formatData(activeRanges.dataEntrada.min) : undefined}
 										max={filters.dataEntrada.max.slice(0,10)}
 										onChange={(e) => onChangeRanges('dataEntrada','max', e.target.value)}
@@ -317,7 +322,7 @@ export const OperacoesPage: React.FC = () => {
 							</FilterSection>
 						</FilterContent>
 							<FilterFooter>
-								<Button label="Limpar Filtros" onClick={() => {setActiveFilters(DEFAULT_FILTER_VALUES); setActiveRanges(DEFAULT_RANGES_VALUES)}} />
+								<Button label="Limpar Filtros" onClick={onClearFilters} />
 							</FilterFooter>
 							</>
 					)}
