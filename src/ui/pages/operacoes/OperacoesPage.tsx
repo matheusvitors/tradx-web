@@ -8,7 +8,7 @@ import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Button, Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
+import { Button, Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Timeline, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
@@ -70,9 +70,8 @@ export const OperacoesPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		data && setOperacoes(preparePayloadDataTable(data));
-		data && loadFiltersOptions(data);
-		// console.log(data);
+		data && data.length > 0 && setOperacoes(preparePayloadDataTable(data));
+		data && data.length > 0 && loadFiltersOptions(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -338,6 +337,7 @@ export const OperacoesPage: React.FC = () => {
 
 							{operacoes && operacoes.length > 0 ?
 								<DataTable columns={columns} payload={operacoes} />
+								// <Timeline />
 							:
 								<EmptyContainer>
 									<span>Não há operações registradas.</span>
