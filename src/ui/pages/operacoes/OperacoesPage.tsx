@@ -336,8 +336,8 @@ export const OperacoesPage: React.FC = () => {
 							</PageHeader>
 
 							{operacoes && operacoes.length > 0 ?
-								<DataTable columns={columns} payload={operacoes} />
-								// <Timeline />
+								// <DataTable columns={columns} payload={operacoes} />
+								<Timeline operacoes={data || []} />
 							:
 								<EmptyContainer>
 									<span>Não há operações registradas.</span>
