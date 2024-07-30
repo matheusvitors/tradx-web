@@ -1,5 +1,6 @@
 import { Operacao } from '@/application/models';
-import React, { useState } from 'react';
+import { format } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 interface TimelineProps {
@@ -28,7 +29,7 @@ const prepareTimelineData = (operacoes: Operacao[]) => {
 	    // Agrupar as operações por data
 		const groupByDate = (operacoes: Operacao[]): { [key: string]: Operacao[] } => {
 			return operacoes.reduce((acc, operacao) => {
-				const dateStr = operacao.dataEntrada.toISOString().split('T')[0];
+				const dateStr = new Date(operacao.dataEntrada).toISOString().split('T')[0];
 				if (!acc[dateStr]) {
 					acc[dateStr] = [];
 				}
@@ -74,19 +75,65 @@ export const Timeline: React.FC<TimelineProps> = ({ operacoes }) => {
 	const [timelineData, setTimelineData] = useState<WeekResult[]>(prepareTimelineData(operacoes));
 	console.log(operacoes);
 
+	useEffect(() => {
+		console.log('timelineData', timelineData)
+	}, [timelineData])
+
 
 	return (
 		<Container>
 			{timelineData.map(week => (
-				<Week>
+				<Week key={week.week}>
 					{week.days.map(days => (
-						<Days>
-							{days.operacoes.map(operacao => <Day>{operacao.id}</Day>)}
+						<Days key={Math.random()}>
+							{days.operacoes.map(operacao => (
+								<Day key={operacao.id}>
+									<Column>
+										{days.date}
+									</Column>
+									<Column>
+										{operacao.ativo.acronimo}
+									</Column>
+
+									<Column>
+										{operacao.quantidade}
+									</Column>
+
+									<Column>
+										{operacao.tipo}
+									</Column>
+
+									<Column>
+										{operacao.precoEntrada}
+									</Column>
+
+									<Column>
+										{operacao.stopLoss}
+									</Column>
+
+									<Column>
+										{operacao.alvo}
+									</Column>
+
+									<Column>
+										{operacao.precoSaida}
+									</Column>
+
+									<Column>
+										{format(operacao.dataEntrada, 'HH:mm')}
+									</Column>
+
+									<Column>
+										{operacao.dataSaida && format(operacao.dataSaida, 'HH:mm')}
+									</Column>
+								</Day>
+							))}
 						</Days>
 					))}
 					<Days>
 						<TotalDay>0,00</TotalDay>
 					</Days>
+					<TotalWeek>100</TotalWeek>
 				</Week>
 			))}
 			{/* <Week>
@@ -144,12 +191,26 @@ const Day = styled.div`
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex-direction: column;
+	flex-direction: row;
+	gap: 5px;
 
 	width: 100%;
 
 	border: 1px solid green;
 `
+
+const Column = styled.div`
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	min-width: 50px;
+	height: 40px;
+
+	border: 1px solid white;
+
+`
+
 
 const TotalDay = styled.div`
 	border: 1px solid blue;
