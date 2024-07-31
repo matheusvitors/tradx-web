@@ -79,9 +79,20 @@ export const Timeline: React.FC<TimelineProps> = ({ operacoes }) => {
 		console.log('timelineData', timelineData)
 	}, [timelineData])
 
-
 	return (
 		<Container>
+			<Header>
+				<HeaderItem>Data</HeaderItem>
+				<HeaderItem>Ativo</HeaderItem>
+				<HeaderItem>Contratos</HeaderItem>
+				<HeaderItem>Tipo</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+				<HeaderItem>header</HeaderItem>
+			</Header>
 			{timelineData.map(week => (
 				<Week key={week.week}>
 					{week.days.map(days => (
@@ -89,7 +100,7 @@ export const Timeline: React.FC<TimelineProps> = ({ operacoes }) => {
 							{days.operacoes.map(operacao => (
 								<Day key={operacao.id}>
 									<Column>
-										{days.date}
+										{format(days.date, 'dd-MM-yyyy')}
 									</Column>
 									<Column>
 										{operacao.ativo.acronimo}
@@ -158,6 +169,32 @@ const Container = styled.div`
 	/* border: 1px solid white; */
 `
 
+const Header = styled.div`
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: row;
+	gap: 5px;
+
+	width: 100%;
+
+	border: 1px solid brown;
+`
+
+const HeaderItem = styled.div`
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	/* min-width: 50px; */
+	width: 100%;
+	height: 40px;
+
+	padding: 0 5px;
+
+	border: 1px solid darkgreen;
+`
+
 const Week = styled.div`
 	display: flex;
 	justify-content: flex-start;
@@ -165,7 +202,6 @@ const Week = styled.div`
 	flex-direction: column;
 
 	width: 100%;
-
 
 	border: 1px solid gray;
 `
@@ -204,13 +240,14 @@ const Column = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 
-	min-width: 50px;
+	/* min-width: 50px; */
+	width: 100%;
 	height: 40px;
 
+	padding: 0 5px;
+
 	border: 1px solid white;
-
 `
-
 
 const TotalDay = styled.div`
 	border: 1px solid blue;
