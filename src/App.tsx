@@ -10,7 +10,7 @@ export const App: React.FC = () => {
 	const queryClient = new QueryClient();
 
 	useEffect(() => {
-		if(import.meta.env.MODE === 'development') document.title = 'Tradx - Dev';
+		if(import.meta.env.MODE === 'development') document.title = 'Tradx - Dev'; else  document.title = 'Tradx - Trading Management';
 	}, [])
 
 	return (
