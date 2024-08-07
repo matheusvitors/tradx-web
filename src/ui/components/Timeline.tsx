@@ -1,79 +1,20 @@
 import { Operacao } from '@/application/models';
+import { prepareTimelineData, WeekResult } from '@/utils/prepare-timeline-data';
 import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface TimelineProps {
 	operacoes: Operacao[];
 }
 
-type DayResult = {
-    date: string;
-    operacoes: Operacao[];
-    sum: number;
-};
-
-type WeekResult = {
-    week: number;
-    days: DayResult[];
-    sum: number;
-};
-
-const getWeekNumber = (date: Date): number => {
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date.getTime() - startOfYear.getTime()) / 86400000;
-    return Math.ceil((pastDaysOfYear + startOfYear.getDay() + 1) / 7);
-};
-
-const prepareTimelineData = (operacoes: Operacao[]) => {
-	    // Agrupar as operações por data
-		const groupByDate = (operacoes: Operacao[]): { [key: string]: Operacao[] } => {
-			return operacoes.reduce((acc, operacao) => {
-				const dateStr = new Date(operacao.dataEntrada).toISOString().split('T')[0];
-				if (!acc[dateStr]) {
-					acc[dateStr] = [];
-				}
-				acc[dateStr].push(operacao);
-				return acc;
-			}, {} as { [key: string]: Operacao[] });
-		};
-
-		const groupedByDate = groupByDate(operacoes);
-
-		// Ordenar cada grupo por horário de entrada
-		for (const date in groupedByDate) {
-			groupedByDate[date].sort((a, b) => a.dataEntrada.getTime() - b.dataEntrada.getTime());
-		}
-
-		// Calcular somatório por dia e organizar por semanas
-		const weeks: { [key: number]: WeekResult } = {};
-		Object.keys(groupedByDate).forEach(date => {
-			const operacoes = groupedByDate[date];
-			const daySum = operacoes.reduce((sum, operacao) => sum + (operacao.alvo - operacao.precoEntrada), 0);
-			const dateObj = new Date(date);
-			const weekNumber = getWeekNumber(dateObj);
-
-			if (!weeks[weekNumber]) {
-				weeks[weekNumber] = { week: weekNumber, days: [], sum: 0 };
-			}
-
-			weeks[weekNumber].days.push({ date, operacoes, sum: daySum });
-			weeks[weekNumber].sum += daySum;
-		});
-
-		// Ordenar semanas e dias
-		const orderedWeeks = Object.values(weeks).sort((a, b) => a.week - b.week);
-		orderedWeeks.forEach(week => {
-			week.days.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-		});
-
-		return orderedWeeks;
-}
-
 export const Timeline: React.FC<TimelineProps> = ({ operacoes }) => {
 
 	const [timelineData, setTimelineData] = useState<WeekResult[]>(prepareTimelineData(operacoes));
-	console.log(operacoes);
+	const [items, setItems] = useState(timelineData[timelineData.length -1 ]);
+	console.log('op', timelineData[timelineData.length -1 ]);
+
+	const columns = ['Data',  'Ativo', 'Tipo', 'Entrada', 'Stop Loss', 'Alvo', 'Saída', 'Horario - Entrada', 'Horário - Saída'];
 
 	useEffect(() => {
 		console.log('timelineData', timelineData)
@@ -81,7 +22,18 @@ export const Timeline: React.FC<TimelineProps> = ({ operacoes }) => {
 
 	return (
 		<Container>
+			<TableContainer>
+				<Table>
+					<Row>
+						{columns.map((column: string, i: number) => (
+							<HeaderCell key={i} >
+								{column}
+							</HeaderCell>
+						))}
+					</Row>
 
+				</Table>
+			</TableContainer>
 		</Container>
 	);
 }
@@ -96,4 +48,47 @@ const Container = styled.div`
 
 	/* border: 1px solid white; */
 `
+const defaultCell = css`
+	height: 45px;
+	padding: 0 20px;
+	vertical-align: middle;
+`;
+
+
+const TableContainer = styled.div`
+	width: 100%;
+	height: 100%;
+`;
+
+const Table = styled.div`
+	display: table;
+	width: 100%;
+
+	border-collapse: collapse;
+`;
+
+const HeaderCell = styled.div<{ $width?: string }>`
+	${defaultCell}
+	display: table-cell;
+	text-align: start;
+	font-weight: 700;
+
+	width: ${(props) => props.$width || "auto"};
+`;
+
+const Row = styled.div`
+	display: table-row;
+	border-bottom: 1px solid ${(props) => props.theme.table.borderRow};
+`;
+
+const Cell = styled.div<{ $width?: string }>`
+	${defaultCell}
+	display: table-cell;
+
+	width: ${(props) => props.$width || "auto"};
+	position: relative;
+
+	border-bottom: 1px solid ${(props) => props.theme.table.borderCell};
+`;
+
 
