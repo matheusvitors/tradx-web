@@ -277,4 +277,3 @@ export const PersistOperacoesPage: React.FC = () => {
 		</ModalPage>
 	);
 };
-

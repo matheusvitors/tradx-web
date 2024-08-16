@@ -4,22 +4,13 @@ import { IconType } from "react-icons";
 import { IconButton } from "@/ui/components";
 import { usePagination } from "@/ui/hooks";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
-
-/**
- * Referencia => https://stackoverflow.com/questions/73001042/how-i-do-to-access-key-of-nested-object-in-my-interface-with-type-generics
- */
-
-type Join<K extends string, P extends string> = `${K}${"" extends P ? "" : "."}${P}`;
-
-type Paths<T> = T extends object
-		? {
-			[K in keyof T]-?: K extends string ? `${K}` | Join<K, Paths<T[K]>> : never;
-		}[keyof T]
-	: never;
+import { Paths } from "@/application/types";
 
 /**
  * Referencia => https://tanstack.com/table/latest
  */
+
+//TODO: Refatorar como um composition pattern
 
 interface DataTableProps {
 	columns: Column<any>[];
@@ -139,8 +130,10 @@ const Table = styled.div`
 const HeaderCell = styled.div<{ $width?: string }>`
 	${defaultCell}
 	display: table-cell;
+
 	text-align: start;
 	font-weight: 700;
+	font-size: 14px;
 
 	width: ${(props) => props.$width || "auto"};
 `;
@@ -156,6 +149,8 @@ const Cell = styled.div<{ $width?: string }>`
 
 	width: ${(props) => props.$width || "auto"};
 	position: relative;
+
+	font-size: 14px;
 
 	border-bottom: 1px solid ${(props) => props.theme.table.borderCell};
 `;

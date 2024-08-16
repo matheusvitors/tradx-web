@@ -6,6 +6,7 @@ import { ModalPage } from "@/ui/layouts";
 import { createAtivo, editAtivo } from "@/application/services/ativos";
 import { Ativo } from "@/application/models";
 import { formatDate } from "@/utils/format-date";
+import { format } from "date-fns";
 
 export const PersistAtivoPage: React.FC = () => {
 
@@ -46,7 +47,7 @@ export const PersistAtivoPage: React.FC = () => {
 			nomeInputRef.current.value = ativo.nome;
 			acronimoInputRef.current.value = ativo.acronimo;
 			multiplicadorInputRef.current.value = `${ativo.multiplicador}`;
-			dataVencimentoInputRef.current.value = ativo.dataVencimento ? formatDate(new Date(ativo.dataVencimento)) : '';
+			dataVencimentoInputRef.current.value = ativo.dataVencimento ? format(new Date(ativo.dataVencimento), 'yyyy-MM-dd') : '';
 			ativo.tipo === 'acao' ? acaoRadioButtonInputRef.current.checked = true : indiceRadioButtonInputRef.current.checked = true;
 
 		}
