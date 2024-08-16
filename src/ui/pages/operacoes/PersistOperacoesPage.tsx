@@ -9,6 +9,8 @@ import { storage } from "@/infra/store/storage";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, TextInput, Textarea, TimePicker, Toast } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 
+
+//FIXME: o radio button de compra e venda está bugado
 export const PersistOperacoesPage: React.FC = () => {
 
 	const navigate = useNavigate();
