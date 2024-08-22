@@ -199,13 +199,15 @@ export const OperacoesPage: React.FC = () => {
 				(item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador);
 			}
 
+			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
+
 			result.push({
 				data: {
 					...item,
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
 					dataEntrada: format(item.dataEntrada, isSameDay(item.dataEntrada, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',
-					resultadoPontos: item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '',
+					resultadoPontos,
 					resultadoFinanceiro:  item.precoSaida &&  (new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.tipo === 'compra' ?  (item.alvo - item.precoEntrada) * parseFloat(item.ativo.multiplicador) : (item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador))),
 					variacao: item.precoSaida ? new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(variacao) : ''
 				},
@@ -221,6 +223,9 @@ export const OperacoesPage: React.FC = () => {
 						color: theme.semantic.warning,
 					},
 				],
+				style: {
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' : 'orange'}`
+				}
 			})
 		})
 

@@ -31,7 +31,7 @@ export const Chip: React.FC<ChipProps> = ({ text, type, ...props }) => {
 		},
 		'negative': {
 			backgroundColor: theme.account.simulador,
-			color: theme.common.background
+			color: theme.white
 		},
 	}
 

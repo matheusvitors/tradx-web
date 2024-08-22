@@ -26,6 +26,7 @@ export interface DataTableActionConfig {
 export interface DataTablePayload {
 	data: any;
 	actions: DataTableActionConfig[];
+	style?: React.CSSProperties;
 }
 
 export interface Column<T> {
@@ -73,10 +74,10 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						</HeaderCell>
 					))}
 				</Row>
-				{items.map(({ data, actions }: DataTablePayload, i: number) => (
+				{items.map(({ data, actions, style }: DataTablePayload, i: number) => (
 					<Row key={i}>
 						{columns.map((column: Column<any>, i: number) => (
-							<Cell key={i} $width={column.width}>
+							<Cell style={style} key={i} $width={column.width}>
 								{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
 								{i + 1 === columns.length && actions && <Actions actions={actions} key={Math.random()} />}
 							</Cell>
