@@ -4,22 +4,13 @@ import { IconType } from "react-icons";
 import { IconButton } from "@/ui/components";
 import { usePagination } from "@/ui/hooks";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
-
-/**
- * Referencia => https://stackoverflow.com/questions/73001042/how-i-do-to-access-key-of-nested-object-in-my-interface-with-type-generics
- */
-
-type Join<K extends string, P extends string> = `${K}${"" extends P ? "" : "."}${P}`;
-
-type Paths<T> = T extends object
-		? {
-			[K in keyof T]-?: K extends string ? `${K}` | Join<K, Paths<T[K]>> : never;
-		}[keyof T]
-	: never;
+import { Paths } from "@/application/types";
 
 /**
  * Referencia => https://tanstack.com/table/latest
  */
+
+//TODO: Refatorar como um composition pattern
 
 interface DataTableProps {
 	columns: Column<any>[];
@@ -35,6 +26,7 @@ export interface DataTableActionConfig {
 export interface DataTablePayload {
 	data: any;
 	actions: DataTableActionConfig[];
+	style?: React.CSSProperties;
 }
 
 export interface Column<T> {
@@ -82,10 +74,10 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						</HeaderCell>
 					))}
 				</Row>
-				{items.map(({ data, actions }: DataTablePayload, i: number) => (
+				{items.map(({ data, actions, style }: DataTablePayload, i: number) => (
 					<Row key={i}>
 						{columns.map((column: Column<any>, i: number) => (
-							<Cell key={i} $width={column.width}>
+							<Cell style={style} key={i} $width={column.width}>
 								{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
 								{i + 1 === columns.length && actions && <Actions actions={actions} key={Math.random()} />}
 							</Cell>
@@ -139,8 +131,10 @@ const Table = styled.div`
 const HeaderCell = styled.div<{ $width?: string }>`
 	${defaultCell}
 	display: table-cell;
+
 	text-align: start;
 	font-weight: 700;
+	font-size: 14px;
 
 	width: ${(props) => props.$width || "auto"};
 `;
@@ -156,6 +150,8 @@ const Cell = styled.div<{ $width?: string }>`
 
 	width: ${(props) => props.$width || "auto"};
 	position: relative;
+
+	font-size: 14px;
 
 	border-bottom: 1px solid ${(props) => props.theme.table.borderCell};
 `;

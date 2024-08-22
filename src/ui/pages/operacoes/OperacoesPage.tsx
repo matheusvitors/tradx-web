@@ -4,11 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
+import { format, isSameDay } from "date-fns";
 import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Button, Checkbox, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
+import { Button, Checkbox, Chip, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
@@ -70,9 +71,8 @@ export const OperacoesPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		data && setOperacoes(preparePayloadDataTable(data));
-		data && loadFiltersOptions(data);
-		// console.log(data);
+		data && data.length > 0 && setOperacoes(preparePayloadDataTable(data));
+		data && data.length > 0 && loadFiltersOptions(data);
 	}, [data]);
 
 	useEffect(() => {
@@ -159,7 +159,7 @@ export const OperacoesPage: React.FC = () => {
 	};
 
 	const onRemove = async (operacao: Operacao) => {
-		Toast.confirm(`Excluir Operação?`, `Deseja excluir a operação iniciada em ${formatData(operacao.dataEntrada)}?`, "Excluir", async () => {
+		Toast.confirm(`Excluir Operação?`, `Deseja excluir a operação iniciada em ${format(operacao.dataEntrada, "dd/MM/yyyy HH:mm")}?`, "Excluir", async () => {
 			await onRemoveOperacao(operacao.id);
 			refetch();
 		});
@@ -173,44 +173,64 @@ export const OperacoesPage: React.FC = () => {
 		}
 	};
 
-	const columns: Column<Operacao>[] = [
+	const columns: Column<Operacao | { resultadoPontos: number, resultadoFinanceiro: string, variacao: string}>[] = [
 		{ name: "Ativo", acessor: "ativo.acronimo" },
 		{ name: "Tipo", acessor: "tipo" },
 		{ name: "Entrada", acessor: "precoEntrada" },
 		{ name: "Stop Loss", acessor: "stopLoss" },
 		{ name: "Alvo", acessor: "alvo" },
 		{ name: "Saída", acessor: "precoSaida" },
-		{ name: "Horário - Entrada", acessor: "dataEntrada" },
-		{ name: "Horário - Saída", acessor: "dataSaida" },
+		{ name: "Hor. Entrada", acessor: "dataEntrada" },
+		{ name: "Hor. Saída", acessor: "dataSaida" },
+		{ name: "Res. (Pontos)", acessor: "resultadoPontos"},
+		{ name: "Res. ($)", acessor: "resultadoFinanceiro" },
+		{ name: "Variação", acessor: "variacao" },
 	];
 
-	const formatData = (date: Date): string => {
-		return new Date(date).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
-	};
-
 	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
-		const result: DataTablePayload[] = input.map((item: Operacao) => ({
-			data: {
-				...item,
-				dataEntrada: new Date(item.dataEntrada).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }),
-				dataSaida: item.dataSaida ? new Date(item.dataSaida).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : undefined,
-			},
-			actions: [
-				{
-					icon: MdEdit,
-					callback: () => onEdit(item),
-					color: theme.semantic.attention,
-				},
-				{
-					icon: MdDelete,
-					callback: () => onRemove(item),
-					color: theme.semantic.warning,
-				},
-			],
-		}));
+		const result: DataTablePayload[] = [];
+		let variacao = 0;
 
-		return result;
-	};
+		input.forEach((item: Operacao) => {
+			if(item.precoSaida){
+				variacao += item.tipo === 'compra' ?
+				(item.alvo - item.precoEntrada) * parseFloat(item.ativo.multiplicador)
+			:
+				(item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador);
+			}
+
+			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
+
+			result.push({
+				data: {
+					...item,
+					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
+					dataEntrada: format(item.dataEntrada, isSameDay(item.dataEntrada, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
+					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',
+					resultadoPontos,
+					resultadoFinanceiro:  item.precoSaida &&  (new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.tipo === 'compra' ?  (item.alvo - item.precoEntrada) * parseFloat(item.ativo.multiplicador) : (item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador))),
+					variacao: item.precoSaida ? new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(variacao) : ''
+				},
+				actions: [
+					{
+						icon: MdEdit,
+						callback: () => onEdit(item),
+						color: theme.semantic.attention,
+					},
+					{
+						icon: MdDelete,
+						callback: () => onRemove(item),
+						color: theme.semantic.warning,
+					},
+				],
+				style: {
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' : 'orange'}`
+				}
+			})
+		})
+
+		return result
+	}
 
 	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {
 		event.preventDefault();
@@ -314,7 +334,7 @@ export const OperacoesPage: React.FC = () => {
 									/>
 									<DatePicker label="Fim"
 										reference={dataEntradaFimRef}
-										min={activeRanges.dataEntrada.min ? formatData(activeRanges.dataEntrada.min) : undefined}
+										min={activeRanges.dataEntrada.min ? format(activeRanges.dataEntrada.min, 'dd/MM/yyyy HH:mm') : undefined}
 										max={filters.dataEntrada.max.slice(0,10)}
 										onChange={(e) => onChangeRanges('dataEntrada','max', e.target.value)}
 									/>
@@ -333,7 +353,7 @@ export const OperacoesPage: React.FC = () => {
 						<TableContainer>
 							<PageHeader>
 								<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
-								<IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />
+								{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 							</PageHeader>
 
 							{operacoes && operacoes.length > 0 ?
@@ -392,6 +412,7 @@ const TableContainer = styled.div`
 	justify-content: flex-start;
 	flex-direction: column;
 	flex-grow: 1;
+	overflow-x: auto;
 
 	width: 100%;
 `;

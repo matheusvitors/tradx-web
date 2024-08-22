@@ -1,11 +1,11 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { TextInput, RadioButton, Button, RadioGroup, Form, Toast, DatePicker } from "@/ui/components";
 import { ModalPage } from "@/ui/layouts";
 import { createAtivo, editAtivo } from "@/application/services/ativos";
 import { Ativo } from "@/application/models";
-import { formatDate } from "@/utils/format-date";
 
 export const PersistAtivoPage: React.FC = () => {
 
@@ -46,7 +46,7 @@ export const PersistAtivoPage: React.FC = () => {
 			nomeInputRef.current.value = ativo.nome;
 			acronimoInputRef.current.value = ativo.acronimo;
 			multiplicadorInputRef.current.value = `${ativo.multiplicador}`;
-			dataVencimentoInputRef.current.value = ativo.dataVencimento ? formatDate(new Date(ativo.dataVencimento)) : '';
+			dataVencimentoInputRef.current.value = ativo.dataVencimento ? format(new Date(ativo.dataVencimento), 'yyyy-MM-dd') : '';
 			ativo.tipo === 'acao' ? acaoRadioButtonInputRef.current.checked = true : indiceRadioButtonInputRef.current.checked = true;
 
 		}

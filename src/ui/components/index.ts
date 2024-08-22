@@ -1,5 +1,6 @@
 export * from './Button'
 export * from './Checkbox'
+export * from './Chip'
 export * from './DataTable'
 export * from './DatePicker'
 export * from './FloatingButton'
@@ -17,4 +18,3 @@ export * from './TextInput'
 export * from './TimePicker'
 export * from './Toast'
 export * from './SystemName'
-
