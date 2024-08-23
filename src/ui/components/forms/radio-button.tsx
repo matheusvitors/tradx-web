@@ -1,4 +1,5 @@
 import React, { InputHTMLAttributes, RefObject } from "react";
+import { UseFormRegister } from "react-hook-form";
 import styled from "styled-components";
 
 interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
@@ -6,14 +7,18 @@ interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
 	value: string;
 	checked?: boolean;
 	label: string;
-	reference?:  RefObject<HTMLInputElement>;
-	onChange?: React.ChangeEventHandler<HTMLInputElement>;
+	register: UseFormRegister<any>;
 }
 
-export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, checked, label, reference, onChange, ...rest}) => {
+export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, label, register, ...rest}) => {
 	return (
 		<Container>
-			<Radio type="radio" id={value} name={name} value={value} checked={checked} ref={reference} onChange={onChange} {...rest} />
+			<Radio
+				type="radio"
+				id={value}
+				value={value}
+				{...register(name)}
+				{...rest} />
 			<Label htmlFor={value}>{label}</Label>
 		</Container>
 	);
@@ -36,9 +41,9 @@ const Radio = styled.input`
 	display: none;
 
 	&[type="radio"]:checked + label {
-		background-color: ${props => props.theme.textInput.background};
-		color: ${props => props.theme.textInput.text};
-		border: 1px solid ${props => props.theme.textInput.background};
+		background-color: ${props => props.theme.input.background};
+		color: ${props => props.theme.input.text};
+		border: 1px solid ${props => props.theme.input.background};
 	}
 
 	`
@@ -54,5 +59,5 @@ const Label = styled.label`
 	cursor: pointer;
 
 	border-radius: 5px;
-	border: 1px solid ${props => props.theme.textInput.background};
+	border: 1px solid ${props => props.theme.input.background};
 `

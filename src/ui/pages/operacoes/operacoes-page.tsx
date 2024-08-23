@@ -9,11 +9,14 @@ import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Button, Checkbox, Chip, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
+import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
+import { Toast, PageLoading } from "@/ui/components/feedback";
+import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/ui/components/forms";
+import { IconButton, FloatingButton } from "@/ui/components/general";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -215,12 +218,12 @@ export const OperacoesPage: React.FC = () => {
 					{
 						icon: MdEdit,
 						callback: () => onEdit(item),
-						color: theme.semantic.attention,
+						color: theme.colors.attention,
 					},
 					{
 						icon: MdDelete,
 						callback: () => onRemove(item),
-						color: theme.semantic.warning,
+						color: theme.colors.warning,
 					},
 				],
 				style: {

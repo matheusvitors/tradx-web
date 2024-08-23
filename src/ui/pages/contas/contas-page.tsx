@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
-import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from "@/ui/components";
 import { listContas, removeConta } from "@/application/services/contas";
 import { STALE_TIME } from "@/infra/config/constants";
-import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
+import { Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
+import { Toast, PageLoading } from "@/ui/components/feedback";
+import { FloatingButton } from "@/ui/components/general";
 
 export const ContasPage: React.FC = () => {
 
@@ -65,12 +67,12 @@ export const ContasPage: React.FC = () => {
 				{
 					icon: MdEdit,
 					callback: () => onEdit(item),
-					color: theme.semantic.attention
+					color: theme.colors.attention
 				},
 				{
 					icon: MdDelete,
 					callback: () => onRemove(item),
-					color: theme.semantic.warning
+					color: theme.colors.warning
 				},
 			]
 		}))

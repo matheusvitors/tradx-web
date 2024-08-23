@@ -10,28 +10,26 @@ export const Chip: React.FC<ChipProps> = ({ text, type, ...props }) => {
 
 	const theme = useTheme();
 
-
-
 	const colorSchema = {
 		'primary': {
-			backgroundColor: theme.primary,
+			backgroundColor: theme.colors.primary,
 			color: theme.common.text
 		},
 		'secondary': {
-			backgroundColor: theme.secondary,
-			color: theme.common.background
+			backgroundColor: theme.colors.primary,
+			color: theme.common.text
 		},
 		'accent': {
 			backgroundColor: theme.accent,
 			color: theme.common.background
 		},
 		'positive': {
-			backgroundColor: theme.account.real,
-			color: theme.common.background
+			backgroundColor: theme.common.positive.background,
+			color: theme.common.positive.text
 		},
 		'negative': {
-			backgroundColor: theme.account.simulador,
-			color: theme.white
+			backgroundColor: theme.common.negative.background,
+			color: theme.common.negative.text
 		},
 	}
 

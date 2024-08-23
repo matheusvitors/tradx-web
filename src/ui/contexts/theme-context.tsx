@@ -1,6 +1,5 @@
 import { useSystemTheme } from "@/ui/hooks/useSystemTheme";
-import dark from "@/ui/styles/themes/dark";
-import light from "@/ui/styles/themes/light";
+import { light, dark } from "@/ui/styles/themes";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components";
 

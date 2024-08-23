@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import { MdClose } from 'react-icons/md';
 import styled, { useTheme } from 'styled-components';
 import { hexToRGBA } from "about-colors-js";
-import { IconButton } from '@/ui/components/IconButton';
+import { IconButton } from '@/ui/components/general';
 
 interface ModalProps {
 	title: string;
@@ -19,7 +19,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, 
 			<Card>
 				<Header>
 					<PageName>{title}</PageName>
-					<IconButton icon={MdClose} onClick={() => setIsOpen(false)} color={theme.semantic.warning} />
+					<IconButton icon={MdClose} onClick={() => setIsOpen(false)} color={theme.colors.warning} />
 				</Header>
 				<Content>{children}</Content>
 			</Card>

@@ -1,8 +1,10 @@
 import React, { FormEvent, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
 import { authenticateUser } from "@/application/services/auth";
-import { TextInput, Button, Toast, Form, SystemName } from "@/ui/components";
+import { Toast } from "@/ui/components/feedback";
+import { TextInput, Button } from "@/ui/components/forms";
+import { SystemName } from "@/ui/components/general";
 
 export const LoginPage: React.FC = () => {
 	const navigate = useNavigate();

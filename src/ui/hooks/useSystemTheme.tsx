@@ -1,9 +1,8 @@
+import { useContext } from "react";
 import { KEY_THEME } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { SystemThemeContext } from "@/ui/contexts/theme-context";
-import dark from "@/ui/styles/themes/dark";
-import light from "@/ui/styles/themes/light";
-import { useContext } from "react";
+import { light, dark } from "@/ui/styles/themes";
 
 export const useSystemTheme = () => {
 	const { theme, setTheme } = useContext(SystemThemeContext);

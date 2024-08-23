@@ -1,2 +1,2 @@
-export * from './AtivosPage'
-export * from './PersistAtivoPage'
+export * from './ativos-page'
+export * from './persist-ativo-page'

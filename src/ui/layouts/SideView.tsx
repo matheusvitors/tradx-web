@@ -1,7 +1,7 @@
-import { IconButton } from '@/ui/components';
 import React, { PropsWithChildren } from 'react';
 import { MdClose } from 'react-icons/md';
 import styled, { useTheme } from 'styled-components';
+import { IconButton } from '@/ui/components/general';
 
 interface SideViewProps {
 	open: boolean;
@@ -18,7 +18,7 @@ export const SideView: React.FC<PropsWithChildren<SideViewProps>> = ({ open, set
 		<Container open={open}>
 			<Header>
 				<CloseContainer>
-					<IconButton icon={MdClose} margin={1} color={theme.semantic.warning} onClick={() => setOpen(false)} />
+					<IconButton icon={MdClose} margin={1} color={theme.colors.warning} onClick={() => setOpen(false)} />
 				</CloseContainer>
 				<Title>{title}</Title>
 			</Header>
@@ -29,7 +29,6 @@ export const SideView: React.FC<PropsWithChildren<SideViewProps>> = ({ open, set
 }
 
 const Container = styled.div<{ open: boolean; }>`
-	/* display: flex; */
 	display: ${({ open }) => open ? 'flex' : 'none'};
 	flex-direction: column;
 	align-items: center;

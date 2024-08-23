@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import { IconType } from "react-icons";
-import { IconButton } from "@/ui/components";
 import { usePagination } from "@/ui/hooks";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { Paths } from "@/application/types";
+import { IconButton } from "@/ui/components/general";
 
 /**
  * Referencia => https://tanstack.com/table/latest

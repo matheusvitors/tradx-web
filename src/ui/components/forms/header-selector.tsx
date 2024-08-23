@@ -1,27 +1,29 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components';
-import { hexToRGBA } from 'about-colors-js';
 
-interface SelectProps {
+interface HeaderSelectorProps {
 	label: string;
 	name: string;
-	options: SelectOptions[];
-	value: string;
+	options: HeaderSelectorOptions[];
+	reference?: RefObject<HTMLSelectElement>;
+	value?: string;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
-export interface SelectOptions {
+export interface HeaderSelectorOptions {
 	label: string;
 	value: string | number;
+	isSelected?: boolean;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, options, value, onChange }) => {
+export const HeaderSelector: React.FC<HeaderSelectorProps> = ({ label, name, options, reference, value, onChange }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<Input
 				name={name}
 				id={name}
+				ref={reference}
 				value={value}
 				onChange={onChange}
 			>
@@ -38,13 +40,10 @@ const Container = styled.div`
 	justify-content: center;
 
 	height: 70px;
-	width: 80%;
-
-	margin: 15px 10px;
+	width: 100%;
 `
 
 const Label = styled.label`
-	margin: 5px 0;
 	font-weight: 400;
 `
 
@@ -53,19 +52,17 @@ const Input = styled.select`
 	height: 80%;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
-	font-size: 16px;
-	color:  ${props => props.theme.textInput.text};
+	font-size: 22px;
+	color: ${props => props.theme.accent};
+
+	appearance: none;
 `
 
 const Option = styled.option`
 	background-color: ${props => props.theme.common.background};
-	color:  ${props => props.theme.textInput.text};
-
-	&:hover {
-	}
+	color:  ${props => props.theme.input.text};
 `

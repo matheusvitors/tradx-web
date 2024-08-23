@@ -38,13 +38,13 @@ const Input = styled.textarea`
 	width: 100%;
 	background-color: transparent;
 
-	border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${props => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 10px;
 
 	font-size: 16px;
-	color:  ${props => props.theme.textInput.text};
+	color:  ${props => props.theme.input.text};
 
 	resize: vertical;
 `

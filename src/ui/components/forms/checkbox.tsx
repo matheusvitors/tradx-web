@@ -36,9 +36,9 @@ const Input = styled.input.attrs({ type: 'checkbox'})<{ $backgroundColor?: strin
 	display: none;
 
 	&[type="checkbox"]:checked + label {
-		background-color: ${props => props.$backgroundColor || props.theme.textInput.background};
-		color: ${props => props.theme.textInput.text};
-		border: 1px solid ${props => props.$backgroundColor || props.theme.textInput.background};
+		background-color: ${props => props.$backgroundColor || props.theme.input.background};
+		color: ${props => props.theme.input.text};
+		border: 1px solid ${props => props.$backgroundColor || props.theme.input.background};
 	}
 `
 
@@ -57,6 +57,6 @@ const Label = styled.label<{ $backgroundColor?: string }>`
 	z-index: 1;
 
 	border-radius: 5px;
-	border: 1px solid ${props => props.$backgroundColor || props.theme.textInput.background};
+	border: 1px solid ${props => props.$backgroundColor || props.theme.input.background};
 
 `

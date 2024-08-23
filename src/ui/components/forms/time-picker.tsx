@@ -70,13 +70,13 @@ const DateInput = styled.input.attrs({ type: 'date' })`
 	height: 100%;
 
 	background-color: transparent;
-	border: 1px solid ${(props) => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${(props) => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
 	font-size: 16px;
-	color: ${(props) => props.theme.textInput.text};
+	color: ${(props) => props.theme.input.text};
 
 	/* &::-webkit-datetime-edit { padding: 1em; } */
 	/* &::-webkit-datetime-edit-fields-wrapper { background: silver; } */
@@ -93,13 +93,13 @@ const TimeInput = styled.input.attrs({ type: "time" })`
 	height: 100%;
 
 	background-color: transparent;
-	border: 1px solid ${(props) => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${(props) => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
 	font-size: 16px;
-	color: ${(props) => props.theme.textInput.text};
+	color: ${(props) => props.theme.input.text};
 
 	/* &::-webkit-datetime-edit { padding: 1em; }
 	&::-webkit-datetime-edit-fields-wrapper { background: silver; }

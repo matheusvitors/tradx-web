@@ -1,24 +1,31 @@
-import React, { HTMLInputTypeAttribute, InputHTMLAttributes, RefObject } from 'react';
+import React, { HTMLInputTypeAttribute, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
+import { UseFormRegister, FieldErrors, RegisterOptions } from 'react-hook-form';
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
+	name: string;
 	type?: HTMLInputTypeAttribute;
-	reference?: RefObject<HTMLInputElement>;
 	textTransform?: string;
+	register: UseFormRegister<any>;
+	options?: RegisterOptions;
+	errors?: FieldErrors;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ label, type, name, reference, textTransform, ...rest }) => {
+export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTransform, options, errors, register, ...rest }) => {
+	// console.log('errros', name, errors);
+
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<Input
 				type={type || 'text'}
-				ref={reference}
 				$textTransform={textTransform}
+				{...register(name, options )}
 				{...rest}
 			/>
+			{errors && <span>erro!</span>}
 		</Container>
 	);
 }
@@ -45,12 +52,12 @@ const Input = styled.input<{ $textTransform?: string; }>`
 	height: 80%;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${props => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
 	font-size: 16px;
-	color:  ${props => props.theme.textInput.text};
+	color:  ${props => props.theme.input.text};
 	text-transform: ${props => props.$textTransform || 'none'};
 `
