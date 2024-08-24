@@ -22,10 +22,11 @@ export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTra
 			<Input
 				type={type || 'text'}
 				$textTransform={textTransform}
-				{...register(name, options )}
+				{...register(name, options)}
 				{...rest}
+				$hasError={errors && errors[name] ? true : false}
 			/>
-			{errors && <span>erro!</span>}
+			{errors && errors[name] && <ErrorMessage>{errors[name].message?.toString()}</ErrorMessage>}
 		</Container>
 	);
 }
@@ -34,25 +35,27 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	justify-content: center;
+	justify-content: flex-start;
 
-	height: 70px;
+	height: 100px;
 	width: 80%;
 
-	margin: 15px 10px;
+	margin: 5px 10px;
 `
 
 const Label = styled.label`
 	margin: 5px 0;
 	font-weight: 400;
+
+	height: 20px;
 `
 
-const Input = styled.input<{ $textTransform?: string; }>`
+const Input = styled.input<{ $textTransform?: string; $hasError?: boolean; }>`
 	width: 100%;
-	height: 80%;
+	height: 40px;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.input.border, 0.3)};
+	border: 1px solid ${props => props.$hasError ? props.theme.colors.warning :  hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
@@ -60,4 +63,13 @@ const Input = styled.input<{ $textTransform?: string; }>`
 	font-size: 16px;
 	color:  ${props => props.theme.input.text};
 	text-transform: ${props => props.$textTransform || 'none'};
+`
+
+const ErrorMessage = styled.span`
+	width: 100%;
+	height: 20px;
+	margin: 3px 0;
+
+	font-size: 12px;
+	color: ${props => props.theme.colors.warning}
 `

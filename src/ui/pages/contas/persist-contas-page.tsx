@@ -104,7 +104,7 @@ export const PersistContaPage: React.FC = () => {
 	return (
 		<ModalPage title={location.state.conta ? "Editar Conta" : "Adicionar Conta"}>
 			<Form onSubmit={handleSubmit(onSubmit)}>
-				<TextInput label="Nome" name="nome" register={register} options={{required: 'requerido'}} errors={errors}/>
+				<TextInput label="Nome" name="nome" register={register} options={{required: 'O nome é obrigatório'}} errors={errors}/>
 				<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register}  />
 				<RadioGroup>
 					<RadioButton name="tipo" value="simulador" label="simulador" register={register} />

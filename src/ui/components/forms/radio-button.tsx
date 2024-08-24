@@ -2,6 +2,8 @@ import React, { InputHTMLAttributes, RefObject } from "react";
 import { UseFormRegister } from "react-hook-form";
 import styled from "styled-components";
 
+
+//TODO: Refatorar de acordo com essa ideia: https://chatgpt.com/c/1f066fa2-2741-4938-8193-eb0795ac5bfa
 interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
 	name: string;
 	value: string;
