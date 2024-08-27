@@ -2,6 +2,7 @@ import React, { HTMLInputTypeAttribute, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
 import { UseFormRegister, FieldErrors, RegisterOptions } from 'react-hook-form';
+import { InputErrorMessage } from '@/ui/components/utils';
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
@@ -10,7 +11,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 	textTransform?: string;
 	register: UseFormRegister<any>;
 	options?: RegisterOptions;
-	errors?: FieldErrors;
+	errors: FieldErrors;
 }
 
 export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTransform, options, errors, register, ...rest }) => {
@@ -26,8 +27,8 @@ export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTra
 				{...rest}
 				$hasError={errors && errors[name] ? true : false}
 			/>
-			{errors && errors[name] && <ErrorMessage>{errors[name].message?.toString()}</ErrorMessage>}
-		</Container>
+			{errors && errors[name] && <InputErrorMessage>{errors[name].message?.toString()}</InputErrorMessage>}
+			</Container>
 	);
 }
 
@@ -63,13 +64,4 @@ const Input = styled.input<{ $textTransform?: string; $hasError?: boolean; }>`
 	font-size: 16px;
 	color:  ${props => props.theme.input.text};
 	text-transform: ${props => props.$textTransform || 'none'};
-`
-
-const ErrorMessage = styled.span`
-	width: 100%;
-	height: 20px;
-	margin: 3px 0;
-
-	font-size: 12px;
-	color: ${props => props.theme.colors.warning}
 `

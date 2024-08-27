@@ -1,5 +1,6 @@
-import React, { InputHTMLAttributes, RefObject } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { InputErrorMessage } from "@/ui/components/utils";
+import React, { InputHTMLAttributes } from "react";
+import { FieldErrors, RegisterOptions, UseFormRegister } from "react-hook-form";
 import styled from "styled-components";
 
 
@@ -10,18 +11,22 @@ interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
 	checked?: boolean;
 	label: string;
 	register: UseFormRegister<any>;
+	options?: RegisterOptions;
+	errors: FieldErrors;
 }
 
-export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, label, register, ...rest}) => {
+export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, label, register, options, errors, ...rest}) => {
 	return (
 		<Container>
 			<Radio
 				type="radio"
 				id={value}
 				value={value}
-				{...register(name)}
-				{...rest} />
-			<Label htmlFor={value}>{label}</Label>
+				{...register(name, options)}
+				{...rest}
+
+			/>
+			<Label htmlFor={value} $hasError={errors && errors[name] ? true : false}>{label}</Label>
 		</Container>
 	);
 };
@@ -35,7 +40,6 @@ const Container = styled.div`
 	margin: 10px 0px;
 
 	height: 50px;
-	/* width: 200px; */
 	width: 100%;
 	`
 
@@ -50,7 +54,7 @@ const Radio = styled.input`
 
 	`
 
-const Label = styled.label`
+const Label = styled.label<{$hasError?: boolean;}>`
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -61,5 +65,6 @@ const Label = styled.label`
 	cursor: pointer;
 
 	border-radius: 5px;
-	border: 1px solid ${props => props.theme.input.background};
+	border: 1px solid ${props => props.$hasError ? props.theme.colors.warning : props.theme.input.background};
+
 `

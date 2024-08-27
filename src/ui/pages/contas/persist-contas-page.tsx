@@ -16,7 +16,7 @@ export const PersistContaPage: React.FC = () => {
 	const location = useLocation()
 	const queryClient = useQueryClient();
 	// const { register, handleSubmit, formState: { errors } } = useForm<ContaDTO>({
-	const { register, handleSubmit, formState: { errors } } = useForm<Omit<ContaDTO, 'id'>>({
+	const { register, handleSubmit, formState: { errors }, setError } = useForm<Omit<ContaDTO, 'id'>>({
 		defaultValues: {
 			nome: location.state.conta?.nome || '',
 			saldoInicial: location.state.conta?.saldoInicial || '',
@@ -93,6 +93,13 @@ export const PersistContaPage: React.FC = () => {
 	const onSubmit: SubmitHandler<Omit<ContaDTO, 'id'>> = (data) => {
 		setIsLoading(true);
 		try {
+			console.log(data.tipo.length === 0);
+
+			if(data.tipo.length === 0) {
+				setError("tipo", {message: 'O tipo é obrigatório'})
+				console.log('erro!');
+
+			}
 			console.log('submit', data);
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -105,10 +112,10 @@ export const PersistContaPage: React.FC = () => {
 		<ModalPage title={location.state.conta ? "Editar Conta" : "Adicionar Conta"}>
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<TextInput label="Nome" name="nome" register={register} options={{required: 'O nome é obrigatório'}} errors={errors}/>
-				<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register}  />
+				<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register} errors={errors} />
 				<RadioGroup>
-					<RadioButton name="tipo" value="simulador" label="simulador" register={register} />
-					<RadioButton name="tipo" value="real" label="real" register={register} />
+					<RadioButton name="tipo" value="simulador" label="simulador" register={register} options={{required: true}} errors={errors} />
+					<RadioButton name="tipo" value="real" label="real" register={register} errors={errors} />
 				</RadioGroup>
 				<Button label={location.state.conta ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
 			</Form>

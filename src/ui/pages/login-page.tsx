@@ -43,7 +43,7 @@ export const LoginPage: React.FC = () => {
 				<SystemName color={theme.common.text || 'red'} width='250px' height='100px' />
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<TextInput label="Usuário" name="username" register={register} options={{ required: 'O usuário é obrigatório' }} errors={errors} />
-					<TextInput label="Senha" type="password" name="password" register={register} options={{ required: 'A senha é obrigatório' }} errors={errors} />
+					<TextInput label="Senha" type="password" name="password" register={register} options={{ required: 'A senha é obrigatória' }} errors={errors} />
 					<Button label="Entrar" type="submit" isLoading={loading} />
 				</Form>
 			</Content>
