@@ -1,21 +1,29 @@
-import React, { InputHTMLAttributes, RefObject } from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
+import { UseFormRegister, RegisterOptions, FieldErrors } from 'react-hook-form';
+import { InputErrorMessage } from '@/ui/components/utils';
 
 interface DatePickerProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
-	reference?: RefObject<HTMLInputElement>;
+	name: string;
+	register: UseFormRegister<any>;
+	options?: RegisterOptions;
+	errors: FieldErrors;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({ label, reference, ...rest }) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ label, name, register, options, errors, ...rest }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<Input
-				ref={reference}
-				// defaultValue={defaultValue || new Date(new Date().getTime() - 10800000).toISOString().slice(0,16)}
+				type='date'
+				{...register(name, options)}
 				{...rest}
+				$hasError={errors && errors[name] ? true : false}
 			/>
+			{errors && errors[name] && <InputErrorMessage>{errors[name].message?.toString()}</InputErrorMessage>}
+
 		</Container>
 	);
 }
@@ -24,24 +32,25 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	justify-content: center;
+	justify-content: flex-start;
 
-	height: 70px;
+	height: 100px;
 	width: 80%;
 
-	/* margin: 15px 10px; */
+	margin: 10px 10px;
 `
+
 const Label = styled.label`
 	margin: 5px 0;
 	font-weight: 400;
 `
 
-const Input = styled.input.attrs({ type: 'date' })`
+const Input = styled.input<{ $hasError?: boolean; }>`
 	width: 100%;
-	height: 80%;
+	height: 40px;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.input.border, 0.3)};
+	border: 1px solid ${props => props.$hasError ? props.theme.colors.warning :  hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
