@@ -7,7 +7,7 @@ import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";
 import { listContas, removeConta } from "@/application/services/contas";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
+import { Chip, Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
 import { FloatingButton } from "@/ui/components/general";
 
@@ -61,8 +61,13 @@ export const ContasPage: React.FC = () => {
 	]
 
 	const preparePayloadDataTable = (input: Conta[]): DataTablePayload[] => {
-		const result: DataTablePayload[]  = input.map((item: any) => ({
-			data: {...item},
+		const result: DataTablePayload[]  = input.map((item: Conta) => ({
+			data: {
+				nome: item.nome,
+				saldoInicial:  new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.saldoInicial),
+				saldo:  new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.saldo),
+				tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'real' ? 'positive' : 'negative'} />,
+			},
 			actions: [
 				{
 					icon: MdEdit,
@@ -113,19 +118,19 @@ const Content = styled.div`
 	flex-grow: 1;
 `;
 
-const ContasContainer = styled.div`
-	display: flex;
-	align-items: flex-start;
-	justify-content: flex-start;
-	flex-direction: row;
-	flex-wrap: wrap;
-	gap: 25px;
+// const ContasContainer = styled.div`
+// 	display: flex;
+// 	align-items: flex-start;
+// 	justify-content: flex-start;
+// 	flex-direction: row;
+// 	flex-wrap: wrap;
+// 	gap: 25px;
 
-	padding-top: 20px;
+// 	padding-top: 20px;
 
-	width: 100%;
-	height: auto;
-`;
+// 	width: 100%;
+// 	height: auto;
+// `;
 
 const EmptyContainer = styled.div`
 	display: flex;

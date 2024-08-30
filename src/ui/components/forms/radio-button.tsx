@@ -1,8 +1,6 @@
-import { InputErrorMessage } from "@/ui/components/utils";
 import React, { InputHTMLAttributes } from "react";
 import { FieldErrors, RegisterOptions, UseFormRegister } from "react-hook-form";
 import styled from "styled-components";
-
 
 //TODO: Refatorar de acordo com essa ideia: https://chatgpt.com/c/1f066fa2-2741-4938-8193-eb0795ac5bfa
 interface RadioButtonParams extends InputHTMLAttributes<HTMLInputElement> {
@@ -24,7 +22,6 @@ export const RadioButton: React.FC<RadioButtonParams> = ({ name, value, label, r
 				value={value}
 				{...register(name, options)}
 				{...rest}
-
 			/>
 			<Label htmlFor={value} $hasError={errors && errors[name] ? true : false}>{label}</Label>
 		</Container>

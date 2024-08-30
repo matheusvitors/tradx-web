@@ -15,8 +15,6 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement>{
 }
 
 export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTransform, options, errors, register, ...rest }) => {
-	// console.log('errros', name, errors);
-
 	return (
 		<Container>
 			<Label>{label}</Label>
@@ -28,7 +26,7 @@ export const TextInput: React.FC<TextInputProps> = ({ label, type, name, textTra
 				$hasError={errors && errors[name] ? true : false}
 			/>
 			{errors && errors[name] && <InputErrorMessage>{errors[name].message?.toString()}</InputErrorMessage>}
-			</Container>
+		</Container>
 	);
 }
 

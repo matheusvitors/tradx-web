@@ -1,11 +1,10 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { createConta } from "@/application/services/contas";
 import { ModalPage } from "@/ui/layouts";
 import { editConta } from "@/application/services/contas/edit-conta";
-import { Conta } from "@/application/models";
 import { Toast } from "@/ui/components/feedback";
 import { TextInput, RadioGroup, RadioButton, Button, Form } from "@/ui/components/forms";
 import { ContaDTO } from "@/application/dto";
@@ -15,7 +14,6 @@ export const PersistContaPage: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation()
 	const queryClient = useQueryClient();
-	// const { register, handleSubmit, formState: { errors } } = useForm<ContaDTO>({
 	const { register, handleSubmit, formState: { errors }, setError } = useForm<Omit<ContaDTO, 'id'>>({
 		defaultValues: {
 			nome: location.state.conta?.nome || '',
@@ -26,81 +24,31 @@ export const PersistContaPage: React.FC = () => {
 
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleCreateConta = async () => {
-		try {
-			// if (nomeInputRef.current &&
-			// 	simuladorRadioButtonInputRef.current &&
-			// 	realRadioButtonInputRef.current &&
-			// 	saldoInicialInputRef.current
-			// ) {
-			// 	await createConta({
-			// 		nome: nomeInputRef.current.value,
-			// 		tipo: tipoInputValue,
-			// 		saldoInicial: parseFloat(saldoInicialInputRef.current.value)
-			// 	});
-			// }
+	const onSubmit: SubmitHandler<Omit<ContaDTO, 'id'>> = async (data) => {
 
-			queryClient.invalidateQueries({queryKey: ['contas']});
-
-			// if(nomeInputRef.current && saldoInicialInputRef.current) {
-			// 	nomeInputRef.current.value = "";
-			// 	saldoInicialInputRef.current.value = "0,00";
-			// }
-
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	const handleEditConta = async () => {
-		try {
-			// if (location.state.conta &&
-			// 	nomeInputRef.current &&
-			// 	simuladorRadioButtonInputRef.current &&
-			// 	realRadioButtonInputRef.current &&
-			// 	saldoInicialInputRef.current
-			// ) {
-
-			// 	await editConta({
-			// 		id: location.state.conta.id,
-			// 		nome: nomeInputRef.current.value,
-			// 		tipo: tipoInputValue,
-			// 		saldoInicial: parseFloat(saldoInicialInputRef.current.value)
-			// 	});
-			// }
-
-			queryClient.invalidateQueries({queryKey: ['contas']});
-
-		} catch (error) {
-			throw error;
-		}
-	}
-
-	// const onSubmit = async (event: FormEvent) => {
-	// 	event.preventDefault();
-
-	// 	try {
-	// 		setIsLoading(true);
-	// 		location.state.conta ? handleEditConta() : handleCreateConta();
-	// 		navigate('/contas');
-	// 	} catch (error: any) {
-	// 		Toast.error(error.message);
-	// 	} finally {
-	// 		setIsLoading(false);
-	// 	}
-	// }
-
-	const onSubmit: SubmitHandler<Omit<ContaDTO, 'id'>> = (data) => {
 		setIsLoading(true);
+
 		try {
-			console.log(data.tipo.length === 0);
+			data.tipo.length === 0 && setError("tipo", {message: 'O tipo é obrigatório'});
 
-			if(data.tipo.length === 0) {
-				setError("tipo", {message: 'O tipo é obrigatório'})
-				console.log('erro!');
-
+			const input: ContaDTO = {
+				nome: data.nome,
+				saldoInicial: data.saldoInicial,
+				tipo: data.tipo
 			}
-			console.log('submit', data);
+
+			if(location.state.conta) {
+				input.id = location.state.conta.id
+			}
+
+			if(location.state.conta) {
+				await editConta(input)
+			} else {
+				await createConta(input);
+			}
+
+			queryClient.invalidateQueries({queryKey: ['contas']});
+			navigate('/contas');
 		} catch (error: any) {
 			Toast.error(error.message);
 		} finally {
@@ -115,7 +63,7 @@ export const PersistContaPage: React.FC = () => {
 				<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register} errors={errors} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="simulador" label="simulador" register={register} options={{required: true}} errors={errors} />
-					<RadioButton name="tipo" value="real" label="real" register={register} errors={errors} />
+					<RadioButton name="tipo" value="real" label="real" register={register} options={{required: true}} errors={errors} />
 				</RadioGroup>
 				<Button label={location.state.conta ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
 			</Form>
