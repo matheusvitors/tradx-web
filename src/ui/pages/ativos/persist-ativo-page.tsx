@@ -1,21 +1,21 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ModalPage } from "@/ui/layouts";
 import { createAtivo, editAtivo } from "@/application/services/ativos";
-import { Ativo } from "@/application/models";
 import { Toast } from "@/ui/components/feedback";
 import { TextInput, DatePicker, RadioGroup, RadioButton, Button, Form } from "@/ui/components/forms";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { AtivoDTO } from "@/application/dto";
 
 const persistAtivoFormSchema = z.object({
 	nome: z.string().min(1, 'O nome é obrigatório.'),
 	acronimo: z.string().min(5, 'O acrônimo deve ter pelo menos 5 caracteres'),
 	tipo: z.string().min(1, 'O tipo é obrigatório'),
-	multiplicador: z.number().positive('O número deve ser maior que zero').optional(),
+	multiplicador: z.number().nonnegative('O número deve ser maior que zero').optional(),
 	dataVencimento: z.string()
 })
 
@@ -26,7 +26,7 @@ export const PersistAtivoPage: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation()
 	const queryClient = useQueryClient();
-	const { register, handleSubmit, formState: { errors }, setError } = useForm<PersistAtivoFormData>({
+	const { register, handleSubmit, formState: { errors } } = useForm<PersistAtivoFormData>({
 		defaultValues: {
 			nome: location.state.ativo?.nome || '',
 			acronimo: location.state.ativo?.acronimo || '',
@@ -45,9 +45,23 @@ export const PersistAtivoPage: React.FC = () => {
 		try {
 			setIsLoading(true);
 
-			// location.state.ativo ? await handleEditAtivo() : await handleCreateAtivo();
-			// queryClient.invalidateQueries({queryKey: ['ativos']});
-			// navigate('/ativos');
+			const input: AtivoDTO = {
+				nome: data.nome,
+				acronimo: data.acronimo,
+				tipo: data.tipo,
+				multiplicador: data.multiplicador || 1, //FIXME: Bug no multiplicador
+				dataVencimento: new Date(data.dataVencimento) || null
+			}
+
+			if(location.state.ativo) {
+				input.id = location.state.ativo.id;
+				await editAtivo(input);
+			} else {
+				await createAtivo(input);
+			}
+
+			queryClient.invalidateQueries({queryKey: ['ativos']});
+			navigate('/ativos');
 		} catch (error: any) {
 			Toast.error(error.message);
 		} finally {
