@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createConta } from "@/application/services/contas";
 import { ModalPage } from "@/ui/layouts";
 import { editConta } from "@/application/services/contas/edit-conta";
 import { Toast } from "@/ui/components/feedback";
 import { TextInput, RadioGroup, RadioButton, Button, Form } from "@/ui/components/forms";
 import { ContaDTO } from "@/application/dto";
-import { z } from "zod";
 
 const persistContasFormSchema = z.object({
 	nome: z.string().min(1, 'O nome é obrigatório.'),
@@ -28,7 +29,8 @@ export const PersistContaPage: React.FC = () => {
 			nome: location.state.conta?.nome || '',
 			saldoInicial: location.state.conta?.saldoInicial || '',
 			tipo: location.state.conta?.tipo || '',
-		}
+		},
+		resolver: zodResolver(persistContasFormSchema)
 	});
 
 	const [isLoading, setIsLoading] = useState(false);

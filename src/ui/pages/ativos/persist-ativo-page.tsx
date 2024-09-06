@@ -49,7 +49,7 @@ export const PersistAtivoPage: React.FC = () => {
 				nome: data.nome,
 				acronimo: data.acronimo,
 				tipo: data.tipo,
-				multiplicador: data.multiplicador || 1, //FIXME: Bug no multiplicador
+				multiplicador: data.multiplicador || 1,
 				dataVencimento: new Date(data.dataVencimento) || null
 			}
 
@@ -75,7 +75,7 @@ export const PersistAtivoPage: React.FC = () => {
 				<TextInput label="Nome" name="nome" register={register} errors={errors} />
 				<TextInput label="Acronimo" name="acronimo" textTransform="uppercase" register={register} errors={errors} />
 				<DatePicker label="Data de Vencimento" name="dataVencimento" register={register} errors={errors} />
-				<TextInput label="Multiplicador" name="multiplicador" type="number" step="0.01" register={register} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v),}} errors={errors} />
+				<TextInput label="Multiplicador" name="multiplicador" type="number" step="0.01" register={register} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v),}} errors={errors} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="indice" label="Índice" register={register} errors={errors} />
 					<RadioButton name="tipo" value="acao" label="Ação" register={register} errors={errors} />

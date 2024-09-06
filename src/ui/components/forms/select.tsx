@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
+import { UseFormRegister, RegisterOptions, FieldErrors } from 'react-hook-form';
 
 interface SelectProps {
 	label: string;
 	name: string;
-	options: SelectOptions[];
+	list: SelectOptions[];
 	value: string;
+	errors: FieldErrors;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
@@ -15,17 +17,17 @@ export interface SelectOptions {
 	value: string | number;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, options, value, onChange }) => {
+export const Select: React.FC<SelectProps> = ({ label, name, list, value, errors, onChange }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<Input
-				name={name}
 				id={name}
 				value={value}
 				onChange={onChange}
+				$hasError={errors && errors[name] ? true : false}
 			>
-				{options.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
+				{list.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
 			</Input>
 		</Container>
 	);
@@ -48,12 +50,12 @@ const Label = styled.label`
 	font-weight: 400;
 `
 
-const Input = styled.select`
+const Input = styled.select<{$hasError?: boolean;}>`
 	width: 100%;
 	height: 80%;
 
 	background-color: transparent;
-	border: 1px solid ${props => hexToRGBA(props.theme.input.border, 0.3)};
+	border: 1px solid ${props => props.$hasError ? props.theme.colors.warning :  hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;

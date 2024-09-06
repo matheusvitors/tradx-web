@@ -7,21 +7,30 @@ import { InputErrorMessage } from '@/ui/components/utils';
 interface DatePickerProps extends InputHTMLAttributes<HTMLInputElement>{
 	label: string;
 	name: string;
-	register: UseFormRegister<any>;
+	register?: UseFormRegister<any>;
 	options?: RegisterOptions;
-	errors: FieldErrors;
+	errors?: FieldErrors;
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({ label, name, register, options, errors, ...rest }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input
-				type='date'
-				{...register(name, options)}
-				{...rest}
-				$hasError={errors && errors[name] ? true : false}
-			/>
+			{register ?
+				<Input
+					type='date'
+					{...register(name, options)}
+					{...rest}
+					$hasError={errors && errors[name] ? true : false}
+				/>
+			:
+				<Input
+					type='date'
+					{...rest}
+					$hasError={errors && errors[name] ? true : false}
+				/>
+			}
+
 			{errors && errors[name] && <InputErrorMessage>{errors[name].message?.toString()}</InputErrorMessage>}
 
 		</Container>
@@ -37,7 +46,7 @@ const Container = styled.div`
 	height: 100px;
 	width: 80%;
 
-	margin: 10px 10px;
+	/* border: 1px solid silver; */
 `
 
 const Label = styled.label`

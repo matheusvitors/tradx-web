@@ -1,6 +1,7 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { listAtivos, listContas, createOperacao, editOperacao,  } from "@/application/services";
 import { Ativo, Conta, Operacao } from "@/application/models";
@@ -9,15 +10,54 @@ import { storage } from "@/infra/store/storage";
 import { ModalPage } from "@/ui/layouts";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, Textarea, TextInput, TimePicker } from "@/ui/components/forms";
 import { Toast } from "@/ui/components/feedback";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
-//FIXME: o radio button de compra e venda está bugado
+const persistOperacaoFormScheme = z.object({
+	ativo: z.string(),
+	conta: z.string(),
+	quantidade: z.number(),
+	tipo: z.string(),
+	precoEntrada: z.number(),
+	stopLoss: z.number(),
+	alvo: z.number(),
+	precoSaida: z.number().optional(),
+	dataEntrada: z.string(),
+	dataSaida: z.string(),
+	operacaoPerdida: z.boolean(),
+	operacaoErrada: z.boolean(),
+	motivo: z.string().optional(),
+	comentarios: z.string().optional(),
+})
+
+type PersistOperacaoFormData = z.infer<typeof persistOperacaoFormScheme>;
+
+
 export const PersistOperacoesPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const location = useLocation()
 	const queryClient = useQueryClient();
-
+	const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<PersistOperacaoFormData>({
+		defaultValues: {
+			ativo: location.state.operacoes?.ativo.id,
+			conta: location.state.operacoes?.conta.id,
+			quantidade: location.state.operacoes?.quantidade,
+			tipo: location.state.operacoes?.tipo,
+			precoEntrada: location.state.operacoes?.precoEntrada,
+			stopLoss: location.state.operacoes?.stopLoss,
+			alvo: location.state.operacoes?.alvo,
+			precoSaida: location.state.operacoes?.precoSaida,
+			dataEntrada: location.state.operacoes?.dataEntrada,
+			dataSaida: location.state.operacoes?.dataSaida,
+			operacaoPerdida: location.state.operacoes?.operacaoPerdida,
+			operacaoErrada: location.state.operacoes?.operacaoErrada,
+			motivo: location.state.operacoes?.motivo,
+			comentarios: location.state.operacoes?.comentarios,
+		},
+		resolver: zodResolver(persistOperacaoFormScheme)
+	})
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
@@ -25,28 +65,19 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const [dataEntrada, setDataEntrada] = useState<string | undefined>();
 	const [dataSaida, setDataSaida] = useState<string | undefined>();
-	const [selectAtivo, setSelectAtivo] = useState<string>(location.state.operacao?.ativo.id || '')
-	const [selectConta, setSelectConta] = useState<string>(location.state.operacao?.conta.id || '');
 
-	const quantidadeInputRef = useRef<HTMLInputElement>(null);
-	const compraRadioButtonInputRef = useRef<HTMLInputElement>(null);
-	const vendaRadioButtonInputRef = useRef<HTMLInputElement>(null);
-	const precoEntradaInputRef = useRef<HTMLInputElement>(null);
-	const stopLossInputRef = useRef<HTMLInputElement>(null);
-	const alvoInputRef = useRef<HTMLInputElement>(null);
-	const precoSaidaInputRef = useRef<HTMLInputElement>(null);
-	const operacaoPerdidaCheckboxInputRef = useRef<HTMLInputElement>(null);
-	const operacaoErradaCheckboxInputRef = useRef<HTMLInputElement>(null);
-	const comentariosTextareaRef = useRef<HTMLTextAreaElement>(null);
+	const selectAtivo = watch('ativo');
+	const selectConta = watch('conta');
 
 	useEffect(() => {
-		if(compraRadioButtonInputRef.current) {
-			compraRadioButtonInputRef.current.checked = true;
-		}
-
 		loadContas();
 		loadAtivos();
 	}, []);
+
+	useEffect(() => {
+		register('ativo');
+		register('conta');
+	}, [register])
 
 	useEffect(() => {
 		location.state.operacao && loadOperacao(location.state.operacao);
@@ -74,7 +105,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			}))
 
-			setSelectAtivo(location.state.operacao?.ativo.id || ativos[0].id);
+			setValue('ativo',location.state.operacao?.ativo.id || ativos[0].id);
 			setAtivoOptions(options)
 		} catch (error: any) {
 			console.error(error);
@@ -103,7 +134,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
-			setSelectConta(location.state.operacao?.conta.id || contas[0].id)
+			setValue('conta', location.state.operacao?.conta.id || contas[0].id)
 			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
@@ -113,37 +144,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	const loadOperacao = (operacao: Operacao) => {
 		setIsLoading(true);
 
-		if(
-			quantidadeInputRef.current &&
-			compraRadioButtonInputRef.current &&
-			vendaRadioButtonInputRef.current &&
-			precoEntradaInputRef.current &&
-			stopLossInputRef.current &&
-			alvoInputRef.current &&
-			precoSaidaInputRef.current &&
-			operacaoErradaCheckboxInputRef.current &&
-			operacaoPerdidaCheckboxInputRef.current &&
-			comentariosTextareaRef.current
-		) {
-			quantidadeInputRef.current.value = `${operacao.quantidade}`;
-			operacao.tipo === 'acao' ? compraRadioButtonInputRef.current.checked = true : vendaRadioButtonInputRef.current.checked = true;
-
-			precoEntradaInputRef.current.value = `${operacao.precoEntrada}`
-			stopLossInputRef.current.value = `${operacao.stopLoss}`
-			alvoInputRef.current.value = `${operacao.alvo}`
-			precoSaidaInputRef.current.value = operacao.precoSaida ? `${operacao.precoSaida}` : '';
-			operacaoErradaCheckboxInputRef.current.checked = operacao.operacaoErrada || false;
-			operacaoPerdidaCheckboxInputRef.current.checked = operacao.operacaoPerdida || false;
-			comentariosTextareaRef.current.value = operacao.comentarios || '';
-
-			if(operacao.tipo === 'compra') {
-				compraRadioButtonInputRef.current.checked = true;
-			}
-
-			if(operacao.tipo === 'venda') {
-				vendaRadioButtonInputRef.current.checked = true;
-			}
-		}
 
 		setIsLoading(false);
 	}
@@ -169,80 +169,44 @@ export const PersistOperacoesPage: React.FC = () => {
 		}
 	}
 
-	const onSubmit = async (event: FormEvent) => {
-		event.preventDefault();
+	const onSubmit = async (data: PersistOperacaoFormData) => {
 
-		let input: OperacaoDTO | null = null;
+		// let input: OperacaoDTO | null = null;
 
-		if(!dataEntrada) {
-			Toast.error('A data de entrada é obrigatória.');
-			return;
-		}
-
-		if(quantidadeInputRef.current){
-			if(!parseInt(quantidadeInputRef.current.value) || parseInt(quantidadeInputRef.current.value) <= 0 ){
-				Toast.error('A quantidade é obrigatória e deve ser maior que zero.');
-				return;
-			}
-		}
-
-		if(!dataEntrada || dataEntrada.length === 0) {
-			Toast.error('A data/hora de entrada é obrigatória.');
-			return;
-		}
-
-		const dateRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
-
-		if(!dateRegex.test(dataEntrada)) {
-			Toast.error('A data/hora de entrada está incorreta.');
-			return;
-		}
-
-		if(dataSaida && !dateRegex.test(dataSaida)) {
-			Toast.error('A data/hora de saída está incorreta.');
-			return;
-		}
+		// if(!dataEntrada) {
+		// 	Toast.error('A data de entrada é obrigatória.');
+		// 	return;
+		// }
 
 
-		if(
-			quantidadeInputRef.current &&
-			compraRadioButtonInputRef.current &&
-			vendaRadioButtonInputRef.current &&
-			precoEntradaInputRef.current &&
-			stopLossInputRef.current &&
-			alvoInputRef.current &&
-			precoSaidaInputRef.current &&
-			operacaoErradaCheckboxInputRef.current &&
-			operacaoPerdidaCheckboxInputRef.current &&
-			comentariosTextareaRef.current &&
-			dataEntrada
-		) {
-			input = {
-				ativoId: selectAtivo,
-				contaId: selectConta,
-				quantidade: parseInt(quantidadeInputRef.current.value),
-				tipo: compraRadioButtonInputRef.current.checked ? 'compra' : 'venda',
-				precoEntrada: parseFloat(precoEntradaInputRef.current.value),
-				stopLoss: parseFloat(stopLossInputRef.current.value),
-				alvo: parseFloat(alvoInputRef.current.value),
-				precoSaida: parseFloat(precoSaidaInputRef.current.value) || undefined,
-				dataEntrada,
-				dataSaida,
-				operacaoPerdida: operacaoPerdidaCheckboxInputRef.current.checked,
-				operacaoErrada: operacaoErradaCheckboxInputRef.current.checked,
-				comentarios: comentariosTextareaRef.current.value,
-			}
-		}
+		// if(!dataEntrada || dataEntrada.length === 0) {
+		// 	Toast.error('A data/hora de entrada é obrigatória.');
+		// 	return;
+		// }
+
+		// const dateRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
+
+		// if(!dateRegex.test(dataEntrada)) {
+		// 	Toast.error('A data/hora de entrada está incorreta.');
+		// 	return;
+		// }
+
+		// if(dataSaida && !dateRegex.test(dataSaida)) {
+		// 	Toast.error('A data/hora de saída está incorreta.');
+		// 	return;
+		// }
+
+
 
 		try {
 			setIsLoading(true);
 
-			if(input){
-				location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
-			}
+			// if(input){
+			// 	location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
+			// }
 
-			queryClient.invalidateQueries({queryKey: ['operacoes']});
-			navigate('/operacoes');
+			// queryClient.invalidateQueries({queryKey: ['operacoes']});
+			// navigate('/operacoes');
 
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -253,26 +217,26 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	return (
 		<ModalPage title={location.state.operacao ? "Editar Operação" : "Adicionar Operação"}>
-			<Form onSubmit={onSubmit}>
-				<Select label='Conta' name='conta' options={contaOptions} value={selectConta} onChange={(e) => setSelectConta(e.target.value)} />
-				<Select label='Ativo' name='ativo' options={ativoOptions} value={selectAtivo} onChange={(e) => setSelectAtivo(e.target.value)} />
-				<TextInput label="Quantidade" reference={quantidadeInputRef} />
+			<Form onSubmit={handleSubmit(onSubmit)}>
+				<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
+				<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)} />
+				<TextInput label="Quantidade" name="quantidade" register={register} errors={errors} />
 				<RadioGroup>
-					<RadioButton name="tipo" value="compra" label="Compra" reference={compraRadioButtonInputRef} />
-					<RadioButton name="tipo" value="venda" label="Venda" reference={vendaRadioButtonInputRef} />
+					<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
+					<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
 				</RadioGroup>
-				<TextInput label="Entrada" reference={precoEntradaInputRef} />
-				<TextInput label="Stop Loss" reference={stopLossInputRef} />
-				<TextInput label="Alvo" reference={alvoInputRef} />
-				<TextInput label="Saída" reference={precoSaidaInputRef} />
-				<TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
-				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} />
+				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} />
+				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} />
+				<TextInput label="Alvo" name="alvo" register={register} errors={errors} />
+				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} />
+				{/* <TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
+				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} /> */}
 				<RadioGroup>
-					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" reference={operacaoErradaCheckboxInputRef} />
-					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" reference={operacaoPerdidaCheckboxInputRef} />
+					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919"  />
+					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A"  />
 				</RadioGroup>
 
-				<Textarea label="Comentários" name='comentarios' reference={comentariosTextareaRef} />
+				<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />
 
 				<Button label="Salvar" type="submit" isLoading={isLoading} />
 			</Form>
