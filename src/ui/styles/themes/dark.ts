@@ -7,7 +7,7 @@ const black = '#120623'
 const white = '#F8F1F5'
 const gray= '#c7c3c3'
 const green = '#69FF1F'
-const red = '#cc0606'
+const red = '#C92020'
 const background = '#080014';
 
 export const dark: DefaultTheme = {

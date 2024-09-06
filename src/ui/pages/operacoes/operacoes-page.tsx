@@ -230,7 +230,7 @@ export const OperacoesPage: React.FC = () => {
 					},
 				],
 				style: {
-					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' : 'orange'}`
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red : 'orange'}`
 				}
 			})
 		})
