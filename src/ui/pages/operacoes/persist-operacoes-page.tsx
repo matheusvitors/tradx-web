@@ -12,18 +12,31 @@ import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions,
 import { Toast } from "@/ui/components/feedback";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { min } from "date-fns";
 
 
 const persistOperacaoFormScheme = z.object({
-	ativo: z.string(),
-	conta: z.string(),
-	quantidade: z.number(),
-	tipo: z.string(),
-	precoEntrada: z.number(),
-	stopLoss: z.number(),
-	alvo: z.number(),
+	ativo: z.string().min(1, 'O campo é obrigatório'),
+	conta: z.string().min(1, 'O campo é obrigatório'),
+	quantidade: z.number({
+		required_error: "O campo é obrigatório",
+		invalid_type_error: "Deve ser um número",
+	}),
+	tipo: z.string().min(1, 'O campo é obrigatório'),
+	precoEntrada: z.number({
+		required_error: "O campo é obrigatório",
+		invalid_type_error: "Deve ser um número",
+	}),
+	stopLoss: z.number({
+		required_error: "O campo é obrigatório",
+		invalid_type_error: "Deve ser um número",
+	}),
+	alvo: z.number({
+		required_error: "O campo é obrigatório",
+		invalid_type_error: "Deve ser um número",
+	}),
 	precoSaida: z.number().optional(),
-	dataEntrada: z.string(),
+	dataEntrada: z.string().min(1, 'O campo é obrigatório'),
 	dataSaida: z.string(),
 	operacaoPerdida: z.boolean(),
 	operacaoErrada: z.boolean(),
@@ -32,7 +45,6 @@ const persistOperacaoFormScheme = z.object({
 })
 
 type PersistOperacaoFormData = z.infer<typeof persistOperacaoFormScheme>;
-
 
 export const PersistOperacoesPage: React.FC = () => {
 
@@ -43,7 +55,7 @@ export const PersistOperacoesPage: React.FC = () => {
 		defaultValues: {
 			ativo: location.state.operacoes?.ativo.id,
 			conta: location.state.operacoes?.conta.id,
-			quantidade: location.state.operacoes?.quantidade,
+			quantidade: location.state.operacoes?.quantidade || 1,
 			tipo: location.state.operacoes?.tipo,
 			precoEntrada: location.state.operacoes?.precoEntrada,
 			stopLoss: location.state.operacoes?.stopLoss,
@@ -80,7 +92,7 @@ export const PersistOperacoesPage: React.FC = () => {
 	}, [register])
 
 	useEffect(() => {
-		location.state.operacao && loadOperacao(location.state.operacao);
+		// location.state.operacao && loadOperacao(location.state.operacao);
 		console.log(location.state.operacao);
 	}, [location]);
 
@@ -139,13 +151,6 @@ export const PersistOperacoesPage: React.FC = () => {
 		} catch (error: any) {
 			Toast.error(error)
 		}
-	}
-
-	const loadOperacao = (operacao: Operacao) => {
-		setIsLoading(true);
-
-
-		setIsLoading(false);
 	}
 
 	const handleSaveOperacao = async (input: OperacaoDTO) => {
@@ -220,15 +225,15 @@ export const PersistOperacoesPage: React.FC = () => {
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
 				<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)} />
-				<TextInput label="Quantidade" name="quantidade" register={register} errors={errors} />
+				<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} />
 				<RadioGroup>
 					<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
 					<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
 				</RadioGroup>
-				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} />
-				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} />
-				<TextInput label="Alvo" name="alvo" register={register} errors={errors} />
-				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} />
+				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
 				{/* <TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
 				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} /> */}
 				<RadioGroup>
