@@ -234,8 +234,8 @@ export const PersistOperacoesPage: React.FC = () => {
 				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
 				<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
 				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
-				{/* <TimePicker label="Data de Entrada" setValue={setDataEntrada} defaultValue={location.state.operacao?.dataEntrada ? new Date(location.state.operacao.dataEntrada) : new Date()} />
-				<TimePicker label="Data de Saída" setValue={setDataSaida} defaultValue={location.state.operacao?.dataSaida ? new Date(location.state.operacao.dataSaida) : undefined} /> */}
+				<TimePicker label="Data de Entrada" name='dataEntrada' setValue={setValue} register={register} errors={errors} />
+				<TimePicker label="Data de Saída" name='dataEntrada' setValue={setValue} register={register} errors={errors} />
 				<RadioGroup>
 					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919"  />
 					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A"  />

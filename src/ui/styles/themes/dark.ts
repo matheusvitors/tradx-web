@@ -7,7 +7,7 @@ const black = '#120623'
 const white = '#F8F1F5'
 const gray= '#c7c3c3'
 const green = '#69FF1F'
-const red = '#C92020'
+const red = '#fa0000'
 const background = '#080014';
 
 export const dark: DefaultTheme = {
@@ -26,7 +26,7 @@ export const dark: DefaultTheme = {
 
 		success: '#46B93C',
 		attention: '#f2f230',
-		warning: '#C92020',
+		warning: '#fa0000',
 	},
 
 	common: {

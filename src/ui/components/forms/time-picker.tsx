@@ -2,37 +2,44 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { format } from "date-fns";
+import { UseFormRegister, RegisterOptions, FieldErrors, UseFormSetValue } from "react-hook-form";
 
 interface TimePickerProps {
 	label: string;
-	setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+	name: string;
+	setValue: UseFormSetValue<any>;
 	defaultValue?: Date;
+	register: UseFormRegister<any>;
+	options?: RegisterOptions;
+	errors: FieldErrors;
 }
 
-export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
+export const TimePicker: React.FC<TimePickerProps> = ({ label, name, setValue, defaultValue, register, options, errors }) => {
 
-	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
-	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
+	// const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
+	// const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
 
-	const [date, setDate] = useState(defaultDateString);
-	const [hour, setHour] = useState(defaultTimeString)
+	// const [date, setDate] = useState(defaultDateString);
+	// const [hour, setHour] = useState(defaultTimeString)
 
-	useEffect(() => {
-		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
-		defaultValue && setDate(defaultDateString || '');
-		defaultValue && setHour(defaultTimeString || '');
-	}, [])
+	// useEffect(() => {
+	// 	defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
+	// 	defaultValue && setDate(defaultDateString || '');
+	// 	defaultValue && setHour(defaultTimeString || '');
+	// }, [])
 
-	useEffect(() => {
-		setValue(date && hour ? `${date} ${hour}`: undefined);
-	}, [date, hour])
+	// useEffect(() => {
+	// 	setValue(date && hour ? `${date} ${hour}`: undefined);
+	// }, [date, hour])
 
 	return (
 		<Container>
 			<Label>{label}</Label>
 			<InputContainer>
-				<DateInput value={date} onChange={(event) => setDate(event.target.value)} />
-				<TimeInput value={hour} onChange={(event) => setHour(event.target.value)}  />
+				<DateInput defaultValue={format(new Date(), "yyyy-MM-dd")} />
+				<TimeInput />
+				{/* <DateInput value={date} onChange={(event) => setDate(event.target.value)} />
+				<TimeInput value={hour} onChange={(event) => setHour(event.target.value)}  /> */}
 			</InputContainer>
 		</Container>
 	);
@@ -49,6 +56,7 @@ const Container = styled.div`
 
 	margin: 15px 10px;
 `;
+
 const Label = styled.label`
 	margin: 5px 0;
 	font-weight: 400;
@@ -56,7 +64,6 @@ const Label = styled.label`
 
 const InputContainer = styled.div`
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
 	flex-direction: row;
