@@ -1,19 +1,20 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
-import { listAtivos, listContas, createOperacao, editOperacao,  } from "@/application/services";
-import { Ativo, Conta, Operacao } from "@/application/models";
+import { listAtivos, listContas, createOperacao, editOperacao } from "@/application/services";
+import { Ativo, Conta } from "@/application/models";
 import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { ModalPage } from "@/ui/layouts";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, Textarea, TextInput, TimePicker } from "@/ui/components/forms";
 import { Toast } from "@/ui/components/feedback";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { min } from "date-fns";
 
+
+const datetimeRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
 
 const persistOperacaoFormScheme = z.object({
 	ativo: z.string().min(1, 'O campo é obrigatório'),
@@ -35,9 +36,11 @@ const persistOperacaoFormScheme = z.object({
 		required_error: "O campo é obrigatório",
 		invalid_type_error: "Deve ser um número",
 	}),
-	precoSaida: z.number().optional(),
-	dataEntrada: z.string().min(1, 'O campo é obrigatório'),
-	dataSaida: z.string(),
+	precoSaida: z.number({
+		invalid_type_error: "Deve ser um número",
+	}).optional(),
+	dataEntrada: z.string().min(1, 'O campo é obrigatório').regex(datetimeRegex, 'A formatação da data está errada'),
+	dataSaida: z.string().optional().or(z.string().regex(datetimeRegex, 'A formatação da data está errada')),
 	operacaoPerdida: z.boolean(),
 	operacaoErrada: z.boolean(),
 	motivo: z.string().optional(),
@@ -53,20 +56,20 @@ export const PersistOperacoesPage: React.FC = () => {
 	const queryClient = useQueryClient();
 	const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<PersistOperacaoFormData>({
 		defaultValues: {
-			ativo: location.state.operacoes?.ativo.id,
-			conta: location.state.operacoes?.conta.id,
-			quantidade: location.state.operacoes?.quantidade || 1,
-			tipo: location.state.operacoes?.tipo,
-			precoEntrada: location.state.operacoes?.precoEntrada,
-			stopLoss: location.state.operacoes?.stopLoss,
-			alvo: location.state.operacoes?.alvo,
-			precoSaida: location.state.operacoes?.precoSaida,
-			dataEntrada: location.state.operacoes?.dataEntrada,
-			dataSaida: location.state.operacoes?.dataSaida,
-			operacaoPerdida: location.state.operacoes?.operacaoPerdida,
-			operacaoErrada: location.state.operacoes?.operacaoErrada,
-			motivo: location.state.operacoes?.motivo,
-			comentarios: location.state.operacoes?.comentarios,
+			ativo: location.state.operacao?.ativo.id,
+			conta: location.state.operacao?.conta.id,
+			quantidade: location.state.operacao?.quantidade || 1,
+			tipo: location.state.operacao?.tipo || 'compra',
+			precoEntrada: location.state.operacao?.precoEntrada,
+			stopLoss: location.state.operacao?.stopLoss,
+			alvo: location.state.operacao?.alvo,
+			precoSaida: location.state.operacao?.precoSaida,
+			dataEntrada: location.state.operacao?.dataEntrada || new Date(),
+			dataSaida: location.state.operacao?.dataSaida,
+			operacaoPerdida: location.state.operacao?.operacaoPerdida || false,
+			operacaoErrada: location.state.operacao?.operacaoErrada || false,
+			motivo: location.state.operacao?.motivo,
+			comentarios: location.state.operacao?.comentarios,
 		},
 		resolver: zodResolver(persistOperacaoFormScheme)
 	})
@@ -75,11 +78,10 @@ export const PersistOperacoesPage: React.FC = () => {
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
 
-	const [dataEntrada, setDataEntrada] = useState<string | undefined>();
-	const [dataSaida, setDataSaida] = useState<string | undefined>();
-
 	const selectAtivo = watch('ativo');
 	const selectConta = watch('conta');
+	const dataEntrada = watch('dataEntrada');
+	const dataSaida = watch('dataSaida');
 
 	useEffect(() => {
 		loadContas();
@@ -91,10 +93,9 @@ export const PersistOperacoesPage: React.FC = () => {
 		register('conta');
 	}, [register])
 
-	useEffect(() => {
-		// location.state.operacao && loadOperacao(location.state.operacao);
-		console.log(location.state.operacao);
-	}, [location]);
+	// useEffect(() => {
+	// 	console.log('errors', errors)
+	// }, [errors]);
 
 	const loadAtivos = async () => {
 		try {
@@ -175,43 +176,27 @@ export const PersistOperacoesPage: React.FC = () => {
 	}
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
-
-		// let input: OperacaoDTO | null = null;
-
-		// if(!dataEntrada) {
-		// 	Toast.error('A data de entrada é obrigatória.');
-		// 	return;
-		// }
-
-
-		// if(!dataEntrada || dataEntrada.length === 0) {
-		// 	Toast.error('A data/hora de entrada é obrigatória.');
-		// 	return;
-		// }
-
-		// const dateRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
-
-		// if(!dateRegex.test(dataEntrada)) {
-		// 	Toast.error('A data/hora de entrada está incorreta.');
-		// 	return;
-		// }
-
-		// if(dataSaida && !dateRegex.test(dataSaida)) {
-		// 	Toast.error('A data/hora de saída está incorreta.');
-		// 	return;
-		// }
-
-
-
 		try {
 			setIsLoading(true);
+			console.log(data);
 
-			// if(input){
-			// 	location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
-			// }
+			const input: OperacaoDTO = {
+				...data,
+				ativoId: data.ativo,
+				contaId: data.conta,
+			}
 
-			// queryClient.invalidateQueries({queryKey: ['operacoes']});
-			// navigate('/operacoes');
+			if(location.state.operacao) {
+				input.id = location.state.operacao.id;
+				await editOperacao(input);
+			} else {
+				await createOperacao(input);
+			}
+
+			location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
+
+			queryClient.invalidateQueries({queryKey: ['operacoes']});
+			navigate('/operacoes');
 
 		} catch (error: any) {
 			Toast.error(error.message);
@@ -230,15 +215,15 @@ export const PersistOperacoesPage: React.FC = () => {
 					<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
 					<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
 				</RadioGroup>
-				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v)}} />
-				<TimePicker label="Data de Entrada" name='dataEntrada' setValue={setValue} register={register} errors={errors} />
-				<TimePicker label="Data de Saída" name='dataEntrada' setValue={setValue} register={register} errors={errors} />
+				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+				<TimePicker label="Data de Entrada" name='dataEntrada' value={dataEntrada} setValue={setValue} errors={errors} />
+				<TimePicker label="Data de Saída" name='dataSaida' value={dataSaida} setValue={setValue} errors={errors} />
 				<RadioGroup>
-					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919"  />
-					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A"  />
+					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" register={register} errors={errors} />
+					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
 				</RadioGroup>
 
 				<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />

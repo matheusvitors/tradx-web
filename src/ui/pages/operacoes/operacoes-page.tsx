@@ -197,24 +197,26 @@ export const OperacoesPage: React.FC = () => {
 		let variacao = 0;
 
 		input.forEach((item: Operacao) => {
+			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
+
 			if(item.precoSaida){
-				variacao += item.tipo === 'compra' ?
-				(item.alvo - item.precoEntrada) * item.ativo.multiplicador
-			:
-				(item.precoEntrada - item.alvo) * item.ativo.multiplicador;
+				variacao += typeof resultadoPontos === 'number' ? resultadoPontos * item.ativo.multiplicador : 0;
+				// 	variacao += item.tipo === 'compra' ?
+				// 	(item.alvo - item.precoEntrada) * item.ativo.multiplicador
+				// :
+				// 	(item.precoEntrada - item.alvo) * item.ativo.multiplicador;
 			}
 
-			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
 
 			result.push({
 				data: {
 					...item,
-					data: isSameDay(item.dataEntrada, item.dataSaida || Date.now()) && format(item.dataEntrada, 'dd-MM-yyyy'),
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
-					dataEntrada: format(item.dataEntrada, isSameDay(item.dataEntrada, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
+					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',
 					resultadoPontos,
-					resultadoFinanceiro:  item.precoSaida &&  (new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.tipo === 'compra' ?  (item.alvo - item.precoEntrada) * item.ativo.multiplicador : (item.precoEntrada - item.alvo) * item.ativo.multiplicador)),
+					resultadoFinanceiro:  item.precoSaida && typeof resultadoPontos === 'number' && new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(resultadoPontos * item.ativo.multiplicador),
 					variacao: item.precoSaida ? new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(variacao) : ''
 				},
 				actions: [
@@ -319,7 +321,7 @@ export const OperacoesPage: React.FC = () => {
 									<FilterOptions>
 										{filters.tipo.map((item: string, key: number) => (
 											<Checkbox key={key}
-												label={item} name={item}
+												label={item} name={`${item}Filter`} //foi necessário pois estava dando bug de conflitos de nome
 												width="100px" height="35px"
 												checked={activeFilters.tipos.includes(item)}
 												onChange={(e) => onChangeFilter('tipos', item, e.target.checked)}
