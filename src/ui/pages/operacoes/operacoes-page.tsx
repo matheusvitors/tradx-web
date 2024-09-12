@@ -19,6 +19,7 @@ import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/u
 import { IconButton, FloatingButton } from "@/ui/components/general";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
+//TODO: Carregar operações por data dos mais antigos para os novos
 
 interface Filter {
 	ativos: Array<string>;
