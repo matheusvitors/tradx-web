@@ -93,10 +93,6 @@ export const PersistOperacoesPage: React.FC = () => {
 		register('conta');
 	}, [register])
 
-	// useEffect(() => {
-	// 	console.log('errors', errors)
-	// }, [errors]);
-
 	const loadAtivos = async () => {
 		try {
 			const cachedAtivos = storage.get(KEY_ATIVOS);
@@ -178,7 +174,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	const onSubmit = async (data: PersistOperacaoFormData) => {
 		try {
 			setIsLoading(true);
-			console.log(data);
 
 			const input: OperacaoDTO = {
 				...data,

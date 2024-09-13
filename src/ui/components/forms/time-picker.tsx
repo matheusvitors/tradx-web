@@ -29,10 +29,6 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, name, value, setV
 	}, [])
 
 	useEffect(() => {
-		console.log('errors', errors)
-	}, [errors])
-
-	useEffect(() => {
 		date && hour && setValue(name, `${date} ${hour}`);
 	}, [date, hour])
 

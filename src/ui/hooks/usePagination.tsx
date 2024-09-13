@@ -12,7 +12,7 @@ export const usePagination = () => {
 			return array;
 		}
 
-		console.log('slice', totalPerPage * currentPage - totalPerPage, totalPerPage * currentPage);
+		// console.log('slice', totalPerPage * currentPage - totalPerPage, totalPerPage * currentPage);
 
 		return array.slice(totalPerPage * currentPage - totalPerPage, totalPerPage * currentPage);
 	};

@@ -197,17 +197,12 @@ export const OperacoesPage: React.FC = () => {
 		const result: DataTablePayload[] = [];
 		let variacao = 0;
 
-		input.forEach((item: Operacao) => {
+		input.reverse().forEach((item: Operacao) => {
 			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
 
 			if(item.precoSaida){
 				variacao += typeof resultadoPontos === 'number' ? resultadoPontos * item.ativo.multiplicador : 0;
-				// 	variacao += item.tipo === 'compra' ?
-				// 	(item.alvo - item.precoEntrada) * item.ativo.multiplicador
-				// :
-				// 	(item.precoEntrada - item.alvo) * item.ativo.multiplicador;
 			}
-
 
 			result.push({
 				data: {
@@ -238,7 +233,8 @@ export const OperacoesPage: React.FC = () => {
 			})
 		})
 
-		return result
+		return result;
+		// return result.reverse();
 	}
 
 	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {

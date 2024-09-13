@@ -40,7 +40,6 @@ export const PersistAtivoPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const onSubmit = async (data: PersistAtivoFormData) => {
-		console.log(data);
 
 		try {
 			setIsLoading(true);
