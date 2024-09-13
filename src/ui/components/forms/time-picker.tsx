@@ -2,29 +2,34 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { format } from "date-fns";
+import { FieldErrors, UseFormSetValue } from "react-hook-form";
+import { InputErrorMessage } from "@/ui/components/utils";
 
 interface TimePickerProps {
 	label: string;
-	setValue: React.Dispatch<React.SetStateAction<string | undefined>>;
-	defaultValue?: Date;
+	name: string;
+	value?: string;
+	setValue: UseFormSetValue<any>;
+	errors: FieldErrors;
 }
 
-export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, defaultValue }) => {
+export const TimePicker: React.FC<TimePickerProps> = ({ label, name, value, setValue, errors }) => {
 
-	const defaultDateString = defaultValue ? format(defaultValue, "yyyy-MM-dd") : undefined ;
-	const defaultTimeString = defaultValue ? format(defaultValue, "HH:mm") : undefined ;
+	const defaultDateString = value ? format(new Date(value), "yyyy-MM-dd") : undefined ;
+	const defaultTimeString = value ? format(new Date(value), "HH:mm") : undefined ;
 
 	const [date, setDate] = useState(defaultDateString);
 	const [hour, setHour] = useState(defaultTimeString)
 
 	useEffect(() => {
-		defaultDateString && defaultTimeString && setValue(defaultValue ? `${defaultDateString} ${defaultTimeString}`: undefined);
-		defaultValue && setDate(defaultDateString || '');
-		defaultValue && setHour(defaultTimeString || '');
+		setValue(name, undefined);
+		defaultDateString && defaultTimeString && setValue(name, `${defaultDateString} ${defaultTimeString}`);
+		value && setDate(defaultDateString || '');
+		value && setHour(defaultTimeString || '');
 	}, [])
 
 	useEffect(() => {
-		setValue(date && hour ? `${date} ${hour}`: undefined);
+		date && hour && setValue(name, `${date} ${hour}`);
 	}, [date, hour])
 
 	return (
@@ -34,6 +39,7 @@ export const TimePicker: React.FC<TimePickerProps> = ({ label, setValue, default
 				<DateInput value={date} onChange={(event) => setDate(event.target.value)} />
 				<TimeInput value={hour} onChange={(event) => setHour(event.target.value)}  />
 			</InputContainer>
+			{errors && errors[name] && <InputErrorMessage>{errors[name].message?.toString()}</InputErrorMessage>}
 		</Container>
 	);
 };
@@ -44,19 +50,20 @@ const Container = styled.div`
 	align-items: flex-start;
 	justify-content: center;
 
-	height: 70px;
+	height: 100px;
 	width: 80%;
 
 	margin: 15px 10px;
 `;
+
 const Label = styled.label`
 	margin: 5px 0;
 	font-weight: 400;
+	height: 20px;
 `;
 
 const InputContainer = styled.div`
 	display: flex;
-	flex-direction: column;
 	align-items: center;
 	justify-content: space-between;
 	flex-direction: row;
@@ -67,16 +74,16 @@ const InputContainer = styled.div`
 
 const DateInput = styled.input.attrs({ type: 'date' })`
 	width: 49%;
-	height: 100%;
+	height: 40px;
 
 	background-color: transparent;
-	border: 1px solid ${(props) => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${(props) => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
 	font-size: 16px;
-	color: ${(props) => props.theme.textInput.text};
+	color: ${(props) => props.theme.input.text};
 
 	/* &::-webkit-datetime-edit { padding: 1em; } */
 	/* &::-webkit-datetime-edit-fields-wrapper { background: silver; } */
@@ -90,16 +97,16 @@ const DateInput = styled.input.attrs({ type: 'date' })`
 
 const TimeInput = styled.input.attrs({ type: "time" })`
 	width: 49%;
-	height: 100%;
+	height: 40px;
 
 	background-color: transparent;
-	border: 1px solid ${(props) => hexToRGBA(props.theme.textInput.border, 0.3)};
+	border: 1px solid ${(props) => hexToRGBA(props.theme.input.border, 0.3)};
 	border-radius: 5px;
 
 	padding: 0 10px;
 
 	font-size: 16px;
-	color: ${(props) => props.theme.textInput.text};
+	color: ${(props) => props.theme.input.text};
 
 	/* &::-webkit-datetime-edit { padding: 1em; }
 	&::-webkit-datetime-edit-fields-wrapper { background: silver; }

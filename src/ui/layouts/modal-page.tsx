@@ -3,7 +3,7 @@ import { MdClose } from "react-icons/md";
 import styled, { useTheme } from "styled-components";
 import { hexToRGBA } from "about-colors-js";
 import { useNavigate } from "react-router-dom";
-import { IconButton } from "@/ui/components";
+import { IconButton } from "@/ui/components/general";
 import { isTokenExpired } from "@/application/services";
 
 interface ModalPageProps {
@@ -25,7 +25,7 @@ export const ModalPage: React.FC<PropsWithChildren<ModalPageProps>> = ({ title, 
 			<Card>
 				<Header>
 					<PageName>{title}</PageName>
-					<IconButton icon={MdClose} onClick={() => navigate(-1)} color={theme.semantic.warning} />
+					<IconButton icon={MdClose} onClick={() => navigate(-1)} color={theme.colors.warning} />
 				</Header>
 				<Content>{children}</Content>
 			</Card>

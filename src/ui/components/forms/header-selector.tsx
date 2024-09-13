@@ -64,5 +64,5 @@ const Input = styled.select`
 
 const Option = styled.option`
 	background-color: ${props => props.theme.common.background};
-	color:  ${props => props.theme.textInput.text};
+	color:  ${props => props.theme.input.text};
 `

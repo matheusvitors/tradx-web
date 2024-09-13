@@ -1,2 +1,2 @@
-export * from './OperacoesPage'
-export * from './PersistOperacoesPage'
+export * from './operacoes-page'
+export * from './persist-operacoes-page'

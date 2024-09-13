@@ -1,6 +1,6 @@
-import { Loading } from '@/ui/components';
 import React from 'react';
 import styled from 'styled-components';
+import { Loading } from '@/ui/components/feedback';
 
 interface PageLoadingProps {
 	visible: boolean;

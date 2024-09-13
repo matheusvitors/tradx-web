@@ -4,54 +4,50 @@ import 'styled-components';
  * Este arquivo serve para sobrescrever a tipagem DefaultTheme no styled-component do sistema
  */
 
+interface CommomProps {
+	background: string;
+	text: string;
+}
+
 declare module 'styled-components' {
     export interface DefaultTheme {
 		name: string,
 
-		primary: string;
-		secondary: string;
-		accent: string;
-		black: string;
-		white: string;
-		gray: string;
+		colors: {
+			primary: string;
+			secondary: string;
+			accent: string;
+			black: string;
+			white: string;
+			gray: string;
 
-		common: {
-			background: string,
-			text: string
-		},
-
-		semantic: {
 			success: string,
 			attention: string,
 			warning: string,
-		},
 
-		login: {
+			green: string;
+			red: string;
+		}
+
+		common: {
 			background: string,
-			text: string
+			text: string;
+			positive: CommomProps;
+			negative: CommomProps;
 		},
 
 		sidebar: {
 			border: string,
-			default: {
-				background: string,
-				text: string
-			},
-			active: {
-				background: string,
-				text: string
-			},
-			hover: {
-				background: string,
-				text: string
-			},
+			default: CommomProps;
+			active: CommomProps;
+			hover: CommomProps;
 		},
 
 		button: {
-			background: primary,
+			background: string,
 			text: string,
 			hover: {
-				background: primary,
+				background: string,
 				text: string,
 			}
 		},
@@ -63,15 +59,10 @@ declare module 'styled-components' {
 			spread: string;
 		},
 
-		textInput: {
+		input: {
 			background: string,
 			border: string,
 			text: string,
-		},
-
-		link: {
-			text: string;
-			hover: string;
 		},
 
 		modalPage: {
@@ -84,11 +75,5 @@ declare module 'styled-components' {
 			borderRow: string;
 			borderCell: string;
 		},
-
-		account: {
-			real: string;
-			simulador: string;
-		}
-
 	};
 }

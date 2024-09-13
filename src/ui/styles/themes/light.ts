@@ -1,37 +1,45 @@
+import { DefaultTheme } from "styled-components"
+
 const primary = '#593C8F'
 const secondary = '#171738'
 const accent = '#006F62'
-// const accent = '#6247AA'
 const black = '#141414'
 const white = '#F6F1F9'
 const gray= '#c7c3c3'
+const green = '#07ad25'
+const red = '#bd0606'
 
 
-const light = {
+export const light: DefaultTheme = {
 	name: 'light',
 
-	primary,
-	secondary,
-	accent,
-	black,
-	white,
-	gray,
+	colors: {
+		primary,
+		secondary,
+		accent,
+		black,
+		white,
+		gray,
 
-
-	common: {
-		background: white,
-		text: black
-	},
-
-	semantic: {
 		success: '#31cb00',
 		attention: '#CCC900',
 		warning: '#C92020',
+
+		green,
+		red
 	},
 
-	login: {
+	common: {
 		background: white,
-		text: black
+		text: black,
+		positive: {
+			background: green,
+			text: black
+		},
+		negative: {
+			background: red,
+			text: white
+		}
 	},
 
 	sidebar: {
@@ -66,15 +74,10 @@ const light = {
 		spread: '-8px',
 	},
 
-	textInput: {
+	input: {
 		background: primary,
 		border: black,
 		text: black,
-	},
-
-	link: {
-		text: black,
-		hover: secondary,
 	},
 
 	modalPage: {
@@ -87,12 +90,5 @@ const light = {
 		borderCell: primary,
 		borderRow: secondary,
 	},
-
-	account: {
-		real: '#44CC00',
-		simulador: '#CC0000'
-	}
-
 }
 
-export default light;

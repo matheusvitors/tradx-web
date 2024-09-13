@@ -9,13 +9,17 @@ import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { Button, Checkbox, Chip, Column, DataTable, DataTablePayload, DatePicker, FloatingButton, HeaderSelector, IconButton, PageLoading, SelectOptions, Toast } from "@/ui/components";
 import { listContas } from "@/application/services";
 import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
+import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
+import { Toast, PageLoading } from "@/ui/components/feedback";
+import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/ui/components/forms";
+import { IconButton, FloatingButton } from "@/ui/components/general";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
+//TODO: Carregar operações por data dos mais antigos para os novos
 
 interface Filter {
 	ativos: Array<string>;
@@ -173,7 +177,9 @@ export const OperacoesPage: React.FC = () => {
 		}
 	};
 
-	const columns: Column<Operacao | { resultadoPontos: number, resultadoFinanceiro: string, variacao: string}>[] = [
+	const columns: Column<Operacao | { resultadoPontos: number, resultadoFinanceiro: string, variacao: string, data: string}>[] = [
+		{ name: "Data", acessor: "data" },
+		{ name: "Contr.", acessor: "quantidade", width: '5%' },
 		{ name: "Ativo", acessor: "ativo.acronimo" },
 		{ name: "Tipo", acessor: "tipo" },
 		{ name: "Entrada", acessor: "precoEntrada" },
@@ -182,7 +188,7 @@ export const OperacoesPage: React.FC = () => {
 		{ name: "Saída", acessor: "precoSaida" },
 		{ name: "Hor. Entrada", acessor: "dataEntrada" },
 		{ name: "Hor. Saída", acessor: "dataSaida" },
-		{ name: "Res. (Pontos)", acessor: "resultadoPontos"},
+		{ name: "Res. (Pts)", acessor: "resultadoPontos"},
 		{ name: "Res. ($)", acessor: "resultadoFinanceiro" },
 		{ name: "Variação", acessor: "variacao" },
 	];
@@ -191,45 +197,44 @@ export const OperacoesPage: React.FC = () => {
 		const result: DataTablePayload[] = [];
 		let variacao = 0;
 
-		input.forEach((item: Operacao) => {
-			if(item.precoSaida){
-				variacao += item.tipo === 'compra' ?
-				(item.alvo - item.precoEntrada) * parseFloat(item.ativo.multiplicador)
-			:
-				(item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador);
-			}
-
+		input.reverse().forEach((item: Operacao) => {
 			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
+
+			if(item.precoSaida){
+				variacao += typeof resultadoPontos === 'number' ? resultadoPontos * item.ativo.multiplicador : 0;
+			}
 
 			result.push({
 				data: {
 					...item,
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
-					dataEntrada: format(item.dataEntrada, isSameDay(item.dataEntrada, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
+					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',
 					resultadoPontos,
-					resultadoFinanceiro:  item.precoSaida &&  (new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(item.tipo === 'compra' ?  (item.alvo - item.precoEntrada) * parseFloat(item.ativo.multiplicador) : (item.precoEntrada - item.alvo) * parseFloat(item.ativo.multiplicador))),
+					resultadoFinanceiro:  item.precoSaida && typeof resultadoPontos === 'number' && new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(resultadoPontos * item.ativo.multiplicador),
 					variacao: item.precoSaida ? new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(variacao) : ''
 				},
 				actions: [
 					{
 						icon: MdEdit,
 						callback: () => onEdit(item),
-						color: theme.semantic.attention,
+						color: theme.colors.attention,
 					},
 					{
 						icon: MdDelete,
 						callback: () => onRemove(item),
-						color: theme.semantic.warning,
+						color: theme.colors.warning,
 					},
 				],
 				style: {
-					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' : 'orange'}`
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red : 'orange'}`
 				}
 			})
 		})
 
-		return result
+		return result;
+		// return result.reverse();
 	}
 
 	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {
@@ -313,7 +318,7 @@ export const OperacoesPage: React.FC = () => {
 									<FilterOptions>
 										{filters.tipo.map((item: string, key: number) => (
 											<Checkbox key={key}
-												label={item} name={item}
+												label={item} name={`${item}Filter`} //foi necessário pois estava dando bug de conflitos de nome
 												width="100px" height="35px"
 												checked={activeFilters.tipos.includes(item)}
 												onChange={(e) => onChangeFilter('tipos', item, e.target.checked)}
@@ -326,14 +331,12 @@ export const OperacoesPage: React.FC = () => {
 							<FilterSection>
 								<FilterTitle>Data de Entrada</FilterTitle>
 								<FilterOptions>
-									<DatePicker label="Inicio"
-										reference={dataEntradaInicioRef}
+									<DatePicker label="Inicio" name="inicio"
 										min={filters.dataEntrada.min.slice(0,10)}
 										max={filters.dataEntrada.max.slice(0,10)}
 										onChange={(e) => onChangeRanges('dataEntrada','min', e.target.value)}
 									/>
-									<DatePicker label="Fim"
-										reference={dataEntradaFimRef}
+									<DatePicker label="Fim" name="fim"
 										min={activeRanges.dataEntrada.min ? format(activeRanges.dataEntrada.min, 'dd/MM/yyyy HH:mm') : undefined}
 										max={filters.dataEntrada.max.slice(0,10)}
 										onChange={(e) => onChangeRanges('dataEntrada','max', e.target.value)}
@@ -447,7 +450,7 @@ const FilterSection = styled.div`
 	align-items: flex-start;
 	justify-content: space-between;
 	flex-direction: column;
-	gap: 15px;
+	gap: 10px;
 
 	width: 95%;
 

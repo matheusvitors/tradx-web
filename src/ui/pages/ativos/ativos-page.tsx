@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Page } from '@/ui/layouts';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
+import { Page } from '@/ui/layouts';
 import { Ativo } from '@/application/models';
 import { listAtivos, removeAtivo } from '@/application/services/ativos';
 import { STALE_TIME } from '@/infra/config/constants';
-import { Column, DataTable, DataTablePayload, FloatingButton, PageLoading, Toast } from '@/ui/components';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
+import { DataTablePayload, DataTable, Column } from '@/ui/components/data-display';
+import { Toast, PageLoading } from '@/ui/components/feedback';
+import { FloatingButton } from '@/ui/components/general';
 
 export const AtivosPage: React.FC = () => {
 
@@ -70,12 +72,12 @@ export const AtivosPage: React.FC = () => {
 				{
 					icon: MdEdit,
 					callback: () => onEdit(item),
-					color: theme.semantic.attention
+					color: theme.colors.attention
 				},
 				{
 					icon: MdDelete,
 					callback: () => onRemove(item),
-					color: theme.semantic.warning
+					color: theme.colors.warning
 				},
 			]
 		}))

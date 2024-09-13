@@ -1,5 +1,5 @@
-import { Page } from '@/ui/layouts';
 import React from 'react';
+import { Page } from '@/ui/layouts';
 
 export const HomePage: React.FC = () => {
 	return (
