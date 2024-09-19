@@ -5,6 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { STALE_TIME } from '@/infra/config/constants';
 import { getDashboardInformations } from '@/application/services/dashboard';
 import { Conta, Operacao } from '@/application/models';
+import { storage } from '@/infra/store/storage';
+import { KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
+import { Loading, Toast } from '@/ui/components/feedback';
+import { AccountCard } from '@/ui/components/dashboard';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -14,29 +18,32 @@ interface DashboardInformations {
 
 export const HomePage: React.FC = () => {
 
-	const { data, isLoading, error, refetch } = useQuery<DashboardInformations>({
+	const [selectedConta, setSelectedConta] = useState('');
+
+	const { data, isLoading, error } = useQuery<DashboardInformations>({
 		queryKey: ['dashboard'],
-		queryFn: getDashboardInformations,
-		staleTime: STALE_TIME
+		queryFn: () => getDashboardInformations(selectedConta),
+		staleTime: STALE_TIME,
+		enabled: selectedConta ? true : false
 	});
 
-	const [contas, setContas] = useState<Conta[]>([]);
-	const [relatorios, setRelatorios] = useState<number[]>([]);
-	const [operacoes, setOperacoes] = useState<Operacao[]>([]);
+	useEffect(() => {
+		(async () => {
+			const data = storage.get(KEY_CONTA_SELECIONADA)?.data;
+			data && setSelectedConta(data);
+		})()
+	}, [])
 
 	useEffect(() => {
-		if(data){
-			setContas(data.contas);
-			setRelatorios(data.variacao);
-			setOperacoes(data.operacoes);
-		}
-	}, [data])
+		error && Toast.error(error.message)
+	}, [error])
 
 	return (
 		<Page pageName='Home'>
 			<Content>
 				<ContasContainer>
-					contas
+					{isLoading && <Loading visible={isLoading} />}
+					{data && data.contas.map(conta => <AccountCard key={conta.id} conta={conta} selected={selectedConta === conta.id} />)}
 				</ContasContainer>
 
 				<RelatoriosContainer>
@@ -44,7 +51,7 @@ export const HomePage: React.FC = () => {
 				</RelatoriosContainer>
 
 				<OperacoesContainer>
-					operacoes
+					{data && data.operacoes.map(operacao => <div>{operacao.ativo.acronimo}</div>)}
 				</OperacoesContainer>
 			</Content>
 		</Page>
@@ -64,12 +71,13 @@ const Content = styled.div`
 const ContasContainer = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
+	gap: 20px;
 
 	width: 100%;
 	height: 20%;
 
-	border: 1px solid red;
+	/* border: 1px solid red; */
 `
 
 const RelatoriosContainer = styled.div`

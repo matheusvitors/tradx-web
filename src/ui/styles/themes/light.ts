@@ -67,11 +67,15 @@ export const light: DefaultTheme = {
 		}
 	},
 
-	card: {
+	accountCard: {
 		background: white,
 		text: black,
-		shadowColor: black,
-		spread: '-8px',
+		shadowColor: primary,
+		selected: {
+			background: primary,
+			text: white,
+			shadowColor: primary,
+		}
 	},
 
 	input: {

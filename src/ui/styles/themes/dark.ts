@@ -68,11 +68,15 @@ export const dark: DefaultTheme = {
 		}
 	},
 
-	card: {
-		background: primary,
+	accountCard: {
+		background,
 		text: white,
-		shadowColor: white,
-		spread: '-2px',
+		shadowColor: primary,
+		selected: {
+			background: primary,
+			text: white,
+			shadowColor: primary,
+		}
 	},
 
 	input: {

@@ -53,7 +53,8 @@ export const OperacoesPage: React.FC = () => {
 		queryKey: ["operacoes"],
 		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ""),
 		staleTime: STALE_TIME,
-		enabled: storage.get(KEY_CONTA_SELECIONADA)?.data ? true : false
+		enabled: storage.get(KEY_CONTA_SELECIONADA)?.data ? true : false,
+		retry: 5
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
