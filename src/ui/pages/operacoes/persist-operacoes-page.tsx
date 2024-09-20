@@ -98,11 +98,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			const cachedAtivos = storage.get(KEY_ATIVOS);
 			let ativos: Ativo[] = [];
 			if(cachedAtivos){
-				if(cachedAtivos.expiration && Date.now() > cachedAtivos.expiration) {
-					ativos = await listAtivos();
-				} else {
-					ativos = JSON.parse(cachedAtivos.data);
-				}
+				ativos = JSON.parse(cachedAtivos);
 			} else {
 				ativos = await listAtivos();
 			}
@@ -128,11 +124,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			let contas: Conta[] = [];
 
 			if(cachedContas){
-				if(cachedContas.expiration && Date.now() > cachedContas.expiration) {
-					contas = await listContas();
-				} else {
-					contas = JSON.parse(cachedContas.data);
-				}
+				contas = JSON.parse(cachedContas);
 			} else {
 				contas = await listContas();
 			}

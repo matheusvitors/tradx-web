@@ -1,9 +1,19 @@
 import { Store, StoreData } from "@/application/interfaces";
 
 export const LocalStorageStore: Store = {
-	get: (key: string): StoreData | null => {
-		const data = localStorage.getItem(key);
-		return data ? JSON.parse(data) : null;
+	get: (key: string): any | null => {
+		const savedData = localStorage.getItem(key);
+
+		if(savedData) {
+			const parsedData: StoreData = JSON.parse(savedData);
+
+			if(!parsedData.expiration || (parsedData.expiration && parsedData.expiration > Date.now())){
+				return parsedData.data;
+			}
+			return null
+		}
+
+		return null;
 	},
 
 	set: function (key: string, data: string, expiration?: number): void {

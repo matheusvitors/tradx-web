@@ -62,7 +62,7 @@ const Card = styled.div`
 	max-height: 90vh;
 
 	border-radius: 10px;
-	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
+	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.colors.black, 0.45)};
 `;
 
 const Header = styled.div`

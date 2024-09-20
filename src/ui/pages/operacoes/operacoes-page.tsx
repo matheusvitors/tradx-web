@@ -19,7 +19,6 @@ import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/u
 import { IconButton, FloatingButton } from "@/ui/components/general";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
-//TODO: Carregar operações por data dos mais antigos para os novos
 
 interface Filter {
 	ativos: Array<string>;
@@ -51,9 +50,9 @@ export const OperacoesPage: React.FC = () => {
 	const location = useLocation();
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ""),
+		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA) || ""),
 		staleTime: STALE_TIME,
-		enabled: storage.get(KEY_CONTA_SELECIONADA)?.data ? true : false,
+		enabled: storage.get(KEY_CONTA_SELECIONADA) ? true : false,
 		retry: 5
 	});
 
@@ -72,7 +71,7 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		loadContas();
 		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
-		setSelectedConta(storagedConta?.data || "");
+		setSelectedConta(storagedConta || "");
 	}, []);
 
 	useEffect(() => {
@@ -81,7 +80,7 @@ export const OperacoesPage: React.FC = () => {
 	}, [data]);
 
 	useEffect(() => {
-		error && Toast.error(error.message);
+		error && Toast.error(error.message || 'A mensagem não pode ser carregada');
 	}, [error]);
 
 	useEffect(() => {
@@ -132,11 +131,7 @@ export const OperacoesPage: React.FC = () => {
 			let contas: Conta[] = [];
 
 			if (cachedContas) {
-				if (cachedContas.expiration && Date.now() > cachedContas.expiration) {
-					contas = await listContas();
-				} else {
-					contas = JSON.parse(cachedContas.data);
-				}
+				contas = JSON.parse(cachedContas);
 			} else {
 				contas = await listContas();
 			}
@@ -147,11 +142,9 @@ export const OperacoesPage: React.FC = () => {
 			}));
 
 			setContaOptions(options);
-
-			const defaultConta = storage.get(KEY_CONTA_SELECIONADA);
-			defaultConta && setSelectedConta(defaultConta.data);
+			setSelectedConta( storage.get(KEY_CONTA_SELECIONADA));
 		} catch (error: any) {
-			Toast.error(error);
+			Toast.error(error.message);
 		}
 	};
 

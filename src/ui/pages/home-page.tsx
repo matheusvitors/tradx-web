@@ -8,7 +8,8 @@ import { Conta, Operacao } from '@/application/models';
 import { storage } from '@/infra/store/storage';
 import { KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
 import { Loading, Toast } from '@/ui/components/feedback';
-import { AccountCard } from '@/ui/components/dashboard';
+import { AccountCard, GotoAccountsCard } from '@/ui/components/dashboard';
+import { listContas } from '@/application/services';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -18,7 +19,7 @@ interface DashboardInformations {
 
 export const HomePage: React.FC = () => {
 
-	const [selectedConta, setSelectedConta] = useState('');
+	const [selectedConta, setSelectedConta] = useState<string>(storage.get(KEY_CONTA_SELECIONADA));
 
 	const { data, isLoading, error } = useQuery<DashboardInformations>({
 		queryKey: ['dashboard'],
@@ -28,22 +29,27 @@ export const HomePage: React.FC = () => {
 	});
 
 	useEffect(() => {
-		(async () => {
-			const data = storage.get(KEY_CONTA_SELECIONADA)?.data;
-			data && setSelectedConta(data);
-		})()
-	}, [])
+		error && Toast.error(error.message)
+	}, [error]);
 
 	useEffect(() => {
-		error && Toast.error(error.message)
-	}, [error])
+		if(!selectedConta) {
+			(async () => {
+				const contas = await listContas();
+				setSelectedConta(contas[0].id);
+			})()
+		}
+
+		selectedConta && selectedConta.length > 0 && storage.set(KEY_CONTA_SELECIONADA, selectedConta);
+	}, [selectedConta])
 
 	return (
 		<Page pageName='Home'>
 			<Content>
 				<ContasContainer>
 					{isLoading && <Loading visible={isLoading} />}
-					{data && data.contas.map(conta => <AccountCard key={conta.id} conta={conta} selected={selectedConta === conta.id} />)}
+					{data && data.contas.map(conta => <AccountCard key={conta.id} conta={conta} selected={selectedConta === conta.id} setSelectedConta={setSelectedConta} />)}
+					<GotoAccountsCard />
 				</ContasContainer>
 
 				<RelatoriosContainer>
@@ -73,6 +79,9 @@ const ContasContainer = styled.div`
 	align-items: center;
 	justify-content: flex-start;
 	gap: 20px;
+	flex-grow: 1;
+
+	overflow-x: auto;
 
 	width: 100%;
 	height: 20%;

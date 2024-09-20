@@ -75,7 +75,7 @@ export const dark: DefaultTheme = {
 		selected: {
 			background: primary,
 			text: white,
-			shadowColor: primary,
+			shadowColor: secondary,
 		}
 	},
 

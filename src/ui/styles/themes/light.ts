@@ -1,4 +1,5 @@
 import { DefaultTheme } from "styled-components"
+import { hexToRGBA } from 'about-colors-js'
 
 const primary = '#593C8F'
 const secondary = '#171738'
@@ -70,7 +71,7 @@ export const light: DefaultTheme = {
 	accountCard: {
 		background: white,
 		text: black,
-		shadowColor: primary,
+		shadowColor: hexToRGBA(black, 0.4),
 		selected: {
 			background: primary,
 			text: white,
