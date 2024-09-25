@@ -5,6 +5,7 @@ import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
+
 import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
@@ -222,7 +223,7 @@ export const OperacoesPage: React.FC = () => {
 					},
 				],
 				style: {
-					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red : 'orange'}`
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red :  theme.colors.orange}`
 				}
 			})
 		})

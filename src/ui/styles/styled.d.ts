@@ -27,6 +27,7 @@ declare module 'styled-components' {
 
 			green: string;
 			red: string;
+			orange: string;
 		}
 
 		common: {

@@ -182,7 +182,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 			location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
 
-			queryClient.invalidateQueries({queryKey: ['operacoes']});
+			queryClient.invalidateQueries({queryKey: ['operacoes', 'dashboard']});
 			navigate('/operacoes');
 
 		} catch (error: any) {

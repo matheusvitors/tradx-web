@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Page } from '@/ui/layouts';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
+
 import { STALE_TIME } from '@/infra/config/constants';
 import { getDashboardInformations } from '@/application/services/dashboard';
 import { Conta, Operacao } from '@/application/models';
@@ -10,6 +11,10 @@ import { KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
 import { Loading, Toast } from '@/ui/components/feedback';
 import { AccountCard, GotoAccountsCard } from '@/ui/components/dashboard';
 import { listContas } from '@/application/services';
+import { Chip, Column, DataTable, DataTablePayload } from '@/ui/components/data-display';
+import { isSameDay, format } from 'date-fns';
+import { MdEdit } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -20,7 +25,10 @@ interface DashboardInformations {
 export const HomePage: React.FC = () => {
 
 	const [selectedConta, setSelectedConta] = useState<string>(storage.get(KEY_CONTA_SELECIONADA));
+	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 
+	const theme = useTheme();
+	const navigate = useNavigate();
 	const { data, isLoading, error } = useQuery<DashboardInformations>({
 		queryKey: ['dashboard'],
 		queryFn: () => getDashboardInformations(selectedConta),
@@ -43,6 +51,56 @@ export const HomePage: React.FC = () => {
 		selectedConta && selectedConta.length > 0 && storage.set(KEY_CONTA_SELECIONADA, selectedConta);
 	}, [selectedConta])
 
+	useEffect(() => {
+		console.log(data?.operacoes);
+		data && setOperacoes(preparePayloadDataTable(data.operacoes));
+	}, [data]);
+
+	const onEdit = async (operacao: Operacao) => {
+		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
+	};
+
+	const columns: Column<Operacao | { data: string }>[] = [
+		{ name: "Data", acessor: "data" },
+		{ name: "Contr.", acessor: "quantidade", width: '5%' },
+		{ name: "Ativo", acessor: "ativo.acronimo" },
+		{ name: "Tipo", acessor: "tipo" },
+		{ name: "Entrada", acessor: "precoEntrada" },
+		{ name: "Stop Loss", acessor: "stopLoss" },
+		{ name: "Alvo", acessor: "alvo" },
+		{ name: "Saída", acessor: "precoSaida" },
+		{ name: "Hor. Entrada", acessor: "dataEntrada" },
+	];
+
+	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
+		const result: DataTablePayload[] = [];
+
+		input.reverse().forEach((item: Operacao) => {
+
+			result.push({
+				data: {
+					...item,
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
+					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
+					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
+				},
+				actions: [
+					{
+						icon: MdEdit,
+						callback: () => onEdit(item),
+						color: theme.colors.attention,
+					},
+				],
+				style: {
+					color: theme.colors.orange
+				}
+			})
+		})
+
+		return result;
+
+	}
+
 	return (
 		<Page pageName='Home'>
 			<Content>
@@ -57,7 +115,7 @@ export const HomePage: React.FC = () => {
 				</RelatoriosContainer>
 
 				<OperacoesContainer>
-					{data && data.operacoes.map(operacao => <div>{operacao.ativo.acronimo}</div>)}
+					<DataTable columns={columns} payload={operacoes} />
 				</OperacoesContainer>
 			</Content>
 		</Page>
@@ -73,7 +131,6 @@ const Content = styled.div`
 	width: 100%;
 `
 
-
 const ContasContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -81,7 +138,7 @@ const ContasContainer = styled.div`
 	gap: 20px;
 	flex-grow: 1;
 
-	overflow-x: auto;
+	overflow-y: auto;
 
 	width: 100%;
 	height: 20%;
@@ -97,6 +154,8 @@ const RelatoriosContainer = styled.div`
 	width: 100%;
 	height: 50%;
 
+	overflow-y: auto;
+
 	border: 1px solid green;
 
 `
@@ -108,6 +167,8 @@ const OperacoesContainer = styled.div`
 
 	width: 100%;
 	height: 30%;
+
+	padding: 20px;
 
 	border: 1px solid blue;
 
