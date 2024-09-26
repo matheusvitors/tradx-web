@@ -202,7 +202,7 @@ export const OperacoesPage: React.FC = () => {
 			result.push({
 				data: {
 					...item,
-					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd/MM/yyyy'),
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
 					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',

@@ -14,7 +14,7 @@ import { listContas } from '@/application/services';
 import { Chip, Column, DataTable, DataTablePayload } from '@/ui/components/data-display';
 import { isSameDay, format } from 'date-fns';
 import { MdEdit } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -29,6 +29,7 @@ export const HomePage: React.FC = () => {
 
 	const theme = useTheme();
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { data, isLoading, error } = useQuery<DashboardInformations>({
 		queryKey: ['dashboard'],
 		queryFn: () => getDashboardInformations(selectedConta),
@@ -52,11 +53,13 @@ export const HomePage: React.FC = () => {
 	}, [selectedConta])
 
 	useEffect(() => {
-		console.log(data?.operacoes);
 		data && setOperacoes(preparePayloadDataTable(data.operacoes));
 	}, [data]);
 
 	const onEdit = async (operacao: Operacao) => {
+		console.log({ state: { background: location, operacao: operacao } });
+
+		// navigate("/operacoes");
 		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
 	};
 
@@ -68,7 +71,6 @@ export const HomePage: React.FC = () => {
 		{ name: "Entrada", acessor: "precoEntrada" },
 		{ name: "Stop Loss", acessor: "stopLoss" },
 		{ name: "Alvo", acessor: "alvo" },
-		{ name: "Saída", acessor: "precoSaida" },
 		{ name: "Hor. Entrada", acessor: "dataEntrada" },
 	];
 
@@ -80,7 +82,7 @@ export const HomePage: React.FC = () => {
 			result.push({
 				data: {
 					...item,
-					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd/MM/yyyy'),
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
 					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 				},
@@ -96,6 +98,7 @@ export const HomePage: React.FC = () => {
 				}
 			})
 		})
+		console.log(result);
 
 		return result;
 
