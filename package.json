@@ -26,6 +26,7 @@
 		"react-icon": "^1.0.0",
 		"react-loader-spinner": "^6.1.6",
 		"react-router-dom": "^6.26.1",
+		"recharts": "^2.13.0-alpha.5",
 		"styled-components": "^6.1.12",
 		"zod": "^3.23.8"
 	},

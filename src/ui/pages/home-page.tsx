@@ -15,6 +15,7 @@ import { Chip, Column, DataTable, DataTablePayload } from '@/ui/components/data-
 import { isSameDay, format } from 'date-fns';
 import { MdEdit } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Chart } from '@/ui/components/charts';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -114,7 +115,7 @@ export const HomePage: React.FC = () => {
 				</ContasContainer>
 
 				<RelatoriosContainer>
-					relatorios
+					<Chart />
 				</RelatoriosContainer>
 
 				<OperacoesContainer>
@@ -152,15 +153,14 @@ const ContasContainer = styled.div`
 const RelatoriosContainer = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 
 	width: 100%;
 	height: 50%;
 
 	overflow-y: auto;
 
-	border: 1px solid green;
-
+	/* border: 1px solid green; */
 `
 
 const OperacoesContainer = styled.div`
@@ -173,7 +173,7 @@ const OperacoesContainer = styled.div`
 
 	padding: 20px;
 
-	border: 1px solid blue;
+	/* border: 1px solid blue; */
 
 `
 
