@@ -15,7 +15,8 @@ import { Chip, Column, DataTable, DataTablePayload } from '@/ui/components/data-
 import { isSameDay, format } from 'date-fns';
 import { MdEdit } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Chart } from '@/ui/components/charts';
+import { LineChart } from '@/ui/components/charts';
+// import { Chart } from '@/ui/components/charts';
 
 interface DashboardInformations {
 	contas: Conta[];
@@ -31,7 +32,7 @@ export const HomePage: React.FC = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { data, isLoading, error } = useQuery<DashboardInformations>({
+	const { data, isLoading, error, refetch } = useQuery<DashboardInformations>({
 		queryKey: ['dashboard'],
 		queryFn: () => getDashboardInformations(selectedConta),
 		staleTime: STALE_TIME,
@@ -51,14 +52,17 @@ export const HomePage: React.FC = () => {
 		}
 
 		selectedConta && selectedConta.length > 0 && storage.set(KEY_CONTA_SELECIONADA, selectedConta);
+		refetch();
 	}, [selectedConta])
 
 	useEffect(() => {
+		console.log(data?.variacao);
+
 		data && setOperacoes(preparePayloadDataTable(data.operacoes));
 	}, [data]);
 
 	const onEdit = async (operacao: Operacao) => {
-		console.log({ state: { background: location, operacao: operacao } });
+		// console.log({ state: { background: location, operacao: operacao } });
 
 		// navigate("/operacoes");
 		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
@@ -99,7 +103,7 @@ export const HomePage: React.FC = () => {
 				}
 			})
 		})
-		console.log(result);
+		// console.log(result);
 
 		return result;
 
@@ -115,7 +119,7 @@ export const HomePage: React.FC = () => {
 				</ContasContainer>
 
 				<RelatoriosContainer>
-					<Chart />
+					<LineChart />
 				</RelatoriosContainer>
 
 				<OperacoesContainer>

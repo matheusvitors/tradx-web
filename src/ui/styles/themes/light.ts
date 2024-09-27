@@ -9,7 +9,7 @@ const white = '#F6F1F9'
 const gray= '#c7c3c3'
 const green = '#07ad25'
 const red = '#bd0606'
-const orange = '#ff8b52'
+const orange = '#b83d00'
 
 
 export const light: DefaultTheme = {

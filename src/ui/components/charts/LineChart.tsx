@@ -1,50 +1,62 @@
-import React from "react";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import React from 'react';
+import { PointTooltipProps, ResponsiveLine, Serie } from '@nivo/line';
+import { useTheme } from 'styled-components';
 
-export const Chart: React.FC = () => {
+export const LineChart: React.FC = () => {
 
-	const data = [
-		{data: '21/01', value: 5, variacao: 'R$ 5,00'},
-		{data: '21/01', value: 7, variacao: 'R$ 7,00'},
-		{data: '22/01', value: 12.5, variacao: 'R$ 12,50'},
-		{data: '22/01', value: 9, variacao: 'R$ 9,00'},
-		{data: '23/01', value: 15, variacao: 'R$ 15,00'},
-		{data: '24/01', value: 12, variacao: 'R$ 12,00'},
-		{data: '24/01', value: 18, variacao: 'R$ 18,00'},
-	]
+	const theme = useTheme();
 
-	const CustomToolTip = ({payload, label, active}: {payload: any, label: string; active: boolean}) => {
+	const data: Serie[] = [{
+		id: 'variação',
+		data: [
+			{y: 1.50, x: '01/02'},
+			{y: 3.25, x: '02/02'},
+			{y: 2.10, x: '03/02'},
+			{y: 5.70, x: '04/02'},
+			{y: 7.60, x: '05/02'},
+			{y: 6.10, x: '08/02'},
+		]
+	}]
 
-		return (
-			<>
-				{active && <>
-					<div>
-						<p>{label}</p>
-						<p>{payload[0].payload.variacao}</p>
-						<p></p>
-					</div>
-				</>}
-			</>
-		)
-	}
+	// const customTooltip = () => {
+	// 	return
+	// }
 
 	return (
-		<ResponsiveContainer width="100%" height="95%">
-		{/* <ResponsiveContainer width="100%" height="95%" style={{border: '1px solid red'}}> */}
-			<LineChart data={data} margin={{top: 5, right: 25, bottom: 5, left: 5}}>
-				<Line type="natural" dataKey="value" stroke="#8884d8"/>
-				<XAxis dataKey="data" />
-				{/* <YAxis dataKey="value" /> */}
-				{/* <Tooltip
-					content={<CustomToolTip />}
-				/> */}
-				<Tooltip
-					labelStyle={{ color: 'green'}}
-					contentStyle={{ background: 'black', color: 'red'}}
-					itemStyle={{color: 'red'}}
-					wrapperStyle={{color: 'brown'}}
-				/>
-			</LineChart>
-		</ResponsiveContainer>
+		<div style={{width: '98%', height: '95%'}}>
+			<ResponsiveLine
+				data={data}
+				margin={{ top: 70, right: 70, bottom: 55, left: 45 }}
+				curve="natural"
+				animate
+
+				enableGridX={false}
+				enableGridY={false}
+				xScale={{ type: 'point' }}
+				yScale={{
+					type: 'linear',
+					min: 'auto',
+					max: 'auto',
+				}}
+				colors={[`${theme.colors.secondary}`]}
+				lineWidth={1}
+
+				isInteractive
+				enableCrosshair={true}
+				useMesh={true}
+
+				tooltip={({point}:PointTooltipProps) => (
+					<div style={{
+						background: `${theme.common.background}`,
+						border: `1px solid ${theme.colors.primary}`,
+						padding: '10px',
+						borderRadius: '10px',
+					}} >
+						{/* <div>{point.data.xFormatted.toString()}</div> */}
+						<div style={{color: `${theme.colors.secondary}`}}>{new Intl.NumberFormat('pt-BR', {style: 'currency', currency: 'BRL'}).format(parseFloat(point.data.yFormatted.toString()))}</div>
+					</div>
+				)}
+			/>
+		</div>
 	);
-};
+}
