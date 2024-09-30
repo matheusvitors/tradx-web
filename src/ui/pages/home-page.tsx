@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { STALE_TIME } from '@/infra/config/constants';
 import { getDashboardInformations } from '@/application/services/dashboard';
-import { Conta, Operacao } from '@/application/models';
+import { Conta, Operacao, Variacao } from '@/application/models';
 import { storage } from '@/infra/store/storage';
 import { KEY_CONTA_SELECIONADA } from '@/infra/config/storage-keys';
 import { Loading, Toast } from '@/ui/components/feedback';
@@ -15,12 +15,13 @@ import { Chip, Column, DataTable, DataTablePayload } from '@/ui/components/data-
 import { isSameDay, format } from 'date-fns';
 import { MdEdit } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LineChart } from '@/ui/components/charts';
+import { LineChart, Serie } from '@/ui/components/charts';
 // import { Chart } from '@/ui/components/charts';
+
 
 interface DashboardInformations {
 	contas: Conta[];
-	variacao: number[];
+	variacao: Variacao[];
 	operacoes: Operacao[];
 }
 
@@ -28,6 +29,7 @@ export const HomePage: React.FC = () => {
 
 	const [selectedConta, setSelectedConta] = useState<string>(storage.get(KEY_CONTA_SELECIONADA));
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
+	const [variacoes, setVariacoes] = useState<Serie[]>([])
 
 	const theme = useTheme();
 	const navigate = useNavigate();
@@ -56,8 +58,8 @@ export const HomePage: React.FC = () => {
 	}, [selectedConta])
 
 	useEffect(() => {
-		console.log(data?.variacao);
-
+		data && data.variacao.length > 0 && setVariacoes(prepareChartData(data.variacao))
+		data && data.variacao.length === 0 && setVariacoes([])
 		data && setOperacoes(preparePayloadDataTable(data.operacoes));
 	}, [data]);
 
@@ -103,10 +105,25 @@ export const HomePage: React.FC = () => {
 				}
 			})
 		})
-		// console.log(result);
 
 		return result;
 
+	}
+
+	const prepareChartData = (input: Variacao[]): Serie[] => {
+		const chartData: Serie[] = [{
+			id: 'Variação',
+			data: []
+		}];
+
+		input.forEach((item: Variacao) => {
+			chartData[0].data.push({
+				y: item.value,
+				x: item.data
+			})
+		})
+
+		return chartData;
 	}
 
 	return (
@@ -119,11 +136,11 @@ export const HomePage: React.FC = () => {
 				</ContasContainer>
 
 				<RelatoriosContainer>
-					<LineChart />
+					<LineChart series={variacoes} />
 				</RelatoriosContainer>
 
 				<OperacoesContainer>
-					<DataTable columns={columns} payload={operacoes} />
+					{operacoes && operacoes.length > 0 && <DataTable columns={columns} payload={operacoes} /> }
 				</OperacoesContainer>
 			</Content>
 		</Page>
