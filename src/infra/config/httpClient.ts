@@ -12,7 +12,7 @@ httpClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) =
 	const token = storage.get(KEY_TOKEN);
 
 	if(!( config.url === '/login')) {
-		config.headers.Authorization = token ? `Bearer ${token.data}`: '';
+		config.headers.Authorization = token ? `Bearer ${token}`: '';
 	}
 
 	return config;

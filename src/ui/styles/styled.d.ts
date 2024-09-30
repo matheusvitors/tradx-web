@@ -27,6 +27,7 @@ declare module 'styled-components' {
 
 			green: string;
 			red: string;
+			orange: string;
 		}
 
 		common: {
@@ -46,17 +47,18 @@ declare module 'styled-components' {
 		button: {
 			background: string,
 			text: string,
-			hover: {
-				background: string,
-				text: string,
-			}
+			hover: CommomProps;
 		},
 
-		card: {
+		accountCard: {
 			background: string,
 			text: string,
 			shadowColor: string;
-			spread: string;
+			selected: {
+				background: string,
+				text: string,
+				shadowColor: string;
+			}
 		},
 
 		input: {

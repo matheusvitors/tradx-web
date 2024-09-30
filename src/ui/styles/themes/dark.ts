@@ -8,6 +8,7 @@ const white = '#F8F1F5'
 const gray= '#c7c3c3'
 const green = '#69FF1F'
 const red = '#fa0000'
+const orange = 'orange'
 const background = '#080014';
 
 export const dark: DefaultTheme = {
@@ -23,6 +24,7 @@ export const dark: DefaultTheme = {
 
 		green,
 		red,
+		orange,
 
 		success: '#46B93C',
 		attention: '#f2f230',
@@ -68,11 +70,15 @@ export const dark: DefaultTheme = {
 		}
 	},
 
-	card: {
-		background: primary,
+	accountCard: {
+		background,
 		text: white,
-		shadowColor: white,
-		spread: '-2px',
+		shadowColor: primary,
+		selected: {
+			background: primary,
+			text: white,
+			shadowColor: secondary,
+		}
 	},
 
 	input: {

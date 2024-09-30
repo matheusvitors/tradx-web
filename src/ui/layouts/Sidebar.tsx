@@ -73,16 +73,13 @@ const MenuItem = styled(Link)<{ active?: string; }>`
 	transition: all .3s ;
 
 	${props => props.active === 'true' && css`
-	background-color: ${props => props.theme.sidebar.active.background};
-	color: ${props => props.theme.sidebar.active.text};
-	box-shadow: 0px 0px 20px ${props => props.theme.card.spread} ${props => hexToRGBA(props.theme.sidebar.active.background, 0.45)};
+		background-color: ${props => props.theme.sidebar.active.background};
+		color: ${props => props.theme.sidebar.active.text};
+		box-shadow: 0px 0px 20px 4px ${props => hexToRGBA(props.theme.sidebar.active.background, 0.45)};
 	`}
 
 	&:hover {
 		background-color: ${props => props.theme.sidebar.hover.background};
 		color: ${props => props.theme.sidebar.hover.text};
 	}
-
-	/* border: 1px solid white; */
-
 `

@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { listAtivos, listContas, createOperacao, editOperacao } from "@/application/services";
 import { Ativo, Conta } from "@/application/models";
@@ -98,11 +99,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			const cachedAtivos = storage.get(KEY_ATIVOS);
 			let ativos: Ativo[] = [];
 			if(cachedAtivos){
-				if(cachedAtivos.expiration && Date.now() > cachedAtivos.expiration) {
-					ativos = await listAtivos();
-				} else {
-					ativos = JSON.parse(cachedAtivos.data);
-				}
+				ativos = JSON.parse(cachedAtivos);
 			} else {
 				ativos = await listAtivos();
 			}
@@ -128,11 +125,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			let contas: Conta[] = [];
 
 			if(cachedContas){
-				if(cachedContas.expiration && Date.now() > cachedContas.expiration) {
-					contas = await listContas();
-				} else {
-					contas = JSON.parse(cachedContas.data);
-				}
+				contas = JSON.parse(cachedContas);
 			} else {
 				contas = await listContas();
 			}
@@ -191,6 +184,7 @@ export const PersistOperacoesPage: React.FC = () => {
 			location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
 
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
+			queryClient.invalidateQueries({queryKey: ['dashboard']});
 			navigate('/operacoes');
 
 		} catch (error: any) {

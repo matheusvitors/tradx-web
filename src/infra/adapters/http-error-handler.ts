@@ -9,5 +9,4 @@ export const httpErrorHandler = (error: any) => {
 	}
 	console.error('[HTTP-ERROR-HANDLER] => ', error);
 	throw new Error(message);
-
 }

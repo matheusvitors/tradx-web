@@ -1,4 +1,5 @@
 import { DefaultTheme } from "styled-components"
+import { hexToRGBA } from 'about-colors-js'
 
 const primary = '#593C8F'
 const secondary = '#171738'
@@ -8,6 +9,7 @@ const white = '#F6F1F9'
 const gray= '#c7c3c3'
 const green = '#07ad25'
 const red = '#bd0606'
+const orange = '#b83d00'
 
 
 export const light: DefaultTheme = {
@@ -26,7 +28,8 @@ export const light: DefaultTheme = {
 		warning: '#C92020',
 
 		green,
-		red
+		red,
+		orange
 	},
 
 	common: {
@@ -67,11 +70,15 @@ export const light: DefaultTheme = {
 		}
 	},
 
-	card: {
+	accountCard: {
 		background: white,
 		text: black,
-		shadowColor: black,
-		spread: '-8px',
+		shadowColor: hexToRGBA(black, 0.4),
+		selected: {
+			background: primary,
+			text: white,
+			shadowColor: primary,
+		}
 	},
 
 	input: {

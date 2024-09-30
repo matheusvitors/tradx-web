@@ -166,7 +166,6 @@ const ActionsContainer = styled.div`
 	padding-right: 20px;
 
 	position: absolute;
-
 	top: 0;
 	left: 0;
 

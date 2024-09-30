@@ -5,6 +5,7 @@ import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
+
 import { Page, SideView } from "@/ui/layouts";
 import { Conta, Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
@@ -19,7 +20,6 @@ import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/u
 import { IconButton, FloatingButton } from "@/ui/components/general";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
-//TODO: Carregar operações por data dos mais antigos para os novos
 
 interface Filter {
 	ativos: Array<string>;
@@ -51,9 +51,10 @@ export const OperacoesPage: React.FC = () => {
 	const location = useLocation();
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA)?.data || ""),
+		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA) || ""),
 		staleTime: STALE_TIME,
-		enabled: storage.get(KEY_CONTA_SELECIONADA)?.data ? true : false
+		enabled: storage.get(KEY_CONTA_SELECIONADA) ? true : false,
+		retry: 5
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
@@ -71,7 +72,7 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		loadContas();
 		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
-		setSelectedConta(storagedConta?.data || "");
+		setSelectedConta(storagedConta || "");
 	}, []);
 
 	useEffect(() => {
@@ -80,7 +81,7 @@ export const OperacoesPage: React.FC = () => {
 	}, [data]);
 
 	useEffect(() => {
-		error && Toast.error(error.message);
+		error && Toast.error(error.message || 'A mensagem não pode ser carregada');
 	}, [error]);
 
 	useEffect(() => {
@@ -131,11 +132,7 @@ export const OperacoesPage: React.FC = () => {
 			let contas: Conta[] = [];
 
 			if (cachedContas) {
-				if (cachedContas.expiration && Date.now() > cachedContas.expiration) {
-					contas = await listContas();
-				} else {
-					contas = JSON.parse(cachedContas.data);
-				}
+				contas = JSON.parse(cachedContas);
 			} else {
 				contas = await listContas();
 			}
@@ -146,11 +143,9 @@ export const OperacoesPage: React.FC = () => {
 			}));
 
 			setContaOptions(options);
-
-			const defaultConta = storage.get(KEY_CONTA_SELECIONADA);
-			defaultConta && setSelectedConta(defaultConta.data);
+			setSelectedConta( storage.get(KEY_CONTA_SELECIONADA));
 		} catch (error: any) {
-			Toast.error(error);
+			Toast.error(error.message);
 		}
 	};
 
@@ -207,7 +202,7 @@ export const OperacoesPage: React.FC = () => {
 			result.push({
 				data: {
 					...item,
-					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd-MM-yyyy'),
+					data: (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) && format(item.dataEntrada, 'dd/MM/yyyy'),
 					tipo: <Chip style={{ textTransform: 'capitalize'}} text={item.tipo} type={item.tipo === 'compra' ? 'positive' : 'negative'} />,
 					dataEntrada: format(item.dataEntrada, (isSameDay(item.dataEntrada, item.dataSaida || Date.now()) || !item.dataSaida) ? 'HH:mm' : 'dd/MM/yyyy HH:mm'),
 					dataSaida: item.dataSaida ? format(item.dataSaida, isSameDay(item.dataSaida, item.dataSaida || Date.now()) ? 'HH:mm' : 'dd/MM/yyyy HH:mm') : '',
@@ -228,7 +223,7 @@ export const OperacoesPage: React.FC = () => {
 					},
 				],
 				style: {
-					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red : 'orange'}`
+					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red :  theme.colors.orange}`
 				}
 			})
 		})

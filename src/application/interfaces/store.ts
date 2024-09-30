@@ -1,5 +1,5 @@
 export interface Store {
-	get: (key: string) => StoreData | null;
+	get: (key: string) => any | null;
 	set: (key: string, data: any, expiration?: number) => void;
 	remove: (key: string) => void;
 }
