@@ -64,9 +64,6 @@ export const HomePage: React.FC = () => {
 	}, [data]);
 
 	const onEdit = async (operacao: Operacao) => {
-		// console.log({ state: { background: location, operacao: operacao } });
-
-		// navigate("/operacoes");
 		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
 	};
 
