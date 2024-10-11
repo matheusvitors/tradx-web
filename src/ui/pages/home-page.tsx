@@ -126,11 +126,11 @@ export const HomePage: React.FC = () => {
 	return (
 		<Page pageName='Home'>
 			<Content>
-				<ContasContainer>
+				{/* <ContasContainer>
 					{isLoading && <Loading visible={isLoading} />}
 					{data && data.contas.map(conta => <AccountCard key={conta.id} conta={conta} selected={selectedConta === conta.id} setSelectedConta={setSelectedConta} />)}
 					<GotoAccountsCard />
-				</ContasContainer>
+				</ContasContainer> */}
 
 				<RelatoriosContainer>
 					<LineChart series={variacoes} />

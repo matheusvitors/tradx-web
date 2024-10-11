@@ -281,7 +281,8 @@ export const OperacoesPage: React.FC = () => {
 	}
 
 	return (
-		<Page pageName="Operações">
+		<Page pageName="Gerenciamento de Risco">
+		{/* <Page pageName="Operações"> */}
 			<Content>
 				<SideView open={isOpenFilters} setOpen={setIsOpenFilters} title="Filtros">
 					{filters && (
@@ -349,10 +350,10 @@ export const OperacoesPage: React.FC = () => {
 				{ contaOptions && contaOptions.length > 0 ? (
 					<>
 						<TableContainer>
-							<PageHeader>
+							{/* <PageHeader>
 								<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
 								{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
-							</PageHeader>
+							</PageHeader> */}
 
 							{operacoes && operacoes.length > 0 ?
 								<DataTable columns={columns} payload={operacoes} />
