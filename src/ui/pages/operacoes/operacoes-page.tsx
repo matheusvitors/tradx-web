@@ -16,8 +16,9 @@ import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
-import { SelectOptions, Checkbox, DatePicker, Button, HeaderSelector } from "@/ui/components/forms";
-import { IconButton, FloatingButton } from "@/ui/components/general";
+import { SelectOptions, Checkbox, DatePicker, Button } from "@/ui/components/forms";
+import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
+import { PageHeader } from "@/ui/components/layout";
 
 //FIXME: Mudança de conta as vezes não carrega suas operações corretamente
 
@@ -281,8 +282,7 @@ export const OperacoesPage: React.FC = () => {
 	}
 
 	return (
-		<Page pageName="Gerenciamento de Risco">
-		{/* <Page pageName="Operações"> */}
+		<Page pageName="Operações">
 			<Content>
 				<SideView open={isOpenFilters} setOpen={setIsOpenFilters} title="Filtros">
 					{filters && (
@@ -350,10 +350,10 @@ export const OperacoesPage: React.FC = () => {
 				{ contaOptions && contaOptions.length > 0 ? (
 					<>
 						<TableContainer>
-							{/* <PageHeader>
-								<HeaderSelector label="" name="conta" value={selectedConta} options={contaOptions} reference={contaSelectRef} onChange={onChangeConta} />
+							<PageHeader>
+								<ContaSelector  />
 								{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
-							</PageHeader> */}
+							</PageHeader>
 
 							{operacoes && operacoes.length > 0 ?
 								<DataTable columns={columns} payload={operacoes} />
@@ -387,22 +387,6 @@ const Content = styled.div`
 
 	overflow-x: hidden;
 	white-space: nowrap;
-
-`;
-
-const PageHeader = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	flex-direction: row;
-	gap: 20px;
-
-	width: 100%;
-	height: 70px;
-
-	margin-bottom: 20px;
-
-	/* border: 1px solid white; */
 `;
 
 const TableContainer = styled.div`

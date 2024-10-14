@@ -1,23 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { MdDarkMode, MdLogout, MdSunny } from 'react-icons/md';
 import { useSystemTheme } from '@/ui/hooks/useSystemTheme';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from '@/application/services/auth';
 import { IconButton } from '@/ui/components/general';
-import { useSelectedConta } from '@/ui/contexts';
 
 interface HeaderProps {
 	pageName: string;
-	showAccount?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ pageName, showAccount }) => {
+export const Header: React.FC<HeaderProps> = ({ pageName }) => {
 	const navigate = useNavigate();
 	const { theme, changeTheme } = useSystemTheme();
-	const { selectedConta } = useSelectedConta();
-	console.log(selectedConta);
-
 
 	const handleLogout = () => {
 		signOut();
@@ -32,10 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ pageName, showAccount }) => {
 		<Container>
 			<TitleContainer>
 				<PageName>{pageName}</PageName>
-			</TitleContainer>
-
-			<TitleContainer>
-				<PageName>{selectedConta?.nome}</PageName>
 			</TitleContainer>
 
 			<OptionsContainer>
@@ -63,8 +54,6 @@ const Container = styled.div`
 const TitleContainer = styled.div`
 	width: 40%;
 	padding: 20px;
-
-	border: 1px solid white;
 `
 
 const PageName = styled.h2`
@@ -77,7 +66,5 @@ const OptionsContainer = styled.div`
 	align-items: center;
 	justify-content: flex-end;
 
-	width: 20%;
-
-	border: 1px solid white;
+	width: 60%;
 `
