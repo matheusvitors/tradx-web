@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
@@ -7,20 +7,16 @@ import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
 
 import { Page, SideView } from "@/ui/layouts";
-import { Conta, Operacao } from "@/application/models";
+import { Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
 import { STALE_TIME } from "@/infra/config/constants";
-import { listContas } from "@/application/services";
-import { KEY_CONTAS, KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
-import { storage } from "@/infra/store/storage";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
-import { SelectOptions, Checkbox, DatePicker, Button } from "@/ui/components/forms";
+import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
 import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
-
-//FIXME: Mudança de conta as vezes não carrega suas operações corretamente
+import { useSelectedConta } from "@/ui/contexts";
 
 interface Filter {
 	ativos: Array<string>;
@@ -50,31 +46,23 @@ export const OperacoesPage: React.FC = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { selectedConta } = useSelectedConta()
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		queryFn: () => listOperacaoByConta(storage.get(KEY_CONTA_SELECIONADA) || ""),
+		queryFn: () => listOperacaoByConta(selectedConta!.id, {year: 2024}),
 		staleTime: STALE_TIME,
-		enabled: storage.get(KEY_CONTA_SELECIONADA) ? true : false,
+		enabled: selectedConta ? true : false,
 		retry: 5
 	});
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
-	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
-	const [selectedConta, setSelectedConta] = useState("");
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 
-	const contaSelectRef = useRef<HTMLSelectElement>(null);
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		loadContas();
-		const storagedConta = storage.get(KEY_CONTA_SELECIONADA);
-		setSelectedConta(storagedConta || "");
-	}, []);
 
 	useEffect(() => {
 		data && data.length > 0 && setOperacoes(preparePayloadDataTable(data));
@@ -84,6 +72,10 @@ export const OperacoesPage: React.FC = () => {
 	useEffect(() => {
 		error && Toast.error(error.message || 'A mensagem não pode ser carregada');
 	}, [error]);
+
+	useEffect(() => {
+		refetch();
+	}, [selectedConta])
 
 	useEffect(() => {
 		if(data) {
@@ -126,29 +118,6 @@ export const OperacoesPage: React.FC = () => {
 
 		}
 	}, [activeFilters, activeRanges])
-
-	const loadContas = async () => {
-		try {
-			const cachedContas = storage.get(KEY_CONTAS);
-			let contas: Conta[] = [];
-
-			if (cachedContas) {
-				contas = JSON.parse(cachedContas);
-			} else {
-				contas = await listContas();
-			}
-
-			const options: SelectOptions[] = contas.map((conta) => ({
-				label: conta.nome,
-				value: conta.id,
-			}));
-
-			setContaOptions(options);
-			setSelectedConta( storage.get(KEY_CONTA_SELECIONADA));
-		} catch (error: any) {
-			Toast.error(error.message);
-		}
-	};
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		setFilters(uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']));
@@ -232,18 +201,6 @@ export const OperacoesPage: React.FC = () => {
 		return result;
 		// return result.reverse();
 	}
-
-	const onChangeConta = async (event: ChangeEvent<HTMLSelectElement>) => {
-		event.preventDefault();
-		try {
-			contaSelectRef.current && storage.set(KEY_CONTA_SELECIONADA, contaSelectRef.current.value);
-			setSelectedConta(event.target.value);
-			const result = await listOperacaoByConta(event.target.value);
-			setOperacoes(preparePayloadDataTable(result));
-		} catch (error: any) {
-			Toast.error(error.message);
-		}
-	};
 
 	const onChangeFilter = (filter: keyof Filter, value: string, checked: boolean) => {
 		if(checked){
@@ -347,30 +304,24 @@ export const OperacoesPage: React.FC = () => {
 					)}
 				</SideView>
 
-				{ contaOptions && contaOptions.length > 0 ? (
-					<>
-						<TableContainer>
-							<PageHeader>
-								<ContaSelector  />
-								{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
-							</PageHeader>
+				<>
+					<TableContainer>
+						<PageHeader>
+							<ContaSelector  />
+							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
+						</PageHeader>
 
-							{operacoes && operacoes.length > 0 ?
-								<DataTable columns={columns} payload={operacoes} />
-							:
-								<EmptyContainer>
-									<span>Não há operações registradas.</span>
-								</EmptyContainer>
-							}
-						</TableContainer>
+						{operacoes && operacoes.length > 0 ?
+							<DataTable columns={columns} payload={operacoes} />
+						:
+							<EmptyContainer>
+								<span>Não há operações registradas.</span>
+							</EmptyContainer>
+						}
+					</TableContainer>
 
-						<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
-					</>
-				) : (
-					<EmptyContainer>
-						<span>Não há operações registradas.</span>
-					</EmptyContainer>
-				)}
+					<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
+				</>
 
 				<PageLoading visible={isLoading} />
 			</Content>

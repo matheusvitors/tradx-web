@@ -42,6 +42,7 @@ const Container = styled.div<{ $visible?: boolean; }>`
 	transform: translate(-50%, -50%);
 
 	background-color: rgba(0, 0, 0, 0.4);
+	z-index: 99;
 `;
 
 const Card = styled.div`
@@ -91,5 +92,5 @@ const Content = styled.div`
 	padding: 20px;
 	margin-bottom: 40px;
 
-	overflow-y: scroll;
+	overflow-y: auto;
 `;

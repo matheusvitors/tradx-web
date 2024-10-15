@@ -129,7 +129,7 @@ export const HomePage: React.FC = () => {
 				</ContasContainer> */}
 
 				<RelatoriosContainer>
-					{/* <LineChart series={variacoes} /> */}
+					<LineChart series={variacoes} />
 				</RelatoriosContainer>
 
 				<OperacoesContainer>{operacoes && operacoes.length > 0 && <DataTable columns={columns} payload={operacoes} />}</OperacoesContainer>

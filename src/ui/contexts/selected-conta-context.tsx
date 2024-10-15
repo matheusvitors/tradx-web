@@ -25,8 +25,6 @@ export const SelectedContaProvider: React.FC<PropsWithChildren> = ({ children })
 
 	useEffect(() => {
 		storage.set(KEY_CONTA_SELECIONADA, selectedConta);
-		console.log(selectedConta?.nome);
-
 	}, [selectedConta])
 
 	return (

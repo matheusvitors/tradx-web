@@ -10,17 +10,23 @@ interface RangeData {
 
 interface Period {
 	year: number;
-	month: number;
+	month?: number;
 }
 
 export const listOperacaoByConta = async (contaId: string, period?: Period): Promise<Operacao[]> => {
 
 	const range: RangeData = { init: '', end: '' };
+	let endDate = new Date();
 
 	if(period) {
-		range.init = format(new Date(`${period?.year}-${period?.month}-01`).setDate(1), 'yyyy-MM-dd');
+		if(!period.month && period.year) {
+			range.init = format(new Date(`${period?.year}-01-01`).setDate(1), 'yyyy-MM-dd');
+			endDate = new Date(`${period?.year}-12-31`);
+		} else {
+			range.init = format(new Date(`${period?.year}-${period?.month}-01`).setDate(1), 'yyyy-MM-dd');
+			endDate = new Date(`${period?.year}-${period?.month}-01`);
+		}
 
-		const endDate = new Date(`${period?.year}-${period?.month}-01`);
 		endDate.setMonth(endDate.getMonth() + 1);
 		endDate.setDate(0);
 		range.end = format(endDate, 'yyyy-MM-dd');
