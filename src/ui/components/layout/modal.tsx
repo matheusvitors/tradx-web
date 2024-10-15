@@ -15,7 +15,7 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, 
 	const theme = useTheme();
 
 	return (
-		<Container visible={isOpen}>
+		<Container $visible={isOpen}>
 			<Card>
 				<Header>
 					<PageName>{title}</PageName>
@@ -27,8 +27,8 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, 
 	);
 }
 
-const Container = styled.div<{ visible?: boolean; }>`
-	display: ${props => props.visible ? 'flex' : 'none'};
+const Container = styled.div<{ $visible?: boolean; }>`
+	display: ${props => props.$visible ? 'flex' : 'none'};
 	align-items: center;
 	justify-content: center;
 
@@ -42,6 +42,7 @@ const Container = styled.div<{ visible?: boolean; }>`
 	transform: translate(-50%, -50%);
 
 	background-color: rgba(0, 0, 0, 0.4);
+	z-index: 99;
 `;
 
 const Card = styled.div`
@@ -56,7 +57,7 @@ const Card = styled.div`
 	max-height: 90vh;
 
 	border-radius: 10px;
-	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.card.shadowColor, 0.45)};
+	box-shadow: 0px 0px 20px -8px ${(props) => hexToRGBA(props.theme.modalPage.shadowColor, 0.45)};
 `;
 
 const Header = styled.div`
@@ -91,5 +92,5 @@ const Content = styled.div`
 	padding: 20px;
 	margin-bottom: 40px;
 
-	overflow-y: scroll;
+	overflow-y: auto;
 `;

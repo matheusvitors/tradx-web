@@ -97,5 +97,5 @@ const Content = styled.div`
 	padding: 20px;
 	margin-bottom: 40px;
 
-	overflow-y: scroll;
+	overflow-y: auto;
 `;
