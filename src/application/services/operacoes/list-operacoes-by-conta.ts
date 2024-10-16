@@ -1,16 +1,12 @@
+import { format } from "date-fns";
+import { Period } from "@/application/interfaces";
 import { Operacao } from "@/application/models";
 import { http } from "@/infra/adapters/http";
 import { httpErrorHandler } from "@/infra/adapters/http-error-handler";
-import { format } from "date-fns";
 
 interface RangeData {
 	init: string;
 	end: string;
-}
-
-interface Period {
-	year: number;
-	month?: number;
 }
 
 export const listOperacaoByConta = async (contaId: string, period?: Period): Promise<Operacao[]> => {

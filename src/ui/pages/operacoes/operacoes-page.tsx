@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
@@ -9,7 +9,7 @@ import { format, isSameDay } from "date-fns";
 import { Page, SideView } from "@/ui/layouts";
 import { Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
-import { STALE_TIME } from "@/infra/config/constants";
+import { MONTH, STALE_TIME } from "@/infra/config/constants";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
@@ -17,6 +17,7 @@ import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
 import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
+import { Period } from "@/application/interfaces";
 
 interface Filter {
 	ativos: Array<string>;
@@ -60,6 +61,7 @@ export const OperacoesPage: React.FC = () => {
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
+	const [period, setPeriod] = useState<Required<Period>>({ month: new Date().getMonth(), year: new Date().getFullYear()});
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -311,6 +313,12 @@ export const OperacoesPage: React.FC = () => {
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
 
+						<PeriodContainer>
+							<IconButton icon={MdNavigateBefore} onClick={() => {}} />
+							{MONTH[period.month]} - {period.year}
+							<IconButton icon={MdNavigateNext} onClick={() => {}} />
+						</PeriodContainer>
+
 						{operacoes && operacoes.length > 0 ?
 							<DataTable columns={columns} payload={operacoes} />
 						:
@@ -404,4 +412,18 @@ const FilterFooter = styled.div`
 	justify-content: center;
 
 	width: 100%;
+`
+
+const PeriodContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+
+	width: 100%;
+	height: 50px;
+
+	margin-bottom: 10px;
+
+	border: 1px solid white;
 `
