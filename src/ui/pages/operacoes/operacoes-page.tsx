@@ -50,7 +50,7 @@ export const OperacoesPage: React.FC = () => {
 	const { selectedConta } = useSelectedConta()
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		queryFn: () => listOperacaoByConta(selectedConta!.id, {year: 2024}),
+		queryFn: () => listOperacaoByConta(selectedConta!.id, {month: period.month, year: period.year}),
 		staleTime: STALE_TIME,
 		enabled: selectedConta ? true : false,
 		retry: 5
@@ -67,7 +67,7 @@ export const OperacoesPage: React.FC = () => {
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		data && data.length > 0 && setOperacoes(preparePayloadDataTable(data));
+		data && setOperacoes(preparePayloadDataTable(data));
 		data && data.length > 0 && loadFiltersOptions(data);
 	}, [data]);
 
@@ -77,7 +77,7 @@ export const OperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		refetch();
-	}, [selectedConta])
+	}, [selectedConta, period])
 
 	useEffect(() => {
 		if(data) {
@@ -240,6 +240,16 @@ export const OperacoesPage: React.FC = () => {
 		if (dataEntradaFimRef && dataEntradaFimRef.current) dataEntradaFimRef.current.value = '';
 	}
 
+	const onPrevPeriod = async () => {
+		const newMonth = period.month - 1 < 0 ? 11 : period.month - 1;
+		setPeriod({month: newMonth, year: period.month - 1 < 0 ? period.year - 1 : period.year})
+	}
+
+	const onNextPeriod = async () => {
+		const newMonth = period.month + 1 > 11 ? 0 : period.month + 1;
+		setPeriod({month: newMonth, year: period.month + 1 > 11 ? period.year + 1 : period.year})
+	}
+
 	return (
 		<Page pageName="Operações">
 			<Content>
@@ -314,9 +324,9 @@ export const OperacoesPage: React.FC = () => {
 						</PageHeader>
 
 						<PeriodContainer>
-							<IconButton icon={MdNavigateBefore} onClick={() => {}} />
+							<IconButton icon={MdNavigateBefore} onClick={onPrevPeriod} />
 							{MONTH[period.month]} - {period.year}
-							<IconButton icon={MdNavigateNext} onClick={() => {}} />
+							{period.month <= new Date().getMonth() + 1 && <IconButton icon={MdNavigateNext} onClick={onNextPeriod} />}
 						</PeriodContainer>
 
 						{operacoes && operacoes.length > 0 ?
@@ -425,5 +435,5 @@ const PeriodContainer = styled.div`
 
 	margin-bottom: 10px;
 
-	border: 1px solid white;
+	/* border: 1px solid white; */
 `
