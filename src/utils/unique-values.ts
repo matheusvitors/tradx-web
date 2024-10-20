@@ -23,6 +23,10 @@ function getNestedUniqueValues<T extends AnyObject, K extends keyof T>(array: T[
 export function uniqueValues<T extends AnyObject>(array: T[], fields: (keyof T)[]): UniqueValues {
 	const uniqueValues: UniqueValues = {};
 
+	if(array.length === 0) {
+		return {}
+	}
+
 	fields.forEach((field) => {
 		if (array[0][field] && typeof array[0][field] === "object" && !Array.isArray(array[0][field])) {
 			uniqueValues[field as string] = getNestedUniqueValues(array, field, Object.keys(array[0][field]) as (keyof T[keyof T])[]);

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
@@ -9,7 +9,7 @@ import { format, isSameDay } from "date-fns";
 import { Page, SideView } from "@/ui/layouts";
 import { Operacao } from "@/application/models";
 import { listOperacaoByConta, removeOperacao } from "@/application/services/operacoes";
-import { STALE_TIME } from "@/infra/config/constants";
+import { MONTH, STALE_TIME } from "@/infra/config/constants";
 import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
@@ -17,6 +17,9 @@ import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
 import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
+import { Period } from "@/application/interfaces";
+import { storage } from "@/infra/store/storage";
+import { KEY_PERIODO_ATUAL } from "@/infra/config/storage-keys";
 
 interface Filter {
 	ativos: Array<string>;
@@ -49,23 +52,28 @@ export const OperacoesPage: React.FC = () => {
 	const { selectedConta } = useSelectedConta()
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		queryFn: () => listOperacaoByConta(selectedConta!.id, {year: 2024}),
+		// queryFn: () => listOperacaoByConta(selectedConta!.id, { year: period.year}),
+		queryFn: () => listOperacaoByConta(selectedConta!.id, {month: period.month, year: period.year}),
 		staleTime: STALE_TIME,
 		enabled: selectedConta ? true : false,
 		retry: 5
 	});
+
+	console.log(storage.get(KEY_PERIODO_ATUAL));
 
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
+	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
+	// const [period, setPeriod] = useState<Required<Period>>({ month: new Date().getMonth(), year: new Date().getFullYear()});
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		data && data.length > 0 && setOperacoes(preparePayloadDataTable(data));
+		data && setOperacoes(preparePayloadDataTable(data));
 		data && data.length > 0 && loadFiltersOptions(data);
 	}, [data]);
 
@@ -75,7 +83,7 @@ export const OperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		refetch();
-	}, [selectedConta])
+	}, [selectedConta, period])
 
 	useEffect(() => {
 		if(data) {
@@ -238,6 +246,16 @@ export const OperacoesPage: React.FC = () => {
 		if (dataEntradaFimRef && dataEntradaFimRef.current) dataEntradaFimRef.current.value = '';
 	}
 
+	const onPrevPeriod = async () => {
+		const newMonth = period.month - 1 < 0 ? 11 : period.month - 1;
+		setPeriod({month: newMonth, year: period.month - 1 < 0 ? period.year - 1 : period.year})
+	}
+
+	const onNextPeriod = async () => {
+		const newMonth = period.month + 1 > 11 ? 0 : period.month + 1;
+		setPeriod({month: newMonth, year: period.month + 1 > 11 ? period.year + 1 : period.year})
+	}
+
 	return (
 		<Page pageName="Operações">
 			<Content>
@@ -310,6 +328,12 @@ export const OperacoesPage: React.FC = () => {
 							<ContaSelector  />
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
+
+						<PeriodContainer>
+							<IconButton icon={MdNavigateBefore} onClick={onPrevPeriod} />
+							{MONTH[period.month]} - {period.year}
+							<IconButton icon={MdNavigateNext} onClick={onNextPeriod} />
+						</PeriodContainer>
 
 						{operacoes && operacoes.length > 0 ?
 							<DataTable columns={columns} payload={operacoes} />
@@ -404,4 +428,18 @@ const FilterFooter = styled.div`
 	justify-content: center;
 
 	width: 100%;
+`
+
+const PeriodContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+
+	width: 100%;
+	height: 50px;
+
+	margin-bottom: 10px;
+
+	/* border: 1px solid white; */
 `
