@@ -88,8 +88,6 @@ export const AtivosPage: React.FC = () => {
 	return (
 		<Page pageName='Ativos'>
 			<Content>
-				{/* <PageHeader>
-				</PageHeader> */}
 				<TableContainer>
 				{ativos && ativos.length > 0 ? (
 					<DataTable columns={columns} payload={ativos} />

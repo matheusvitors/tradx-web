@@ -2,30 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Page } from "@/ui/layouts";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
+import { isSameDay, format } from "date-fns";
+import { MdEdit } from "react-icons/md";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { STALE_TIME } from "@/infra/config/constants";
 import { getDashboardInformations } from "@/application/services/dashboard";
 import { Conta, Operacao, Variacao } from "@/application/models";
-import { storage } from "@/infra/store/storage";
-import { KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
-import { Loading, Toast } from "@/ui/components/feedback";
-import { AccountCard, GotoAccountsCard } from "@/ui/components/dashboard";
-import { listContas } from "@/application/services";
+import { PageLoading, Toast } from "@/ui/components/feedback";
+import { AccountCard } from "@/ui/components/dashboard";
 import { Chip, Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
-import { isSameDay, format } from "date-fns";
-import { MdEdit } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
 import { LineChart, Serie } from "@/ui/components/charts";
 import { ContaSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
-// import { Chart } from '@/ui/components/charts';
+import { DashboardInformations } from "@/application/interfaces/dashboard-informations";
 
-interface DashboardInformations {
-	contas: Conta[];
-	variacao: Variacao[];
-	operacoes: Operacao[];
-}
 
 export const HomePage: React.FC = () => {
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
@@ -51,6 +43,8 @@ export const HomePage: React.FC = () => {
 	}, [selectedConta]);
 
 	useEffect(() => {
+		console.log(data);
+
 		data && data.variacao.length > 0 && setVariacoes(prepareChartData(data.variacao));
 		data && data.variacao.length === 0 && setVariacoes([]);
 		data && setOperacoes(preparePayloadDataTable(data.operacoes));
@@ -119,20 +113,23 @@ export const HomePage: React.FC = () => {
 	return (
 		<Page pageName="Home">
 			<Content>
-				<PageHeader>
-					<ContaSelector />
-				</PageHeader>
-				{/* <ContasContainer>
-					{isLoading && <Loading visible={isLoading} />}
-					{data && data.contas.map(conta => <AccountCard key={conta.id} conta={conta} selected={selectedConta === conta.id} setSelectedConta={setSelectedConta} />)}
-					<GotoAccountsCard />
-				</ContasContainer> */}
+				{isLoading && !data ? <PageLoading visible={isLoading} /> :
+				<>
+					<PageHeader>
+						<ContaSelector />
+					</PageHeader>
+					<ContasContainer>
+						<AccountCard label='Saldo' value={data?.conta?.saldo} />
+						<AccountCard label='Ganhos' value={data?.conta?.ganhos} color={theme.colors.green} />
+						<AccountCard label='Perdas' value={data?.conta?.perdas} color={theme.colors.red} />
+					</ContasContainer>
 
-				<RelatoriosContainer>
-					<LineChart series={variacoes} />
-				</RelatoriosContainer>
+					<RelatoriosContainer>
+						<LineChart series={variacoes} />
+					</RelatoriosContainer>
 
-				<OperacoesContainer>{operacoes && operacoes.length > 0 && <DataTable columns={columns} payload={operacoes} />}</OperacoesContainer>
+					<OperacoesContainer>{operacoes && operacoes.length > 0 && <DataTable columns={columns} payload={operacoes} />}</OperacoesContainer>
+				</>}
 			</Content>
 		</Page>
 	);
