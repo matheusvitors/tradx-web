@@ -171,7 +171,7 @@ export const OperacoesPage: React.FC = () => {
 		let variacao = 0;
 
 		input.reverse().forEach((item: Operacao) => {
-			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoEntrada - item.precoSaida : item.precoSaida - item.precoEntrada : '';
+			const resultadoPontos =  item.precoSaida ? item.tipo === 'compra' ? item.precoSaida - item.precoEntrada : item.precoEntrada - item.precoSaida : '';
 
 			if(item.precoSaida){
 				variacao += typeof resultadoPontos === 'number' ? resultadoPontos * item.ativo.multiplicador : 0;

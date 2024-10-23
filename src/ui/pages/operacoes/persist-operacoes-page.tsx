@@ -143,26 +143,26 @@ export const PersistOperacoesPage: React.FC = () => {
 		}
 	}
 
-	const handleSaveOperacao = async (input: OperacaoDTO) => {
-		try {
-			await createOperacao(input)
-		} catch (error) {
-			throw error;
-		}
-	}
+	// const handleSaveOperacao = async (input: OperacaoDTO) => {
+	// 	try {
+	// 		await createOperacao(input)
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// }
 
-	const handleEditOperacao = async (operacao: OperacaoDTO) => {
-		const input = {
-			...operacao,
-			id: location.state.operacao.id
-		}
+	// const handleEditOperacao = async (operacao: OperacaoDTO) => {
+	// 	const input = {
+	// 		...operacao,
+	// 		id: location.state.operacao.id
+	// 	}
 
-		try {
-			await editOperacao(input);
-		} catch (error: any) {
-			Toast.error(error.message);
-		}
-	}
+	// 	try {
+	// 		await editOperacao(input);
+	// 	} catch (error: any) {
+	// 		Toast.error(error.message);
+	// 	}
+	// }
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
 		try {
@@ -180,8 +180,6 @@ export const PersistOperacoesPage: React.FC = () => {
 			} else {
 				await createOperacao(input);
 			}
-
-			location.state.operacao ? await handleEditOperacao(input) : await handleSaveOperacao(input);
 
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
 			queryClient.invalidateQueries({queryKey: ['dashboard']});
