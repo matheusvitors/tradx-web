@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore, MdOutlineFileUpload } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
@@ -15,7 +15,7 @@ import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-
 import { Toast, PageLoading } from "@/ui/components/feedback";
 import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
 import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
-import { PageHeader } from "@/ui/components/layout";
+import { Modal, PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
 import { storage } from "@/infra/store/storage";
@@ -67,7 +67,7 @@ export const OperacoesPage: React.FC = () => {
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
-	// const [period, setPeriod] = useState<Required<Period>>({ month: new Date().getMonth(), year: new Date().getFullYear()});
+	const [isOpenImport, setIsOpenImport] = useState(false);
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -207,7 +207,6 @@ export const OperacoesPage: React.FC = () => {
 		})
 
 		return result;
-		// return result.reverse();
 	}
 
 	const onChangeFilter = (filter: keyof Filter, value: string, checked: boolean) => {
@@ -254,6 +253,19 @@ export const OperacoesPage: React.FC = () => {
 	const onNextPeriod = async () => {
 		const newMonth = period.month + 1 > 11 ? 0 : period.month + 1;
 		setPeriod({month: newMonth, year: period.month + 1 > 11 ? period.year + 1 : period.year})
+	}
+
+	const onSelectFile = async () => {
+
+	}
+
+	const UplaodModal = () => {
+		return (
+			<Modal title="Importação de Operações" isOpen={isOpenImport} setIsOpen={setIsOpenImport} width="100px">
+				<input type="file" accept="text/csv" />
+				<Button label="Importar" />
+			</Modal>
+		);
 	}
 
 	return (
@@ -326,6 +338,7 @@ export const OperacoesPage: React.FC = () => {
 					<TableContainer>
 						<PageHeader>
 							<ContaSelector  />
+							{<IconButton icon={MdOutlineFileUpload} size={36} onClick={() => setIsOpenImport(true)} />}
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
 
@@ -346,7 +359,7 @@ export const OperacoesPage: React.FC = () => {
 
 					<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
 				</>
-
+				<UplaodModal />
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
