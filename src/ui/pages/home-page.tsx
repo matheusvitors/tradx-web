@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { STALE_TIME } from "@/infra/config/constants";
 import { getDashboardInformations } from "@/application/services/dashboard";
-import { Conta, Operacao, Variacao } from "@/application/models";
+import { Operacao, Variacao } from "@/application/models";
 import { PageLoading, Toast } from "@/ui/components/feedback";
 import { AccountCard } from "@/ui/components/dashboard";
 import { Chip, Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
@@ -43,8 +43,6 @@ export const HomePage: React.FC = () => {
 	}, [selectedConta]);
 
 	useEffect(() => {
-		console.log(data);
-
 		data && data.variacao.length > 0 && setVariacoes(prepareChartData(data.variacao));
 		data && data.variacao.length === 0 && setVariacoes([]);
 		data && setOperacoes(preparePayloadDataTable(data.operacoes));

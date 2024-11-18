@@ -1,5 +1,6 @@
 export * from './create-operacao'
 export * from './edit-operacao'
+export * from './import-operacoes'
 export * from './list-operacoes'
 export * from './list-operacoes-by-conta'
 export * from './remove-operacao'

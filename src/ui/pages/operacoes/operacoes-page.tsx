@@ -15,7 +15,7 @@ import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-
 import { Toast, PageLoading } from "@/ui/components/feedback";
 import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
 import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
-import { Modal, PageHeader } from "@/ui/components/layout";
+import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
 import { storage } from "@/infra/store/storage";
@@ -59,15 +59,12 @@ export const OperacoesPage: React.FC = () => {
 		retry: 5
 	});
 
-	console.log(storage.get(KEY_PERIODO_ATUAL));
-
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
-	const [isOpenImport, setIsOpenImport] = useState(false);
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -255,19 +252,6 @@ export const OperacoesPage: React.FC = () => {
 		setPeriod({month: newMonth, year: period.month + 1 > 11 ? period.year + 1 : period.year})
 	}
 
-	const onSelectFile = async () => {
-
-	}
-
-	const UplaodModal = () => {
-		return (
-			<Modal title="Importação de Operações" isOpen={isOpenImport} setIsOpen={setIsOpenImport} width="100px">
-				<input type="file" accept="text/csv" />
-				<Button label="Importar" />
-			</Modal>
-		);
-	}
-
 	return (
 		<Page pageName="Operações">
 			<Content>
@@ -338,7 +322,7 @@ export const OperacoesPage: React.FC = () => {
 					<TableContainer>
 						<PageHeader>
 							<ContaSelector  />
-							{<IconButton icon={MdOutlineFileUpload} size={36} onClick={() => setIsOpenImport(true)} />}
+							{<IconButton icon={MdOutlineFileUpload} size={36} onClick={() => navigate("/operacoes/importar", { state: { background: location } })} />}
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
 
@@ -359,7 +343,7 @@ export const OperacoesPage: React.FC = () => {
 
 					<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
 				</>
-				<UplaodModal />
+				{/* <UplaodModal /> */}
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
