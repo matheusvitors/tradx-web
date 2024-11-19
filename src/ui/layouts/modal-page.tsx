@@ -58,7 +58,7 @@ const Card = styled.div`
 
 	background-color: ${(props) => props.theme.common.background};
 	width: 50%;
-	min-height: 45%;
+	min-height: 25%;
 	max-height: 90vh;
 
 	border-radius: 10px;

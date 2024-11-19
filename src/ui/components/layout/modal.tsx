@@ -8,15 +8,17 @@ interface ModalProps {
 	title: string;
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	width?: string;
+	height?: string;
 }
 
-export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, setIsOpen, children }) => {
+export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({ title, isOpen, setIsOpen, children, width, height }) => {
 
 	const theme = useTheme();
 
 	return (
 		<Container $visible={isOpen}>
-			<Card>
+			<Card width={width} height={height}>
 				<Header>
 					<PageName>{title}</PageName>
 					<IconButton icon={MdClose} onClick={() => setIsOpen(false)} color={theme.colors.warning} />
@@ -45,7 +47,7 @@ const Container = styled.div<{ $visible?: boolean; }>`
 	z-index: 99;
 `;
 
-const Card = styled.div`
+const Card = styled.div<{ width?: string; height?: string;}>`
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -53,7 +55,7 @@ const Card = styled.div`
 
 	background-color: ${(props) => props.theme.common.background};
 	width: 50%;
-	min-height: 45%;
+	min-height: 25%;
 	max-height: 90vh;
 
 	border-radius: 10px;

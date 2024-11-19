@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore, MdOutlineFileUpload } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
@@ -59,15 +59,12 @@ export const OperacoesPage: React.FC = () => {
 		retry: 5
 	});
 
-	console.log(storage.get(KEY_PERIODO_ATUAL));
-
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
-	// const [period, setPeriod] = useState<Required<Period>>({ month: new Date().getMonth(), year: new Date().getFullYear()});
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -207,7 +204,6 @@ export const OperacoesPage: React.FC = () => {
 		})
 
 		return result;
-		// return result.reverse();
 	}
 
 	const onChangeFilter = (filter: keyof Filter, value: string, checked: boolean) => {
@@ -326,6 +322,7 @@ export const OperacoesPage: React.FC = () => {
 					<TableContainer>
 						<PageHeader>
 							<ContaSelector  />
+							{<IconButton icon={MdOutlineFileUpload} size={36} onClick={() => navigate("/operacoes/importar", { state: { background: location } })} />}
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
 
@@ -346,7 +343,7 @@ export const OperacoesPage: React.FC = () => {
 
 					<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
 				</>
-
+				{/* <UplaodModal /> */}
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
