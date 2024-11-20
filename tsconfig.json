@@ -24,7 +24,7 @@
 		"allowJs": false,
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
-		"forceConsistentCasingInFileNames": true,
+		// "forceConsistentCasingInFileNames": true,
 		"strictPropertyInitialization": false,
 		"outDir": "./build",
 		"baseUrl": ".",
