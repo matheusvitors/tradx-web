@@ -7,7 +7,7 @@
 		"skipLibCheck": true,
 
 		/* Bundler mode */
-		"moduleResolution": "bundler",
+		"moduleResolution": "node",
 		"allowImportingTsExtensions": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
@@ -24,7 +24,7 @@
 		"allowJs": false,
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
-		// "forceConsistentCasingInFileNames": true,
+		"forceConsistentCasingInFileNames": true,
 		"strictPropertyInitialization": false,
 		"outDir": "./build",
 		"baseUrl": ".",
@@ -33,5 +33,5 @@
 		}
 	},
 	"include": ["src"],
-	"references": [{ "path": "./tsconfig.node.json" }]
+	// "references": [{ "path": "./tsconfig.node.json" }]
 }
