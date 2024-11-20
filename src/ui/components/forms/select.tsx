@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
-import { UseFormRegister, RegisterOptions, FieldErrors } from 'react-hook-form';
+import { FieldErrors } from 'react-hook-form';
 
 interface SelectProps {
 	label: string;

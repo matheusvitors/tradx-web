@@ -1,5 +1,5 @@
 import React from "react";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
 export const Chart: React.FC = () => {
 
@@ -13,20 +13,20 @@ export const Chart: React.FC = () => {
 		{data: '24/01', value: 18, variacao: 'R$ 18,00'},
 	]
 
-	const CustomToolTip = ({payload, label, active}: {payload: any, label: string; active: boolean}) => {
+	// const CustomToolTip = ({payload, label, active}: {payload: any, label: string; active: boolean}) => {
 
-		return (
-			<>
-				{active && <>
-					<div>
-						<p>{label}</p>
-						<p>{payload[0].payload.variacao}</p>
-						<p></p>
-					</div>
-				</>}
-			</>
-		)
-	}
+	// 	return (
+	// 		<>
+	// 			{active && <>
+	// 				<div>
+	// 					<p>{label}</p>
+	// 					<p>{payload[0].payload.variacao}</p>
+	// 					<p></p>
+	// 				</div>
+	// 			</>}
+	// 		</>
+	// 	)
+	// }
 
 	return (
 		<ResponsiveContainer width="100%" height="95%">
