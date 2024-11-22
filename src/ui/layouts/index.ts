@@ -1,5 +1,5 @@
 export * from './Header'
-export * from './Page'
+export * from './page'
 export * from './SideView'
 export * from './Sidebar'
 export * from './modal-page'

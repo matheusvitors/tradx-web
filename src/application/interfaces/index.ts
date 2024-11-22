@@ -1,4 +1,4 @@
-export * from './crendentials'
+export * from './credentials'
 export * from './decoded-jwt-payload'
 export * from './period'
 export * from './range-data'
