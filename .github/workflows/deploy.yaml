@@ -17,5 +17,5 @@ jobs:
                 script: |
                       cd /var/www/tradx-web
                       git pull origin main
-                      npm i
+                      npm i --legacy-peer-deps
                       npm run build

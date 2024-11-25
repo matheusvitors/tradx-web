@@ -21,8 +21,6 @@ export const Sidebar: React.FC = () => {
 		<Container>
 			<HeaderSidebar>
 				<SystemName color={theme.common.text || 'red'} width='150' height='100' />
-				{/* <SystemName /> */}
-				<div>25</div>
 			</HeaderSidebar>
 
 			{ paths.map(item => <MenuItem key={item.path} to={location.pathname === item.path ? '#' : item.path} active={(location.pathname === item.path).toString()}>{item.label}</MenuItem>)}
