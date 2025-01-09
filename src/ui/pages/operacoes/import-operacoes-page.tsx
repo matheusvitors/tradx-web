@@ -8,7 +8,7 @@ import { Toast } from "@/ui/components/feedback";
 import { importOperacoes } from "@/application/services";
 
 interface ImportFormData {
-	csvFile: FileList;
+	file: FileList;
 }
 
 export const ImportOperacoesPage: React.FC = () => {
@@ -21,16 +21,16 @@ export const ImportOperacoesPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		errors && errors.csvFile?.message && Toast.error(errors.csvFile?.message )
+		errors && errors.file?.message && Toast.error(errors.file?.message )
 	}, [errors])
 
 
 	const onSubmit = async (data: ImportFormData) => {
 		try {
 			setIsLoading(true);
-			console.log(data.csvFile[0].name);
+			console.log(data.file[0].name);
 			const formData = new FormData();
-			formData.append('csvFile', data.csvFile[0]);
+			formData.append('file', data.file[0]);
 
 			await importOperacoes(formData);
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
@@ -48,7 +48,7 @@ export const ImportOperacoesPage: React.FC = () => {
 	return (
 		<ModalPage title="Importar Operações">
 			<Form onSubmit={handleSubmit(onSubmit)}>
-				<input {...register('csvFile', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv" draggable />
+				<input {...register('file', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv, .xls, .xlsx" draggable />
 				<Button label="Importar" isLoading={isLoading} />
 			</Form>
 		</ModalPage>

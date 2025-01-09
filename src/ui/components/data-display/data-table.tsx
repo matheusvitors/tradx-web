@@ -42,6 +42,10 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	const { currentPage, totalPages, firstPage, lastPage, nextPage, prevPage, paginate } = usePagination();
 
 	const [items, setItems] = useState<any>([]);
+	useEffect(() => {
+		console.log(items);
+
+	}, [items])
 
 	useEffect(() => {
 		setItems(paginate(payload));
