@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { IconType } from "react-icons";
 import { usePagination } from "@/ui/hooks";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
@@ -27,6 +27,7 @@ export interface DataTablePayload {
 	data: any;
 	actions: DataTableActionConfig[];
 	style?: React.CSSProperties;
+	color: string;
 }
 
 export interface Column<T> {
@@ -40,18 +41,27 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	// https://www.google.com/search?q=access+nested+atribute+using+string&sca_esv=a62499659915de61&sxsrf=ACQVn09YWAUlKx8JO2S-Kh_Q2LvwMp5dfQ%3A1710625455266&ei=rxL2ZfHoD_yI4dUP54yE0A8&udm=&ved=0ahUKEwix_Oq04PmEAxV8RLgEHWcGAfoQ4dUDCBA&uact=5&oq=access+nested+atribute+using+string&gs_lp=Egxnd3Mtd2l6LXNlcnAiI2FjY2VzcyBuZXN0ZWQgYXRyaWJ1dGUgdXNpbmcgc3RyaW5nMgkQIRgKGKABGApIniFQrQZY3R5wAngBkAEAmAH1AaABwR2qAQYwLjkuMTC4AQPIAQD4AQGYAhCgAoUYwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAgYQABgWGB7CAgYQIRgVGAqYAwDiAwUSATEgQIgGAZAGCJIHBjIuMy4xMaAHwWA&sclient=gws-wiz-serp
 
 	const { currentPage, totalPages, firstPage, lastPage, nextPage, prevPage, paginate } = usePagination();
+	const theme = useTheme();
+
 
 	const [items, setItems] = useState<any>([]);
+
+	const textColor:  Record<string, string> = {
+		'green': theme.colors.green,
+		'red': theme.colors.red,
+		'orange': theme.colors.orange,
+		'neutral': theme.common.text
+	};
+
 	useEffect(() => {
 		console.log(items);
-
 	}, [items])
 
 	useEffect(() => {
 		setItems(paginate(payload));
 	}, [payload, currentPage])
 
-	const Actions: React.FC<Omit<DataTablePayload, "data">> = ({ actions }) => {
+	const Actions: React.FC<Omit<DataTablePayload, "data" | "color">> = ({ actions }) => {
 		return (
 			<>
 				{actions && actions.length > 0 && (
@@ -78,10 +88,10 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						</HeaderCell>
 					))}
 				</Row>
-				{items.map(({ data, actions, style }: DataTablePayload, i: number) => (
+				{items.map(({ data, actions, style, color }: DataTablePayload, i: number) => (
 					<Row key={i}>
 						{columns.map((column: Column<any>, i: number) => (
-							<Cell style={style} key={i} $width={column.width}>
+							<Cell style={style} key={i} $width={column.width} $color={textColor[color]}>
 								{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
 								{i + 1 === columns.length && actions && <Actions actions={actions} key={Math.random()} />}
 							</Cell>
@@ -148,7 +158,7 @@ const Row = styled.div`
 	border-bottom: 1px solid ${(props) => props.theme.table.borderRow};
 `;
 
-const Cell = styled.div<{ $width?: string }>`
+const Cell = styled.div<{ $width?: string; $color: string }>`
 	${defaultCell}
 	display: table-cell;
 
@@ -156,6 +166,7 @@ const Cell = styled.div<{ $width?: string }>`
 	position: relative;
 
 	font-size: 14px;
+	color: ${props => props.$color};
 
 	border-bottom: 1px solid ${(props) => props.theme.table.borderCell};
 `;

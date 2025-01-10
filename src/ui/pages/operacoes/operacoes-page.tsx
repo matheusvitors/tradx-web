@@ -197,9 +197,7 @@ export const OperacoesPage: React.FC = () => {
 						color: theme.colors.warning,
 					},
 				],
-				style: {
-					color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? theme.common.text : resultadoPontos && resultadoPontos > 0 ? theme.colors.green : theme.colors.red :  theme.colors.orange}`
-				}
+				color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? 'neutral' : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' :  'orange'}`
 			})
 		})
 
