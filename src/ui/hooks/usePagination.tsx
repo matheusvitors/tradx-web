@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const usePagination = () => {
-	const totalPerPage = 25;
+	const totalPerPage = 13;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(0);
 

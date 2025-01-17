@@ -12,7 +12,6 @@ interface IconButtonProps {
 }
 
 export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, backgroundColor, color, margin}) => {
-
 	return (
 		<Button
 			onClick={onClick}
@@ -31,7 +30,7 @@ const Button = styled.button<{ size?: number; color?: string; $margin?: number; 
 	width: ${props => props.size ? props.size + 5 + 'px' : '38px'};
 	height: ${props => props.size ? props.size + 4 + 'px' : '36px'};
 
-	margin: ${props => props.$margin ? props.$margin+'px' : '15px'};
+	margin: ${props => props.$margin ? props.$margin+'px' : '5px'};
 
 	border-radius: 5px;
 

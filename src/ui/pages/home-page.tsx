@@ -81,9 +81,7 @@ export const HomePage: React.FC = () => {
 						color: theme.colors.attention,
 					},
 				],
-				style: {
-					color: theme.colors.orange,
-				},
+				color: theme.colors.orange,
 			});
 		});
 

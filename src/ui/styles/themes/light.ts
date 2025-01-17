@@ -24,7 +24,7 @@ export const light: DefaultTheme = {
 		gray,
 
 		success: '#31cb00',
-		attention: '#CCC900',
+		attention: '#B8B500',
 		warning: '#C92020',
 
 		green,

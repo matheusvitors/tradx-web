@@ -25,11 +25,6 @@ export const ImportOperacoesPage: React.FC = () => {
 		errors && errors.file?.message && Toast.error(errors.file?.message);
 	}, [errors])
 
-	useEffect(() => {
-		console.log('selectedConta', selectedConta)
-	}, [selectedConta])
-
-
 	const onSubmit = async (data: ImportFormData) => {
 		try {
 			setIsLoading(true);
@@ -37,7 +32,6 @@ export const ImportOperacoesPage: React.FC = () => {
 				throw new Error('Não há conta selecionada');
 			}
 
-			console.log(data.file[0].name);
 			const formData = new FormData();
 			formData.append('file', data.file[0]);
 
@@ -46,8 +40,7 @@ export const ImportOperacoesPage: React.FC = () => {
 			navigate('/operacoes');
 
 		} catch (error: any) {
-			console.log(error);
-
+			console.error(error);
 			Toast.error(error.message || 'Erro!');
 		} finally {
 			setIsLoading(false);

@@ -44,7 +44,7 @@ export const ContaSelector: React.FC = () => {
 					<ItemsContainer>
 						{contas.map(conta =>
 							<Item key={conta.id}
-								onClick={() => {console.log('selected', conta); setSelectedConta(conta)}}
+								onClick={() => setSelectedConta(conta)}
 								selected={selectedConta?.id === conta.id}
 							>
 								{conta.nome}

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore, MdOutlineFileUpload } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore, MdOutlineFileUpload, MdOpenInFull, MdOutlineCloseFullscreen } from "react-icons/md";
 import { useNavigate, useLocation } from "react-router-dom";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
@@ -19,7 +19,7 @@ import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
 import { storage } from "@/infra/store/storage";
-import { KEY_PERIODO_ATUAL } from "@/infra/config/storage-keys";
+import { KEY_PERIODO_ATUAL, KEY_TABLE_VISIBILITY } from "@/infra/config/storage-keys";
 
 interface Filter {
 	ativos: Array<string>;
@@ -52,7 +52,6 @@ export const OperacoesPage: React.FC = () => {
 	const { selectedConta } = useSelectedConta()
 	const { data, isLoading, error, refetch } = useQuery<Operacao[]>({
 		queryKey: ["operacoes"],
-		// queryFn: () => listOperacaoByConta(selectedConta!.id, { year: period.year}),
 		queryFn: () => listOperacaoByConta(selectedConta!.id, {month: period.month, year: period.year}),
 		staleTime: STALE_TIME,
 		enabled: selectedConta ? true : false,
@@ -65,6 +64,7 @@ export const OperacoesPage: React.FC = () => {
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
 	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
+	const [fullColumnsVisibility, setFullColumnsVisibility] = useState(storage.get(KEY_TABLE_VISIBILITY));
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -80,7 +80,12 @@ export const OperacoesPage: React.FC = () => {
 
 	useEffect(() => {
 		refetch();
-	}, [selectedConta, period])
+	}, [selectedConta, period]);
+
+		useEffect(() => {
+			storage.set(KEY_TABLE_VISIBILITY, fullColumnsVisibility);
+		}, [fullColumnsVisibility])
+
 
 	useEffect(() => {
 		if(data) {
@@ -158,9 +163,9 @@ export const OperacoesPage: React.FC = () => {
 		{ name: "Saída", acessor: "precoSaida" },
 		{ name: "Hor. Entrada", acessor: "dataEntrada" },
 		{ name: "Hor. Saída", acessor: "dataSaida" },
-		{ name: "Res. (Pts)", acessor: "resultadoPontos"},
+		{ name: "Res. (Pts)", acessor: "resultadoPontos", visibility: fullColumnsVisibility},
 		{ name: "Res. ($)", acessor: "resultadoFinanceiro" },
-		{ name: "Variação", acessor: "variacao" },
+		{ name: "Variação", acessor: "variacao", visibility: fullColumnsVisibility },
 	];
 
 	const preparePayloadDataTable = (input: Operacao[]): DataTablePayload[] => {
@@ -201,7 +206,7 @@ export const OperacoesPage: React.FC = () => {
 			})
 		})
 
-		return result;
+		return result.reverse();
 	}
 
 	const onChangeFilter = (filter: keyof Filter, value: string, checked: boolean) => {
@@ -320,8 +325,9 @@ export const OperacoesPage: React.FC = () => {
 					<TableContainer>
 						<PageHeader>
 							<ContaSelector  />
-							{<IconButton icon={MdOutlineFileUpload} size={36} onClick={() => navigate("/operacoes/importar", { state: { background: location } })} />}
-							{data && data.length > 0 && <IconButton icon={MdFilterList} size={36} onClick={() => setIsOpenFilters(true)} />}
+							<IconButton icon={fullColumnsVisibility ? MdOpenInFull : MdOutlineCloseFullscreen} size={26} onClick={() => setFullColumnsVisibility(!fullColumnsVisibility)} />
+							<IconButton icon={MdOutlineFileUpload} size={28} onClick={() => navigate("/operacoes/importar", { state: { background: location } })} />
+							{data && data.length > 0 && <IconButton icon={MdFilterList} size={28} onClick={() => setIsOpenFilters(true)} />}
 						</PageHeader>
 
 						<PeriodContainer>
@@ -341,7 +347,6 @@ export const OperacoesPage: React.FC = () => {
 
 					<FloatingButton icon={MdAdd} label="Nova Operação" onClick={() => navigate("/operacoes/adicionar", { state: { background: location } })} />
 				</>
-				{/* <UplaodModal /> */}
 				<PageLoading visible={isLoading} />
 			</Content>
 		</Page>
