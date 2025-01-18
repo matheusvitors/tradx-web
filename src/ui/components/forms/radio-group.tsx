@@ -20,5 +20,5 @@ const Container = styled.div<{ $width?: string; }>`
 	flex-direction: row;
 	gap: 10px;
 
-	width: ${props => props.$width || '80%'};
+	width: ${props => props.$width || '100%'};
 `;

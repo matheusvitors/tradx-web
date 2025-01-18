@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MdFilterAlt } from "react-icons/md";
+import styled from "styled-components";
 
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { listAtivos, listContas, createOperacao, editOperacao } from "@/application/services";
@@ -13,6 +15,7 @@ import { storage } from "@/infra/store/storage";
 import { ModalPage } from "@/ui/layouts";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, Textarea, TextInput, TimePicker } from "@/ui/components/forms";
 import { Toast } from "@/ui/components/feedback";
+import { useSelectedConta } from "@/ui/contexts";
 
 
 const datetimeRegex = new RegExp('^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]$');
@@ -55,6 +58,7 @@ export const PersistOperacoesPage: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation()
 	const queryClient = useQueryClient();
+	const { selectedConta } = useSelectedConta()
 	const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<PersistOperacaoFormData>({
 		defaultValues: {
 			ativo: location.state.operacao?.ativo.id,
@@ -136,33 +140,12 @@ export const PersistOperacoesPage: React.FC = () => {
 				isSelected: conta.id === location.state.operacao?.conta.id ? true : false
 			}))
 
-			setValue('conta', location.state.operacao?.conta.id || contas[0].id)
+			setValue('conta', location.state.operacao?.conta.id || selectedConta?.id)
 			setContaOptions(options);
 		} catch (error: any) {
 			Toast.error(error)
 		}
 	}
-
-	// const handleSaveOperacao = async (input: OperacaoDTO) => {
-	// 	try {
-	// 		await createOperacao(input)
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// }
-
-	// const handleEditOperacao = async (operacao: OperacaoDTO) => {
-	// 	const input = {
-	// 		...operacao,
-	// 		id: location.state.operacao.id
-	// 	}
-
-	// 	try {
-	// 		await editOperacao(input);
-	// 	} catch (error: any) {
-	// 		Toast.error(error.message);
-	// 	}
-	// }
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
 		try {
@@ -194,29 +177,38 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	return (
 		<ModalPage title={location.state.operacao ? "Editar Operação" : "Adicionar Operação"}>
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
-				<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)} />
-				<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} />
-				<RadioGroup>
-					<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
-					<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
-				</RadioGroup>
-				<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-				<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-				<TimePicker label="Data de Entrada" name='dataEntrada' value={dataEntrada} setValue={setValue} errors={errors} />
-				<TimePicker label="Data de Saída" name='dataSaida' value={dataSaida} setValue={setValue} errors={errors} />
-				<RadioGroup>
-					<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" register={register} errors={errors} />
-					<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
-				</RadioGroup>
+			<Content>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
+					<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)}
+						rightIcon={MdFilterAlt} rightOnClick={() => {console.log('filtrar')}} />
+					<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} />
+					<RadioGroup>
+						<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
+						<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
+					</RadioGroup>
+					<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+					<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+					<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+					<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+					<TimePicker label="Data de Entrada" name='dataEntrada' value={dataEntrada} setValue={setValue} errors={errors} />
+					<TimePicker label="Data de Saída" name='dataSaida' value={dataSaida} setValue={setValue} errors={errors} />
+					<RadioGroup>
+						<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" register={register} errors={errors} />
+						<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
+					</RadioGroup>
 
-				<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />
+					<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />
 
-				<Button label="Salvar" type="submit" isLoading={isLoading} />
-			</Form>
+					<Button label="Salvar" type="submit" isLoading={isLoading} />
+				</Form>
+			</Content>
+
 		</ModalPage>
 	);
 };
+
+const Content = styled.div`
+	width: 80%;
+	height: 100%;
+`
