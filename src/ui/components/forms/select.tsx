@@ -20,6 +20,8 @@ interface SelectProps {
 export interface SelectOptions {
 	label: string;
 	value: string | number;
+	dataVencimento?: Date | null;
+	isSelected: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({ label, name, list, value, errors, onChange, rightIcon, rightOnClick }) => {

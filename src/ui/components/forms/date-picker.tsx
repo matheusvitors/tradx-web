@@ -44,7 +44,7 @@ const Container = styled.div`
 	justify-content: flex-start;
 
 	height: 100px;
-	width: 80%;
+	width: 100%;
 
 	/* border: 1px solid silver; */
 `

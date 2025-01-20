@@ -4,13 +4,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MdFilterAlt } from "react-icons/md";
+import { MdOutlineFilterAlt, MdOutlineFilterAltOff } from "react-icons/md";
 import styled from "styled-components";
 
 import { OperacaoDTO } from "@/application/dto/operacao-dto";
 import { listAtivos, listContas, createOperacao, editOperacao } from "@/application/services";
 import { Ativo, Conta } from "@/application/models";
-import { KEY_ATIVOS, KEY_CONTAS } from "@/infra/config/storage-keys";
+import { KEY } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { ModalPage } from "@/ui/layouts";
 import { Button, Checkbox, Form, RadioButton, RadioGroup, Select, SelectOptions, Textarea, TextInput, TimePicker } from "@/ui/components/forms";
@@ -82,6 +82,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [contaOptions, setContaOptions] = useState<SelectOptions[]>([]);
 	const [ativoOptions, setAtivoOptions] = useState<SelectOptions[]>([]);
+	const [previousAtivoOptions, setPreviousAtivoOptions] = useState<SelectOptions[]>([]);
+	const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
 
 	const selectAtivo = watch('ativo');
 	const selectConta = watch('conta');
@@ -96,11 +98,15 @@ export const PersistOperacoesPage: React.FC = () => {
 	useEffect(() => {
 		register('ativo');
 		register('conta');
-	}, [register])
+	}, [register]);
+
+	useEffect(() => {
+		ativoOptions.length > 0 && !location.state.operacao && onFilterAtivos();
+	}, [isFilterActive]);
 
 	const loadAtivos = async () => {
 		try {
-			const cachedAtivos = storage.get(KEY_ATIVOS);
+			const cachedAtivos = storage.get(KEY.ATIVOS);
 			let ativos: Ativo[] = [];
 			if(cachedAtivos){
 				ativos = JSON.parse(cachedAtivos);
@@ -111,12 +117,15 @@ export const PersistOperacoesPage: React.FC = () => {
 			const options: SelectOptions[] = ativos.map(ativo => ({
 				label: ativo.acronimo,
 				value: ativo.id,
+				dataVencimento: ativo.dataVencimento,
 				isSelected: ativo.id === location.state.operacao?.ativo.id ? true : false
 
 			}))
 
 			setValue('ativo',location.state.operacao?.ativo.id || ativos[0].id);
-			setAtivoOptions(options)
+			setAtivoOptions(options);
+			setPreviousAtivoOptions(options);
+			setIsFilterActive(storage.get(KEY.FILTER_ATIVOS))
 		} catch (error: any) {
 			console.error(error);
 			Toast.error(error.message)
@@ -125,7 +134,7 @@ export const PersistOperacoesPage: React.FC = () => {
 
 	const loadContas = async () => {
 		try {
-			const cachedContas = storage.get(KEY_CONTAS);
+			const cachedContas = storage.get(KEY.CONTAS);
 			let contas: Conta[] = [];
 
 			if(cachedContas){
@@ -145,6 +154,18 @@ export const PersistOperacoesPage: React.FC = () => {
 		} catch (error: any) {
 			Toast.error(error)
 		}
+	}
+
+	const onFilterAtivos = async () => {
+
+		if(isFilterActive) {
+			const filteredAtivoOptions = ativoOptions.filter(ativo => ativo.dataVencimento && ativo.dataVencimento > new Date() || !ativo.dataVencimento);
+			setAtivoOptions(filteredAtivoOptions);
+		} else {
+			setAtivoOptions(previousAtivoOptions);
+		}
+
+		storage.set(KEY.FILTER_ATIVOS, isFilterActive)
 	}
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
@@ -181,7 +202,7 @@ export const PersistOperacoesPage: React.FC = () => {
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
 					<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)}
-						rightIcon={MdFilterAlt} rightOnClick={() => {console.log('filtrar')}} />
+						rightIcon={isFilterActive ? MdOutlineFilterAlt : MdOutlineFilterAltOff} rightOnClick={!location.state.operacao ? () => setIsFilterActive(!isFilterActive) : undefined} />
 					<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} />
 					<RadioGroup>
 						<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
@@ -197,7 +218,6 @@ export const PersistOperacoesPage: React.FC = () => {
 						<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" register={register} errors={errors} />
 						<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
 					</RadioGroup>
-
 					<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />
 
 					<Button label="Salvar" type="submit" isLoading={isLoading} />

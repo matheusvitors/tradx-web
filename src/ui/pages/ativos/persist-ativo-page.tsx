@@ -10,6 +10,7 @@ import { createAtivo, editAtivo } from "@/application/services/ativos";
 import { Toast } from "@/ui/components/feedback";
 import { TextInput, DatePicker, RadioGroup, RadioButton, Button, Form } from "@/ui/components/forms";
 import { AtivoDTO } from "@/application/dto";
+import styled from "styled-components";
 
 const persistAtivoFormSchema = z.object({
 	nome: z.string().min(1, 'O nome é obrigatório.'),
@@ -70,17 +71,24 @@ export const PersistAtivoPage: React.FC = () => {
 
 	return (
 		<ModalPage title={location.state.ativo ? "Editar Ativo" : "Adicionar Ativo"}>
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<TextInput label="Nome" name="nome" register={register} errors={errors} />
-				<TextInput label="Acronimo" name="acronimo" textTransform="uppercase" register={register} errors={errors} />
-				<DatePicker label="Data de Vencimento" name="dataVencimento" register={register} errors={errors} />
-				<TextInput label="Multiplicador" name="multiplicador" type="number" step="0.01" register={register} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v),}} errors={errors} />
-				<RadioGroup>
-					<RadioButton name="tipo" value="indice" label="Índice" register={register} errors={errors} />
-					<RadioButton name="tipo" value="acao" label="Ação" register={register} errors={errors} />
-				</RadioGroup>
-				<Button label={location.state.ativo ? "Editar Ativo" : "Criar Ativo"} type="submit" isLoading={isLoading} />
-			</Form>
+			<Content>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<TextInput label="Nome" name="nome" register={register} errors={errors} />
+					<TextInput label="Acronimo" name="acronimo" textTransform="uppercase" register={register} errors={errors} />
+					<DatePicker label="Data de Vencimento" name="dataVencimento" register={register} errors={errors} />
+					<TextInput label="Multiplicador" name="multiplicador" type="number" step="0.01" register={register} options={{setValueAs: (v) => v === "" ? undefined : parseFloat(v),}} errors={errors} />
+					<RadioGroup>
+						<RadioButton name="tipo" value="indice" label="Índice" register={register} errors={errors} />
+						<RadioButton name="tipo" value="acao" label="Ação" register={register} errors={errors} />
+					</RadioGroup>
+					<Button label={location.state.ativo ? "Editar Ativo" : "Criar Ativo"} type="submit" isLoading={isLoading} />
+				</Form>
+			</Content>
 		</ModalPage>
 	);
 };
+
+const Content = styled.div`
+	width: 80%;
+	height: 100%;
+`

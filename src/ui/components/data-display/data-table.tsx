@@ -83,7 +83,6 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						))}
 					</Row>
 					{items.map(({ data, actions, style, color }: DataTablePayload, i: number) => (
-						<>
 						<Row key={i}>
 							{columns.map((column: Column<any>, i: number) => (
 								column.visibility !== false &&
@@ -93,7 +92,6 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 							))}
 							<Actions actions={actions} key={i}/>
 						</Row>
-						</>
 					))}
 				</Table>
 			</TableContainer>
