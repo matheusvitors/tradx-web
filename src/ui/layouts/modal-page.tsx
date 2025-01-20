@@ -15,9 +15,7 @@ export const ModalPage: React.FC<PropsWithChildren<ModalPageProps>> = ({ title, 
 	const theme = useTheme();
 
 	useEffect(() => {
-		if(isTokenExpired()){
-			navigate('/login');
-		}
+		isTokenExpired() && navigate('/login');
 	}, [])
 
 	return (
@@ -57,6 +55,7 @@ const Card = styled.div`
 	flex-direction: column;
 
 	background-color: ${(props) => props.theme.common.background};
+
 	width: 50%;
 	min-height: 25%;
 	max-height: 90vh;

@@ -1,5 +1,5 @@
 import { Conta } from "@/application/models";
-import { KEY_CONTA_SELECIONADA } from "@/infra/config/storage-keys";
+import { KEY } from "@/infra/config/storage-keys";
 import { storage } from "@/infra/store/storage";
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 
@@ -20,11 +20,11 @@ export const SelectedContaProvider: React.FC<PropsWithChildren> = ({ children })
 	const [selectedConta, setSelectedConta] = useState<Conta | null>(null);
 
 	useEffect(() => {
-		setSelectedConta(storage.get(KEY_CONTA_SELECIONADA));
+		setSelectedConta(storage.get(KEY.CONTA_SELECIONADA));
 	}, [])
 
 	useEffect(() => {
-		storage.set(KEY_CONTA_SELECIONADA, selectedConta);
+		storage.set(KEY.CONTA_SELECIONADA, selectedConta);
 	}, [selectedConta])
 
 	return (

@@ -51,7 +51,7 @@ const Container = styled.div`
 	justify-content: center;
 
 	height: 100px;
-	width: 80%;
+	width: 100%;
 
 	margin: 15px 10px;
 `;

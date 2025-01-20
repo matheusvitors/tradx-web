@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { hexToRGBA } from 'about-colors-js';
 import { FieldErrors } from 'react-hook-form';
+import { IconType } from 'react-icons';
+import { IconButton } from '@/ui/components/general';
 
 interface SelectProps {
 	label: string;
@@ -10,25 +12,33 @@ interface SelectProps {
 	value: string;
 	errors: FieldErrors;
 	onChange?: React.ChangeEventHandler<HTMLSelectElement>;
+	rightIcon?: IconType;
+	rightOnClick?: () => void;
+
 }
 
 export interface SelectOptions {
 	label: string;
 	value: string | number;
+	dataVencimento?: Date | null;
+	isSelected: boolean;
 }
 
-export const Select: React.FC<SelectProps> = ({ label, name, list, value, errors, onChange }) => {
+export const Select: React.FC<SelectProps> = ({ label, name, list, value, errors, onChange, rightIcon, rightOnClick }) => {
 	return (
 		<Container>
 			<Label>{label}</Label>
-			<Input
-				id={name}
-				value={value}
-				onChange={onChange}
-				$hasError={errors && errors[name] ? true : false}
-			>
-				{list.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
-			</Input>
+			<InputContainer>
+				<Input
+					id={name}
+					value={value}
+					onChange={onChange}
+					$hasError={errors && errors[name] ? true : false}
+				>
+					{list.map(({label, value}) => <Option key={value} value={value}>{label}</Option>)}
+				</Input>
+				{rightIcon && rightOnClick && <IconButton icon={rightIcon} onClick={rightOnClick} />}
+			</InputContainer>
 		</Container>
 	);
 }
@@ -39,10 +49,10 @@ const Container = styled.div`
 	align-items: flex-start;
 	justify-content: center;
 
-	height: 70px;
-	width: 80%;
+	height: 80px;
+	width: 100%;
 
-	margin: 15px 10px;
+	margin: 10px 10px 15px 10px;
 `
 
 const Label = styled.label`
@@ -59,6 +69,7 @@ const Input = styled.select<{$hasError?: boolean;}>`
 	border-radius: 5px;
 
 	padding: 0 10px;
+	margin-right: 5px;
 
 	font-size: 16px;
 	color:  ${props => props.theme.input.text};
@@ -70,4 +81,13 @@ const Option = styled.option`
 
 	&:hover {
 	}
+`
+
+const InputContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	width: 100%;
+	height: 100%;
 `

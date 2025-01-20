@@ -19,7 +19,7 @@ import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
 import { storage } from "@/infra/store/storage";
-import { KEY_PERIODO_ATUAL, KEY_TABLE_VISIBILITY } from "@/infra/config/storage-keys";
+import { KEY } from "@/infra/config/storage-keys";
 
 interface Filter {
 	ativos: Array<string>;
@@ -63,8 +63,8 @@ export const OperacoesPage: React.FC = () => {
 	const [filters, setFilters] = useState<UniqueValues>();
 	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
 	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
-	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY_PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
-	const [fullColumnsVisibility, setFullColumnsVisibility] = useState(storage.get(KEY_TABLE_VISIBILITY));
+	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY.PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
+	const [fullColumnsVisibility, setFullColumnsVisibility] = useState(storage.get(KEY.TABLE_VISIBILITY));
 
 	const dataEntradaInicioRef = useRef<HTMLInputElement>(null);
 	const dataEntradaFimRef = useRef<HTMLInputElement>(null);
@@ -83,7 +83,7 @@ export const OperacoesPage: React.FC = () => {
 	}, [selectedConta, period]);
 
 		useEffect(() => {
-			storage.set(KEY_TABLE_VISIBILITY, fullColumnsVisibility);
+			storage.set(KEY.TABLE_VISIBILITY, fullColumnsVisibility);
 		}, [fullColumnsVisibility])
 
 

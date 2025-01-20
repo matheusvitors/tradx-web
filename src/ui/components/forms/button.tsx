@@ -24,7 +24,7 @@ const Container = styled.button<{ width?: string; height?: string; }>`
 	justify-content: center;
 
 	height: ${ ({ height }) => height ? height : '40px'};
-	width: ${ ({ width }) => width ? width : '80%'};
+	width: ${ ({ width }) => width ? width : '100%'};
 
 	margin: 20px 0;
 

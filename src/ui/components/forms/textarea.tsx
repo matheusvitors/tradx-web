@@ -36,7 +36,7 @@ const Container = styled.div`
 	justify-content: center;
 
 	min-height: 70px;
-	width: 80%;
+	width: 100%;
 
 	margin: 15px 10px;
 `

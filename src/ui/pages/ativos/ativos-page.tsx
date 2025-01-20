@@ -10,6 +10,7 @@ import { STALE_TIME } from '@/infra/config/constants';
 import { DataTablePayload, DataTable, Column } from '@/ui/components/data-display';
 import { Toast, PageLoading } from '@/ui/components/feedback';
 import { FloatingButton } from '@/ui/components/general';
+import { format } from 'date-fns';
 
 export const AtivosPage: React.FC = () => {
 
@@ -59,6 +60,7 @@ export const AtivosPage: React.FC = () => {
 		{ name: 'Nome', acessor: 'nome'},
 		{ name: 'Multiplicador', acessor: 'multiplicador'},
 		{ name: 'Tipo', acessor: 'tipo'},
+		{ name: 'Vencimento', acessor: 'dataVencimento'},
 	]
 
 	const preparePayloadDataTable = (input: Ativo[]): DataTablePayload[] => {
@@ -66,7 +68,8 @@ export const AtivosPage: React.FC = () => {
 			data: {
 				...item,
 				isAtivo: item.dataVencimento && (new Date(item.dataVencimento).getTime() <= Date.now())  ?  'Expirado' : 'Ativo',
-				tipo: item.tipo === 'acao' ? 'Ação' : 'Índice'
+				tipo: item.tipo === 'acao' ? 'Ação' : 'Índice',
+				dataVencimento: item.dataVencimento? format(item.dataVencimento, 'dd/MM/yyyy') : ''
 			},
 			actions: [
 				{

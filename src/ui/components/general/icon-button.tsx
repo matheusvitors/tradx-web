@@ -14,6 +14,7 @@ interface IconButtonProps {
 export const IconButton: React.FC<IconButtonProps> = ({ icon: Icon, onClick, size, backgroundColor, color, margin}) => {
 	return (
 		<Button
+			type='button'
 			onClick={onClick}
 			size={size || 32}
 			$backgroundColor={backgroundColor}
