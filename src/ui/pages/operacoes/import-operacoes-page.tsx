@@ -7,6 +7,7 @@ import { ModalPage } from "@/ui/layouts";
 import { Toast } from "@/ui/components/feedback";
 import { importOperacoes } from "@/application/services";
 import { useSelectedConta } from "@/ui/contexts";
+import styled from "styled-components";
 
 interface ImportFormData {
 	file: FileList;
@@ -49,10 +50,18 @@ export const ImportOperacoesPage: React.FC = () => {
 
 	return (
 		<ModalPage title="Importar Operações">
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<input {...register('file', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv, .xls, .xlsx" draggable />
-				<Button label="Importar" isLoading={isLoading} />
-			</Form>
+			<Content>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<input {...register('file', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv, .xls, .xlsx" draggable />
+					<Button label="Importar" isLoading={isLoading} />
+				</Form>
+			</Content>
 		</ModalPage>
 	);
 };
+
+const Content = styled.div`
+	width: 80%;
+	height: 100%;
+`
+

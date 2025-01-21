@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { css, styled, useTheme } from 'styled-components';
 import { hexToRGBA } from "about-colors-js";
 import { SystemName } from '@/ui/components/general';
-
+import project from '../../../package.json'
 
 export const Sidebar: React.FC = () => {
 
@@ -23,7 +23,12 @@ export const Sidebar: React.FC = () => {
 				<SystemName color={theme.common.text || 'red'} width='150' height='100' />
 			</HeaderSidebar>
 
-			{ paths.map(item => <MenuItem key={item.path} to={location.pathname === item.path ? '#' : item.path} active={(location.pathname === item.path).toString()}>{item.label}</MenuItem>)}
+			<Content>
+				{ paths.map(item => <MenuItem key={item.path} to={location.pathname === item.path ? '#' : item.path} active={(location.pathname === item.path).toString()}>{item.label}</MenuItem>)}
+			</Content>
+			<Footer>
+				<FooterText>{project.version}</FooterText>
+			</Footer>
 		</Container>
 	);
 }
@@ -31,7 +36,7 @@ export const Sidebar: React.FC = () => {
 const Container = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: flex-start;
+	justify-content: space-between;
 	flex-direction: column;
 
 	width: 250px;
@@ -50,6 +55,16 @@ const HeaderSidebar = styled.div`
 	height: 70px;
 
 	margin-bottom: 30px;
+`
+
+const Content = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	flex-direction: column;
+
+	width: 100%;
+	height: 80vh;
 `
 
 const MenuItem = styled(Link)<{ active?: string; }>`
@@ -81,4 +96,20 @@ const MenuItem = styled(Link)<{ active?: string; }>`
 		background-color: ${props => props.theme.sidebar.hover.background};
 		color: ${props => props.theme.sidebar.hover.text};
 	}
+`
+
+const Footer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	align-self: flex-end;
+
+	width: 100%;
+	height: 70px;
+`
+
+const FooterText = styled.span`
+	font-size: 10px;
+	color: ${props => props.theme.common.text};
+
 `
