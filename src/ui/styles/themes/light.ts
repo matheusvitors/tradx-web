@@ -7,7 +7,7 @@ const accent = '#006F62'
 const black = '#141414'
 const white = '#F6F1F9'
 const gray= '#c7c3c3'
-const green = '#07ad25'
+const green = '#12692F'
 const red = '#bd0606'
 const orange = '#b83d00'
 
@@ -24,7 +24,7 @@ export const light: DefaultTheme = {
 		gray,
 
 		success: '#31cb00',
-		attention: '#CCC900',
+		attention: '#B8B500',
 		warning: '#C92020',
 
 		green,
@@ -37,7 +37,7 @@ export const light: DefaultTheme = {
 		text: black,
 		positive: {
 			background: green,
-			text: black
+			text: white
 		},
 		negative: {
 			background: red,

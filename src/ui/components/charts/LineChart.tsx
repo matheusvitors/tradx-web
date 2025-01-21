@@ -45,7 +45,7 @@ export const LineChart: React.FC<LineChartProps> = ({ series }) => {
 				<ResponsiveLine
 					data={series}
 					margin={{ top: 70, right: 100, bottom: 60, left: 45 }}
-					curve="monotoneX"
+					curve="linear"
 					animate
 
 					enableGridX={false}

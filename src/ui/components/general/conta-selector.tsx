@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Conta } from '@/application/models';
 import { listContas } from '@/application/services';
-import { KEY_CONTAS } from '@/infra/config/storage-keys';
+import { KEY } from '@/infra/config/storage-keys';
 import { storage } from '@/infra/store/storage';
 import { Toast } from '@/ui/components/feedback';
 import { Modal } from '@/ui/components/layout';
@@ -21,7 +21,7 @@ export const ContaSelector: React.FC = () => {
 
 	const loadContas = async () => {
 		try {
-			const cachedContas = storage.get(KEY_CONTAS);
+			const cachedContas = storage.get(KEY.CONTAS);
 			let contas: Conta[] = [];
 
 			if (cachedContas) {

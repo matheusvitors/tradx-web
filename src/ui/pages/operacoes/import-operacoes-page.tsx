@@ -6,39 +6,42 @@ import { Button, Form } from "@/ui/components/forms";
 import { ModalPage } from "@/ui/layouts";
 import { Toast } from "@/ui/components/feedback";
 import { importOperacoes } from "@/application/services";
+import { useSelectedConta } from "@/ui/contexts";
+import styled from "styled-components";
 
 interface ImportFormData {
-	csvFile: FileList;
+	file: FileList;
 }
 
 export const ImportOperacoesPage: React.FC = () => {
 
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { selectedConta } = useSelectedConta()
 	const { register, handleSubmit, formState: { errors } } = useForm<ImportFormData>();
-
 
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		errors && errors.csvFile?.message && Toast.error(errors.csvFile?.message )
+		errors && errors.file?.message && Toast.error(errors.file?.message);
 	}, [errors])
-
 
 	const onSubmit = async (data: ImportFormData) => {
 		try {
 			setIsLoading(true);
-			console.log(data.csvFile[0].name);
-			const formData = new FormData();
-			formData.append('csvFile', data.csvFile[0]);
+			if(!selectedConta) {
+				throw new Error('Não há conta selecionada');
+			}
 
-			await importOperacoes(formData);
+			const formData = new FormData();
+			formData.append('file', data.file[0]);
+
+			await importOperacoes({data: formData, contaId: selectedConta.id});
 			queryClient.invalidateQueries({queryKey: ['operacoes']});
 			navigate('/operacoes');
 
 		} catch (error: any) {
-			console.log(error);
-
+			console.error(error);
 			Toast.error(error.message || 'Erro!');
 		} finally {
 			setIsLoading(false);
@@ -47,10 +50,18 @@ export const ImportOperacoesPage: React.FC = () => {
 
 	return (
 		<ModalPage title="Importar Operações">
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<input {...register('csvFile', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv" draggable />
-				<Button label="Importar" isLoading={isLoading} />
-			</Form>
+			<Content>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<input {...register('file', {required: 'O arquivo é obrigatório!'})} type="file" accept="text/csv, .xls, .xlsx" draggable />
+					<Button label="Importar" isLoading={isLoading} />
+				</Form>
+			</Content>
 		</ModalPage>
 	);
 };
+
+const Content = styled.div`
+	width: 80%;
+	height: 100%;
+`
+

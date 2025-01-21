@@ -10,6 +10,7 @@ import { editConta } from "@/application/services/contas/edit-conta";
 import { Toast } from "@/ui/components/feedback";
 import { TextInput, RadioGroup, RadioButton, Button, Form } from "@/ui/components/forms";
 import { ContaDTO } from "@/application/dto";
+import styled from "styled-components";
 
 const persistContasFormSchema = z.object({
 	nome: z.string().min(1, 'O nome é obrigatório.'),
@@ -64,15 +65,22 @@ export const PersistContaPage: React.FC = () => {
 
 	return (
 		<ModalPage title={location.state.conta ? "Editar Conta" : "Adicionar Conta"}>
-			<Form onSubmit={handleSubmit(onSubmit)}>
-				<TextInput label="Nome" name="nome" register={register} options={{required: 'O nome é obrigatório'}} errors={errors}/>
-				<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} errors={errors} />
-				<RadioGroup>
-					<RadioButton name="tipo" value="simulador" label="simulador" register={register} options={{required: true}} errors={errors} />
-					<RadioButton name="tipo" value="real" label="real" register={register} options={{required: true}} errors={errors} />
-				</RadioGroup>
-				<Button label={location.state.conta ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
-			</Form>
+			<Content>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<TextInput label="Nome" name="nome" register={register} options={{required: 'O nome é obrigatório'}} errors={errors}/>
+					<TextInput label="Saldo Inicial" name="saldoInicial" type="number" step="0.01" placeholder='0.00' register={register} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} errors={errors} />
+					<RadioGroup>
+						<RadioButton name="tipo" value="simulador" label="simulador" register={register} options={{required: true}} errors={errors} />
+						<RadioButton name="tipo" value="real" label="real" register={register} options={{required: true}} errors={errors} />
+					</RadioGroup>
+					<Button label={location.state.conta ? "Editar Conta" : "Criar Conta"} type="submit" isLoading={isLoading} />
+				</Form>
+			</Content>
 		</ModalPage>
 	);
 };
+
+const Content = styled.div`
+	width: 80%;
+	height: 100%;
+`

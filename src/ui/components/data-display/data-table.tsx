@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import { IconType } from "react-icons";
+import {hexToRGBA} from 'about-colors-js'
 import { usePagination } from "@/ui/hooks";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 import { Paths } from "@/application/types";
@@ -27,27 +28,34 @@ export interface DataTablePayload {
 	data: any;
 	actions: DataTableActionConfig[];
 	style?: React.CSSProperties;
+	color?: string;
 }
 
 export interface Column<T> {
 	name: string;
 	acessor: Paths<T>;
 	width?: string;
+	visibility?: boolean;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
-	//TODO: Resolver bug do background transparente nas actions
-	// https://www.google.com/search?q=access+nested+atribute+using+string&sca_esv=a62499659915de61&sxsrf=ACQVn09YWAUlKx8JO2S-Kh_Q2LvwMp5dfQ%3A1710625455266&ei=rxL2ZfHoD_yI4dUP54yE0A8&udm=&ved=0ahUKEwix_Oq04PmEAxV8RLgEHWcGAfoQ4dUDCBA&uact=5&oq=access+nested+atribute+using+string&gs_lp=Egxnd3Mtd2l6LXNlcnAiI2FjY2VzcyBuZXN0ZWQgYXRyaWJ1dGUgdXNpbmcgc3RyaW5nMgkQIRgKGKABGApIniFQrQZY3R5wAngBkAEAmAH1AaABwR2qAQYwLjkuMTC4AQPIAQD4AQGYAhCgAoUYwgIKEAAYRxjWBBiwA8ICBxAjGLACGCfCAgYQABgWGB7CAgYQIRgVGAqYAwDiAwUSATEgQIgGAZAGCJIHBjIuMy4xMaAHwWA&sclient=gws-wiz-serp
-
 	const { currentPage, totalPages, firstPage, lastPage, nextPage, prevPage, paginate } = usePagination();
+	const theme = useTheme();
 
 	const [items, setItems] = useState<any>([]);
+
+	const textColor:  Record<string, string> = {
+		'green': theme.colors.green,
+		'red': theme.colors.red,
+		'orange': theme.colors.orange,
+		'neutral': theme.common.text
+	};
 
 	useEffect(() => {
 		setItems(paginate(payload));
 	}, [payload, currentPage])
 
-	const Actions: React.FC<Omit<DataTablePayload, "data">> = ({ actions }) => {
+	const Actions: React.FC<Omit<DataTablePayload, "data" | "color">> = ({ actions }) => {
 		return (
 			<>
 				{actions && actions.length > 0 && (
@@ -62,30 +70,32 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 	};
 
 	return (
-
 		<Container>
 			<TableContainer>
-			<Table>
-				<Row>
-					{columns.map((column: Column<any>, i: number) => (
-						<HeaderCell key={i} $width={column.width}>
-							{/* <a style={{cursor: 'pointer', display: 'block'}} onClick={() => console.log(column.name)}>{column.name}</a> */}
-							{column.name}
-						</HeaderCell>
-					))}
-				</Row>
-				{items.map(({ data, actions, style }: DataTablePayload, i: number) => (
-					<Row key={i}>
+				<Table>
+					<Row>
 						{columns.map((column: Column<any>, i: number) => (
-							<Cell style={style} key={i} $width={column.width}>
-								{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
-								{i + 1 === columns.length && actions && <Actions actions={actions} key={Math.random()} />}
-							</Cell>
+							column.visibility !== false &&
+							<HeaderCell key={i} $width={column.width} $display={column.visibility ?? true}>
+								{/* <a style={{cursor: 'pointer', display: 'block'}} onClick={() => console.log(column.name)}>{column.name}</a> */}
+								{column.name}
+							</HeaderCell>
 						))}
 					</Row>
-				))}
-			</Table>
+					{items.map(({ data, actions, style, color }: DataTablePayload, i: number) => (
+						<Row key={i}>
+							{columns.map((column: Column<any>, i: number) => (
+								column.visibility !== false &&
+								<Cell style={style} key={i} $width={column.width} $color={color ? textColor[color] : textColor['neutral']}>
+									{column.acessor.includes('.') ? data[column.acessor.split('.')[0]][column.acessor.split('.')[1]] : data[column.acessor]}
+								</Cell>
+							))}
+							<Actions actions={actions} key={i}/>
+						</Row>
+					))}
+				</Table>
 			</TableContainer>
+
 			{ totalPages > 1 &&
 				<PaginationContainer>
 					<IconButton icon={MdKeyboardDoubleArrowLeft} onClick={firstPage} />
@@ -128,9 +138,9 @@ const Table = styled.div`
 	border-collapse: collapse;
 `;
 
-const HeaderCell = styled.div<{ $width?: string }>`
+const HeaderCell = styled.div<{ $width?: string; $display?: boolean; }>`
 	${defaultCell}
-	display: table-cell;
+	display: ${props => props.$display ?  'table-cell' : 'none'} ;
 
 	text-align: start;
 	font-weight: 700;
@@ -141,10 +151,16 @@ const HeaderCell = styled.div<{ $width?: string }>`
 
 const Row = styled.div`
 	display: table-row;
+
 	border-bottom: 1px solid ${(props) => props.theme.table.borderRow};
+
+	width: 100%;
+
+	position: relative;
+
 `;
 
-const Cell = styled.div<{ $width?: string }>`
+const Cell = styled.div<{ $width?: string; $color: string }>`
 	${defaultCell}
 	display: table-cell;
 
@@ -152,12 +168,14 @@ const Cell = styled.div<{ $width?: string }>`
 	position: relative;
 
 	font-size: 14px;
+	color: ${props => props.$color};
 
 	border-bottom: 1px solid ${(props) => props.theme.table.borderCell};
 `;
 
 const ActionsContainer = styled.div`
 	display: none;
+
 	align-items: center;
 	justify-content: flex-end;
 
@@ -170,7 +188,8 @@ const ActionsContainer = styled.div`
 	left: 0;
 
 	${Row}:hover & {
-		background: linear-gradient(90deg, transparent, 0%, transparent, 50%, ${(props) => props.theme.common.background});
+		background: linear-gradient(90deg, transparent 0%, ${(props) => hexToRGBA(props.theme.common.background, 0.9)} 70%, ${(props) => props.theme.common.background} 100%);
+		/* background: linear-gradient(90deg, transparent, 0%, transparent, 70%, ${(props) => props.theme.common.background}); */
 		display: flex;
 	}
 `;
