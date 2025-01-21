@@ -6,6 +6,7 @@ export enum KEY {
 	ATIVOS = `${prefix}:ativos`,
 	CONTAS = `${prefix}:contas`,
 	CONTA_SELECIONADA = `${prefix}:conta-selecionada`,
+	ATIVO_SELECIONADO = `${prefix}:ativo-selecionado`,
 	PERIODO_ATUAL = `${prefix}:periodo-atual`,
 	TABLE_VISIBILITY = `${prefix}:table-visibility`,
 	FILTER_ATIVOS = `${prefix}:filter-ativos`,

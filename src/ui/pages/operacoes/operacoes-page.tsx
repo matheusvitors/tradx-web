@@ -14,7 +14,7 @@ import { UniqueValues, uniqueValues } from "@/utils/unique-values";
 import { DataTablePayload, Chip, DataTable, Column } from "@/ui/components/data-display";
 import { Toast, PageLoading } from "@/ui/components/feedback";
 import { Checkbox, DatePicker, Button } from "@/ui/components/forms";
-import { IconButton, FloatingButton, ContaSelector } from "@/ui/components/general";
+import { IconButton, FloatingButton, ContaSelector, AtivoSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
@@ -325,6 +325,7 @@ export const OperacoesPage: React.FC = () => {
 					<TableContainer>
 						<PageHeader>
 							<ContaSelector  />
+							<AtivoSelector />
 							<IconButton icon={fullColumnsVisibility ? MdOpenInFull : MdOutlineCloseFullscreen} size={26} onClick={() => setFullColumnsVisibility(!fullColumnsVisibility)} />
 							<IconButton icon={MdOutlineFileUpload} size={28} onClick={() => navigate("/operacoes/importar", { state: { background: location } })} />
 							{data && data.length > 0 && <IconButton icon={MdFilterList} size={28} onClick={() => setIsOpenFilters(true)} />}
