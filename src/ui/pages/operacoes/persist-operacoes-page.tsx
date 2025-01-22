@@ -101,8 +101,12 @@ export const PersistOperacoesPage: React.FC = () => {
 	}, [register]);
 
 	useEffect(() => {
-		ativoOptions.length > 0 && !location.state.operacao && onFilterAtivos();
+		previousAtivoOptions.length > 0 && !location.state.operacao && onFilterAtivos();
 	}, [isFilterActive]);
+
+	useEffect(() => {
+		console.log('ativoOptions', ativoOptions)
+	}, [ativoOptions])
 
 	const loadAtivos = async () => {
 		try {
@@ -157,9 +161,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	}
 
 	const onFilterAtivos = async () => {
-
 		if(isFilterActive) {
-			const filteredAtivoOptions = ativoOptions.filter(ativo => ativo.dataVencimento && ativo.dataVencimento > new Date() || !ativo.dataVencimento);
+			const filteredAtivoOptions = ativoOptions.filter(ativo => (ativo.dataVencimento && new Date(ativo.dataVencimento).getTime() >= new Date().getTime()) || !ativo.dataVencimento);
 			setAtivoOptions(filteredAtivoOptions);
 		} else {
 			setAtivoOptions(previousAtivoOptions);
@@ -223,7 +226,6 @@ export const PersistOperacoesPage: React.FC = () => {
 					<Button label="Salvar" type="submit" isLoading={isLoading} />
 				</Form>
 			</Content>
-
 		</ModalPage>
 	);
 };
