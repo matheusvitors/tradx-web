@@ -162,6 +162,7 @@ const Row = styled.div<{ $backgroundColor?: string; }>`
 	position: relative;
 
 	background-color: ${props => hexToRGBA(props.$backgroundColor, 0.2) || 'transparent'};
+	color: ${props => props.theme.common.text};
 `;
 
 const Cell = styled.div<{ $width?: string; $color: string }>`
@@ -180,9 +181,6 @@ const Cell = styled.div<{ $width?: string; $color: string }>`
 const ActionsContainer = styled.div`
 	display: none;
 
-	align-items: center;
-	justify-content: flex-end;
-
 	width: 100%;
 	height: 100%;
 	padding-right: 20px;
@@ -195,6 +193,9 @@ const ActionsContainer = styled.div`
 		background: linear-gradient(90deg, transparent 0%, ${(props) => hexToRGBA(props.theme.common.background, 0.9)} 70%, ${(props) => props.theme.common.background} 100%);
 		/* background: linear-gradient(90deg, transparent, 0%, transparent, 70%, ${(props) => props.theme.common.background}); */
 		display: flex;
+		align-self: flex-end;
+		align-items: center;
+		justify-content: flex-end;
 	}
 `;
 

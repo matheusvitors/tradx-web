@@ -208,10 +208,10 @@ export const PersistOperacoesPage: React.FC = () => {
 						<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
 						<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
 					</RadioGroup>
-					<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
-					<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
-					<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
-					<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
+					<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} autoComplete="off" />
+					<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} autoComplete="off" />
+					<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} autoComplete="off" />
+					<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} autoComplete="off" />
 					<TimePicker label="Data de Entrada" name='dataEntrada' value={dataEntrada} setValue={setValue} errors={errors} />
 					<TimePicker label="Data de Saída" name='dataSaida' value={dataSaida} setValue={setValue} errors={errors} />
 					<RadioGroup>
