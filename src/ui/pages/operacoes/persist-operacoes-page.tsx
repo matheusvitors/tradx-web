@@ -71,9 +71,8 @@ export const PersistOperacoesPage: React.FC = () => {
 			precoSaida: location.state.operacao?.precoSaida,
 			dataEntrada: location.state.operacao?.dataEntrada || new Date(),
 			dataSaida: location.state.operacao?.dataSaida,
-			operacaoPerdida: location.state.operacao?.operacaoPerdida || false,
-			operacaoErrada: location.state.operacao?.operacaoErrada || false,
-			motivo: location.state.operacao?.motivo,
+			operacaoPerdida: location.state.operacao?.operacaoPerdida ? true : false,
+			operacaoErrada: location.state.operacao?.operacaoErrada ? true : false,
 			comentarios: location.state.operacao?.comentarios,
 		},
 		resolver: zodResolver(persistOperacaoFormScheme)
@@ -103,10 +102,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	useEffect(() => {
 		previousAtivoOptions.length > 0 && !location.state.operacao && onFilterAtivos();
 	}, [isFilterActive]);
-
-	useEffect(() => {
-		console.log('ativoOptions', ativoOptions)
-	}, [ativoOptions])
 
 	const loadAtivos = async () => {
 		try {
@@ -172,6 +167,8 @@ export const PersistOperacoesPage: React.FC = () => {
 	}
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
+		console.log(data);
+
 		try {
 			setIsLoading(true);
 
@@ -206,20 +203,20 @@ export const PersistOperacoesPage: React.FC = () => {
 					<Select label='Conta' name='conta' list={contaOptions} value={selectConta} errors={errors} onChange={(e) => setValue('conta', e.target.value)} />
 					<Select label='Ativo' name='ativo' list={ativoOptions} value={selectAtivo} errors={errors} onChange={(e) => setValue('ativo', e.target.value)}
 						rightIcon={isFilterActive ? MdOutlineFilterAlt : MdOutlineFilterAltOff} rightOnClick={!location.state.operacao ? () => setIsFilterActive(!isFilterActive) : undefined} />
-					<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v === "" ? undefined : parseInt(v)}} />
+					<TextInput label="Quantidade" name="quantidade" type="number" register={register} errors={errors} options={{setValueAs: (v) => v.lenght === 0 ? undefined : parseInt(v)}} />
 					<RadioGroup>
 						<RadioButton name="tipo" value="compra" label="Compra" register={register} errors={errors} />
 						<RadioButton name="tipo" value="venda" label="Venda" register={register} errors={errors} />
 					</RadioGroup>
-					<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-					<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-					<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
-					<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v === "" ? undefined : parseFloat(v)}} />
+					<TextInput label="Entrada" name="precoEntrada" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
+					<TextInput label="Stop Loss" name="stopLoss" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
+					<TextInput label="Alvo" name="alvo" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
+					<TextInput label="Saída" name="precoSaida" register={register} errors={errors} options={{setValueAs: (v) => !v || v.lenght === 0 ? undefined : parseFloat(v)}} />
 					<TimePicker label="Data de Entrada" name='dataEntrada' value={dataEntrada} setValue={setValue} errors={errors} />
 					<TimePicker label="Data de Saída" name='dataSaida' value={dataSaida} setValue={setValue} errors={errors} />
 					<RadioGroup>
-						<Checkbox label="Operação errada?" name='errada' backgroundColor="#CC1919" register={register} errors={errors} />
-						<Checkbox label="Operação perdida?" name="perdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
+						<Checkbox label="Operação errada?" name='operacaoErrada' backgroundColor="#CC1919" register={register} errors={errors} />
+						<Checkbox label="Operação perdida?" name="operacaoPerdida" backgroundColor="#7A7A7A" register={register} errors={errors} />
 					</RadioGroup>
 					<Textarea label="Comentários" name='comentarios' register={register} errors={errors}  />
 
