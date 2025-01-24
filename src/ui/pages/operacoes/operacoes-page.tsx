@@ -179,6 +179,26 @@ export const OperacoesPage: React.FC = () => {
 				variacao += typeof resultadoPontos === 'number' ? resultadoPontos * item.ativo.multiplicador : 0;
 			}
 
+			let color = 'orange';
+
+			if(item.precoSaida) {
+				if(item.precoSaida === item.precoEntrada) {
+					color = 'neutral'
+				} else if(resultadoPontos && resultadoPontos > 0) {
+					color = 'green'
+				} else {
+					color = 'red'
+				}
+			}
+
+			if(item.operacaoPerdida) {
+				color = 'lost'
+			}
+
+			if(item.operacaoErrada) {
+				color = 'error'
+			}
+
 			result.push({
 				data: {
 					...item,
@@ -202,7 +222,8 @@ export const OperacoesPage: React.FC = () => {
 						color: theme.colors.warning,
 					},
 				],
-				color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? 'neutral' : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' :  'orange'}`
+				color
+				// color: `${item.precoSaida ? item.precoSaida === item.precoEntrada ? 'neutral' : resultadoPontos && resultadoPontos > 0 ? 'green' : 'red' :  'orange'}`
 			})
 		})
 
