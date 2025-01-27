@@ -48,7 +48,10 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 		'green': theme.colors.green,
 		'red': theme.colors.red,
 		'orange': theme.colors.orange,
-		'neutral': theme.common.text
+		'neutral': theme.common.text,
+		'error': theme.colors.warning,
+		'lost': theme.colors.gray
+
 	};
 
 	useEffect(() => {
@@ -83,7 +86,7 @@ export const DataTable: React.FC<DataTableProps> = ({ columns, payload }) => {
 						))}
 					</Row>
 					{items.map(({ data, actions, style, color }: DataTablePayload, i: number) => (
-						<Row key={i}>
+						<Row key={i} $backgroundColor={(color === 'lost' || color === 'error') ? textColor[color] : undefined}>
 							{columns.map((column: Column<any>, i: number) => (
 								column.visibility !== false &&
 								<Cell style={style} key={i} $width={column.width} $color={color ? textColor[color] : textColor['neutral']}>
@@ -149,7 +152,7 @@ const HeaderCell = styled.div<{ $width?: string; $display?: boolean; }>`
 	width: ${(props) => props.$width || "auto"};
 `;
 
-const Row = styled.div`
+const Row = styled.div<{ $backgroundColor?: string; }>`
 	display: table-row;
 
 	border-bottom: 1px solid ${(props) => props.theme.table.borderRow};
@@ -158,6 +161,8 @@ const Row = styled.div`
 
 	position: relative;
 
+	background-color: ${props => hexToRGBA(props.$backgroundColor, 0.2) || 'transparent'};
+	color: ${props => props.theme.common.text};
 `;
 
 const Cell = styled.div<{ $width?: string; $color: string }>`
@@ -176,9 +181,6 @@ const Cell = styled.div<{ $width?: string; $color: string }>`
 const ActionsContainer = styled.div`
 	display: none;
 
-	align-items: center;
-	justify-content: flex-end;
-
 	width: 100%;
 	height: 100%;
 	padding-right: 20px;
@@ -191,6 +193,9 @@ const ActionsContainer = styled.div`
 		background: linear-gradient(90deg, transparent 0%, ${(props) => hexToRGBA(props.theme.common.background, 0.9)} 70%, ${(props) => props.theme.common.background} 100%);
 		/* background: linear-gradient(90deg, transparent, 0%, transparent, 70%, ${(props) => props.theme.common.background}); */
 		display: flex;
+		align-self: flex-end;
+		align-items: center;
+		justify-content: flex-end;
 	}
 `;
 
