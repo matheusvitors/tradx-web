@@ -12,12 +12,11 @@ import { Operacao, Variacao } from "@/application/models";
 import { PageLoading, Toast } from "@/ui/components/feedback";
 import { AccountCard } from "@/ui/components/dashboard";
 import { Chip, Column, DataTable, DataTablePayload } from "@/ui/components/data-display";
-import { LineChart, Serie } from "@/ui/components/charts";
+import { LineChart, Serie, SerieData } from "@/ui/components/charts";
 import { ContaSelector } from "@/ui/components/general";
 import { PageHeader } from "@/ui/components/layout";
 import { useSelectedConta } from "@/ui/contexts";
-import { DashboardInformations } from "@/application/interfaces/dashboard-informations";
-
+import { DashboardInformations } from "@/application/interfaces";
 
 export const HomePage: React.FC = () => {
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
@@ -35,6 +34,12 @@ export const HomePage: React.FC = () => {
 	});
 
 	useEffect(() => {
+		data && data.variacao.length > 0 && setVariacoes(prepareChartData(data.variacao));
+		data && data.variacao.length === 0 && setVariacoes([]);
+		data && setOperacoes(preparePayloadDataTable(data.operacoes));
+	}, [data]);
+
+	useEffect(() => {
 		error && Toast.error(error.message);
 	}, [error]);
 
@@ -42,11 +47,19 @@ export const HomePage: React.FC = () => {
 		refetch();
 	}, [selectedConta]);
 
-	useEffect(() => {
-		data && data.variacao.length > 0 && setVariacoes(prepareChartData(data.variacao));
-		data && data.variacao.length === 0 && setVariacoes([]);
-		data && setOperacoes(preparePayloadDataTable(data.operacoes));
-	}, [data]);
+	const filterVariacoes = (data: SerieData[]) => {
+		const result: {[key: string]: any } = {};
+
+		data.forEach((item: SerieData) => {
+			if(item.x) {
+				const index: keyof typeof result = item.x.toString();
+				result[index] = item;
+			}
+		});
+
+		// setVariacoes(Object.values(result));
+		return Object.values(result);
+	}
 
 	const onEdit = async (operacao: Operacao) => {
 		navigate("/operacoes/editar", { state: { background: location, operacao: operacao } });
@@ -102,6 +115,8 @@ export const HomePage: React.FC = () => {
 				x: item.data,
 			});
 		});
+
+		chartData[0].data = filterVariacoes(chartData[0].data);
 
 		return chartData;
 	};

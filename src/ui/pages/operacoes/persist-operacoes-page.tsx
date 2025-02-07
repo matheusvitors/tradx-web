@@ -167,8 +167,6 @@ export const PersistOperacoesPage: React.FC = () => {
 	}
 
 	const onSubmit = async (data: PersistOperacaoFormData) => {
-		console.log(data);
-
 		try {
 			setIsLoading(true);
 
