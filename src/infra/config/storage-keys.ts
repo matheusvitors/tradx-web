@@ -9,4 +9,6 @@ export enum KEY {
 	PERIODO_ATUAL = `${prefix}:periodo-atual`,
 	TABLE_VISIBILITY = `${prefix}:table-visibility`,
 	FILTER_ATIVOS = `${prefix}:filter-ativos`,
+	FILTER_OPERACOES = `${prefix}:filter-operacoes`,
+	RANGE_OPERACOES = `${prefix}:range-operacoes`,
 }
