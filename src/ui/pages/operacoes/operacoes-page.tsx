@@ -20,6 +20,7 @@ import { useSelectedConta } from "@/ui/contexts";
 import { Period } from "@/application/interfaces";
 import { storage } from "@/infra/store/storage";
 import { KEY } from "@/infra/config/storage-keys";
+import { usePersistentState } from "@/ui/hooks";
 
 interface Filter {
 	ativos: Array<string>;
@@ -61,8 +62,8 @@ export const OperacoesPage: React.FC = () => {
 	const [operacoes, setOperacoes] = useState<DataTablePayload[]>([]);
 	const [isOpenFilters, setIsOpenFilters] = useState(false);
 	const [filters, setFilters] = useState<UniqueValues>();
-	const [activeFilters, setActiveFilters] = useState<Filter>(DEFAULT_FILTER_VALUES);
-	const [activeRanges, setActiveRanges] = useState<Range>(DEFAULT_RANGES_VALUES);
+	const [activeFilters, setActiveFilters] = usePersistentState<Filter>(KEY.FILTER_OPERACOES, DEFAULT_FILTER_VALUES);
+	const [activeRanges, setActiveRanges] = usePersistentState<Range>(KEY.RANGE_OPERACOES, DEFAULT_RANGES_VALUES);
 	const [period, setPeriod] = useState<Required<Period>>(storage.get(KEY.PERIODO_ATUAL) || { month: new Date().getMonth(), year: new Date().getFullYear()});
 	const [fullColumnsVisibility, setFullColumnsVisibility] = useState(storage.get(KEY.TABLE_VISIBILITY));
 
@@ -127,7 +128,7 @@ export const OperacoesPage: React.FC = () => {
 			}
 
 		}
-	}, [activeFilters, activeRanges])
+	}, [data, activeFilters, activeRanges]);
 
 	const loadFiltersOptions = (operacoes: Operacao[]) => {
 		setFilters(uniqueValues<Operacao>(operacoes, ['tipo', 'ativo', 'dataEntrada']));
