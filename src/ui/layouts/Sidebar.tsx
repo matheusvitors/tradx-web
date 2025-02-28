@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { css, styled, useTheme } from 'styled-components';
 import { hexToRGBA } from "about-colors-js";
 import { SystemName } from '@/ui/components/general';

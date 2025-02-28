@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styled, { useTheme } from "styled-components";
 import { authenticateUser } from "@/application/services/auth";
 import { Toast } from "@/ui/components/feedback";

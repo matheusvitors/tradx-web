@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 import { isTokenExpired } from '@/application/services';
 import { Header, Sidebar } from '@/ui/layouts';

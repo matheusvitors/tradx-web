@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useEffect } from "react";
 import { MdClose } from "react-icons/md";
 import styled, { useTheme } from "styled-components";
 import { hexToRGBA } from "about-colors-js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { IconButton } from "@/ui/components/general";
 import { isTokenExpired } from "@/application/services";
 

@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { MdDarkMode, MdLogout, MdSunny } from 'react-icons/md';
 import { useSystemTheme } from '@/ui/hooks/useSystemTheme';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { signOut } from '@/application/services/auth';
 import { IconButton } from '@/ui/components/general';
 

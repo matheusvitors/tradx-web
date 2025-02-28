@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button, Form } from "@/ui/components/forms";
 import { ModalPage } from "@/ui/layouts";

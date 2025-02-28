@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
 import { Conta } from "@/application/models";
 import { Page } from "@/ui/layouts";

@@ -4,7 +4,7 @@ import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { isSameDay, format } from "date-fns";
 import { MdEdit } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 import { STALE_TIME } from "@/infra/config/constants";
 import { getDashboardInformations } from "@/application/services/dashboard";

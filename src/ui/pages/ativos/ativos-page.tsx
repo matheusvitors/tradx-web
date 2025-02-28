@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { MdAdd, MdDelete, MdEdit } from 'react-icons/md';
 import styled, { useTheme } from 'styled-components';
 import { useQuery } from '@tanstack/react-query';

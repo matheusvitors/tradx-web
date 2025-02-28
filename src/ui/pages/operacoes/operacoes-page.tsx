@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components";
 import { useQuery } from "@tanstack/react-query";
 import { MdEdit, MdDelete, MdAdd, MdFilterList, MdNavigateNext, MdNavigateBefore, MdOutlineFileUpload, MdOpenInFull, MdOutlineCloseFullscreen } from "react-icons/md";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { hexToRGBA } from 'about-colors-js'
 import { format, isSameDay } from "date-fns";
 
