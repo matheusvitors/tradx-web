@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Navigate, Routes, Route, useLocation } from "react-router-dom";
+import { Outlet, Navigate, Routes, Route, useLocation } from "react-router";
 import { AtivosPage, ContasPage, HomePage, LoginPage, PersistContaPage, OperacoesPage, PersistAtivoPage, PersistOperacoesPage, ImportOperacoesPage } from "@/ui/pages";
 import { isTokenExpired } from "@/application/services";
 
