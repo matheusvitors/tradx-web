@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { Dispatch } from 'react';
 import styled from 'styled-components';
-import { MdDarkMode, MdLogout, MdSunny } from 'react-icons/md';
+import { MdDarkMode, MdLogout, MdMenuOpen, MdOutlineMenu, MdSunny } from 'react-icons/md';
 import { useSystemTheme } from '@/ui/hooks/useSystemTheme';
 import { useNavigate } from 'react-router-dom';
 import { signOut } from '@/application/services/auth';
@@ -8,9 +8,11 @@ import { IconButton } from '@/ui/components/general';
 
 interface HeaderProps {
 	pageName: string;
+	open: boolean;
+	setOpen: Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const Header: React.FC<HeaderProps> = ({ pageName }) => {
+export const Header: React.FC<HeaderProps> = ({ pageName, open, setOpen }) => {
 	const navigate = useNavigate();
 	const { theme, changeTheme } = useSystemTheme();
 
@@ -25,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ pageName }) => {
 
 	return (
 		<Container>
+			<IconButton icon={open ?  MdOutlineMenu : MdMenuOpen} onClick={() => setOpen(!open)}/>
 			<TitleContainer>
 				<PageName>{pageName}</PageName>
 			</TitleContainer>
@@ -48,7 +51,7 @@ const Container = styled.div`
 
 	padding-right: 20px;
 
-	border-bottom: 1px solid ${props => props.theme.sidebar.border};
+	/* border-bottom: 1px solid ${props => props.theme.sidebar.border}; */
 `
 
 const TitleContainer = styled.div`
