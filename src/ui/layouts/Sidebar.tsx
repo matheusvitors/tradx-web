@@ -1,11 +1,11 @@
 import React, { Dispatch, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { css, styled, useTheme } from 'styled-components';
 import { hexToRGBA } from "about-colors-js";
 import { MdDashboard, MdLabelOutline, MdOutlineAccountBalanceWallet, MdOutlineInsertChart } from 'react-icons/md';
 import { SystemName } from '@/ui/components/general';
 import project from '../../../package.json';
-import logo from '../../../public/img/icon.png';
+import logo from '@/ui/assets/icon.png';
 
 interface SidebarProps {
 	open: boolean;
@@ -20,7 +20,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ open }) => {
 	const SIZE = 28;
 
 	const paths = [
-		{ label: 'Home',	path: '/home', icon: <MdDashboard size={SIZE} /> },
+		// { label: 'Home',	path: '/home', icon: <MdDashboard size={SIZE} /> },
 		{ label: 'Operações',	path: '/operacoes', icon: <MdOutlineInsertChart size={SIZE} /> },
 		{ label: 'Ativos',	path: '/ativos', icon: <MdLabelOutline size={SIZE} /> },
 		{ label: 'Contas',	path: '/contas', icon: <MdOutlineAccountBalanceWallet size={SIZE} /> },

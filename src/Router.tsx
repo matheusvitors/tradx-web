@@ -17,8 +17,8 @@ export const Router: React.FC = () => {
 				<Route path="/login" element={<LoginPage />} />
 
 				<Route path="/" element={<ProtectedRoutes />}>
-					<Route path="/" element={<Navigate replace to="home" />} />
-					<Route path="home" element={<HomePage />} />
+					<Route path="/" element={<Navigate replace to="operacoes" />} />
+					{/* <Route path="home" element={<HomePage />} /> */}
 					<Route path="operacoes" element={<OperacoesPage />} />
 					<Route path="ativos" element={<AtivosPage />} />
 					<Route path="contas" element={<ContasPage />} />
